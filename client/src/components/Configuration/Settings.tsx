@@ -223,7 +223,7 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/changeEmail",
+        "http://localhost:3000/user/email",
         {
           method: "POST",
           headers: {
@@ -265,7 +265,7 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/changePassword",
+        "http://localhost:3000/user/password",
         {
           method: "POST",
           headers: {
