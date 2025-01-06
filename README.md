@@ -499,7 +499,7 @@ Fetches all projects.
     - 500 Internal Server Error: Database failure.
  
       
-POST /project-admin/createProjectGroup<br>
+POST /course<br>
 Creates a new project group.
 - Request Body:
 ```

@@ -114,8 +114,8 @@ const ProjectAdmin: React.FC = () => {
   const handleCreate = async () => {
     const endpoint =
       action === "CreateProjectGroup"
-        ? "/createProjectGroup"
-        : "/createProject";
+        ? "/course"
+        : "/project";
     const body: { [key: string]: string } = { semester, projectGroupName };
 
     if (action === "CreateProject") {
@@ -124,7 +124,7 @@ const ProjectAdmin: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/project-admin${endpoint}`,
+        `http://localhost:3000/${endpoint}`,
         {
           method: "POST",
           headers: {
@@ -161,7 +161,7 @@ const ProjectAdmin: React.FC = () => {
 
   const HandleEdit = async () => {
     const endpoint =
-      action === "EditProjectGroup" ? "/editProjectGroup" : "/editProject";
+      action === "EditProjectGroup" ? "/course" : "/project";
     const body: { [key: string]: string } = {
       projectGroupName: selectToEditProjectGroup,
       newSemester,
@@ -178,9 +178,9 @@ const ProjectAdmin: React.FC = () => {
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/project-admin${endpoint}`,
+        `http://localhost:3000/${endpoint}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
