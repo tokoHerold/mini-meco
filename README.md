@@ -407,7 +407,7 @@ Registers a new user to the system.
     - 400 Bad Request: Validation errors or user already exists.
  
       
-POST /login<br>
+POST /session<br>
 Logs a user into the system.
 - Request Body:
 ```

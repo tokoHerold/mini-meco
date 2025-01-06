@@ -38,7 +38,7 @@ initializeDB().then((db) => {
 
 
   app.post('/user', (req, res) => register(req, res, db));
-  app.post('/login', (req, res) => login(req, res, db));
+  app.post('/session', (req, res) => login(req, res, db));
   app.post('/forgotPassword', (req, res) => forgotPassword(req, res, db));
   app.post('/resetPassword', (req, res) => resetPassword(req, res, db));
   app.post('/project-admin/createProjectGroup', (req, res) => createProjectGroup(req, res, db));
