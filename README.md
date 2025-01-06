@@ -391,7 +391,7 @@ http :// localhost :3000
 #### 5.2.1 Authentication Routes
 
 
-POST /register
+POST /user
 Registers a new user to the system.
 
 - Request Body:

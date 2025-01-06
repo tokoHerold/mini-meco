@@ -14,7 +14,7 @@ const LoginScreen = () => {
   const [message, setMessage] = useState("");
 
   const handleSubmit = async () => {
-    const endpoint = action === "Registration" ? "/register" : "/login";
+    const endpoint = action === "Registration" ? "/user" : "/login";
     const body: { [key: string]: string } = { email, password };
     // Add name to the body if the action is Registration (not Login)
     if (action === "Registration") {

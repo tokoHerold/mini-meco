@@ -37,7 +37,7 @@ initializeDB().then((db) => {
   app.get('/getUserStatus', (req, res) => { getUsersByStatus(req, res, db) });
 
 
-  app.post('/register', (req, res) => register(req, res, db));
+  app.post('/user', (req, res) => register(req, res, db));
   app.post('/login', (req, res) => login(req, res, db));
   app.post('/forgotPassword', (req, res) => forgotPassword(req, res, db));
   app.post('/resetPassword', (req, res) => resetPassword(req, res, db));
