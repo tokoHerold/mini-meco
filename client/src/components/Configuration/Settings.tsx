@@ -144,7 +144,7 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/joinProject",
+        "http://localhost:3000/user/project",
         {
           method: "POST",
           headers: {
@@ -184,9 +184,9 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/leaveProject",
+        "http://localhost:3000/user/project",
         {
-          method: "POST",
+          method: "DELETE",
           headers: {
             "Content-Type": "application/json",
           },
