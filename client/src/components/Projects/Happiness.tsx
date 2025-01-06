@@ -154,7 +154,7 @@ const Happiness: React.FC = (): React.ReactNode => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/happiness/createSprints",
+        "http://localhost:3000/happiness/sprint",
         {
           method: "POST",
           headers: {
@@ -180,7 +180,7 @@ const Happiness: React.FC = (): React.ReactNode => {
 
   const handleHappinessSubmit = async () => {
     try {
-      await fetch("http://localhost:3000/happiness/saveHappiness", {
+      await fetch("http://localhost:3000/happiness", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
