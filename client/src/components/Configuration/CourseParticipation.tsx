@@ -33,17 +33,23 @@ const CourseParticipation: React.FC = () => {
   const [message, setMessage] = useState("");
   const [githubUsername, setGithubUsername] = useState("");
 
-  const [projectGroups, setProjectGroups] = useState<string[]>([]);
-  const [projects, setProjects] = useState<
-    { id: number; projectName: string; projectGroupName: string }[]
-  >([]);
-  const [selectedProjectGroup, setSelectedProjectGroup] = useState<string>("");
-
   const [user, setUser] = useState<{
     name: string;
     email: string;
     UserGithubUsername: string;
   } | null>(null);
+
+  const [projectGroups, setProjectGroups] = useState<string[]>([]);
+
+  const [enrolledProjects, setEnrolledProjects] = useState<
+    { id: number; projectName: string; projectGroupName: string }[]
+  >([]);
+  const [selectedEnrolledProjectGroup, setSelectedEnrolledProjectGroup] = useState<string>("");
+
+  const [availableProjects, setAvailableProjects] = useState<
+    { id: number; projectName: string; projectGroupName: string }[]
+  >([]);
+  const [selectedAvailableProjectGroup, setSelectedAvailableProjectGroup] = useState<string>("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -97,34 +103,65 @@ const CourseParticipation: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      if (selectedProjectGroup) {
+    const fetchEnrolledProjects = async () => {
+      if (selectedEnrolledProjectGroup) {
         try {
           const response = await fetch(
-            `http://localhost:3000/projects?projectGroupName=${selectedProjectGroup}`
+            `http://localhost:3000/projects?projectGroupName=${selectedEnrolledProjectGroup}`
           );
           const data = await response.json();
           const mappedProjects = data.map((item: any) => ({
             id: item.id,
             projectName: item.projectName,
-            projectGroupName: item.projectGroupName || selectedProjectGroup,
+            projectGroupName: item.projectGroupName || selectedEnrolledProjectGroup,
           }));
-          setProjects(mappedProjects);
+          setEnrolledProjects(mappedProjects);
         } catch (error: unknown) {
           if (error instanceof Error) {
             console.error(error.message);
           }
         }
       } else {
-        setProjects([]);
+        setEnrolledProjects([]);
       }
     };
 
-    fetchProjects();
-  }, [selectedProjectGroup]);
+    fetchEnrolledProjects();
+  }, [selectedEnrolledProjectGroup]);
 
-  const filteredProjects = projects.filter(
-    (project) => project.projectGroupName === selectedProjectGroup
+  const filteredEnrolledProjects = enrolledProjects.filter(
+    (project) => project.projectGroupName === selectedEnrolledProjectGroup
+  );
+
+  useEffect(() => {
+    const fetchAvailableProjects = async () => {
+      if (selectedAvailableProjectGroup) {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/projects?projectGroupName=${selectedAvailableProjectGroup}`
+          );
+          const data = await response.json();
+          const mappedProjects = data.map((item: any) => ({
+            id: item.id,
+            projectName: item.projectName,
+            projectGroupName: item.projectGroupName || selectedAvailableProjectGroup,
+          }));
+          setAvailableProjects(mappedProjects);
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.error(error.message);
+          }
+        }
+      } else {
+        setAvailableProjects([]);
+      }
+    };
+
+    fetchAvailableProjects();
+  }, [selectedAvailableProjectGroup]);
+
+  const filteredAvailableProjects = availableProjects.filter(
+    (project) => project.projectGroupName === selectedAvailableProjectGroup
   );
 
   const handleJoin = async (projectName: string) => {
@@ -217,12 +254,12 @@ const CourseParticipation: React.FC = () => {
       <div className="BigContainer">
         <div className="ProjectContainer">
           <div className="ProjectTitle">
-            <h3>Project Lists</h3>
+            <h3>Project Lists - Enrolled Courses</h3>
           </div>
           <div className="SelectWrapper">
             <Select
               onValueChange={(value) => {
-                setSelectedProjectGroup(value);
+                setSelectedEnrolledProjectGroup(value);
               }}
             >
               <SelectTrigger className="SelectTrigger">
@@ -238,7 +275,66 @@ const CourseParticipation: React.FC = () => {
             </Select>
           </div>
           <div>
-            {filteredProjects.map((project) => (
+            {filteredEnrolledProjects.map((project) => (
+              <div className="ProjectItem3" key={project.id}>
+                <div className="ProjectName">{project.projectName}</div>
+                <div className="Imgs">
+                  <Dialog>
+                    <DialogTrigger className="DialogTrigger">
+                      <img className="Delete" src={Delete} alt="Delete" />
+                    </DialogTrigger>
+                    <DialogContent className="DialogContent">
+                      <DialogHeader>
+                        <DialogTitle className="DialogTitle">
+                          Leave Project
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="LeaveText">
+                        Are you sure you want to leave {project.projectName} ?{" "}
+                      </div>
+                      <DialogFooter>
+                        <Button
+                          className="create"
+                          variant="primary"
+                          onClick={() => handleLeave(project.projectName)}
+                        >
+                          Confirm
+                        </Button>
+                      </DialogFooter>
+                      {message && <div className="Message">{message}</div>}
+                    </DialogContent>
+                  </Dialog>
+                </div>
+                <hr className="ProjectDivider" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="ProjectContainer">
+          <div className="ProjectTitle">
+            <h3>Project Lists - Available Courses</h3>
+          </div>
+          <div className="SelectWrapper">
+            <Select
+              onValueChange={(value) => {
+                setSelectedAvailableProjectGroup(value);
+              }}
+            >
+              <SelectTrigger className="SelectTrigger">
+                <SelectValue placeholder="Select a project group" />
+              </SelectTrigger>
+              <SelectContent className="SelectContent">
+                {projectGroups.map((group, index) => (
+                  <SelectItem key={index} value={group}>
+                    {group}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            {filteredAvailableProjects.map((project) => (
               <div className="ProjectItem3" key={project.id}>
                 <div className="ProjectName">{project.projectName}</div>
                 <div className="Imgs">
@@ -274,37 +370,13 @@ const CourseParticipation: React.FC = () => {
                       {message && <div className="Message">{message}</div>}
                     </DialogContent>
                   </Dialog>
-                  <Dialog>
-                    <DialogTrigger className="DialogTrigger">
-                      <img className="Delete" src={Delete} alt="Delete" />
-                    </DialogTrigger>
-                    <DialogContent className="DialogContent">
-                      <DialogHeader>
-                        <DialogTitle className="DialogTitle">
-                          Leave Project
-                        </DialogTitle>
-                      </DialogHeader>
-                      <div className="LeaveText">
-                        Are you sure you want to leave {project.projectName} ?{" "}
-                      </div>
-                      <DialogFooter>
-                        <Button
-                          className="create"
-                          variant="primary"
-                          onClick={() => handleLeave(project.projectName)}
-                        >
-                          Confirm
-                        </Button>
-                      </DialogFooter>
-                      {message && <div className="Message">{message}</div>}
-                    </DialogContent>
-                  </Dialog>
                 </div>
                 <hr className="ProjectDivider" />
               </div>
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );
