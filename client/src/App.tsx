@@ -6,6 +6,7 @@ import LoginScreen from "./screens/Auth/LoginScreen";
 import Dashboard from "./components/Dashboard";
 import CodeActivity from "./components/Projects/CodeActivity";
 import Settings from "./components/Configuration/Settings";
+import CourseParticipation from "./components/Configuration/CourseParticipation";
 import UserAdmin from "./components/Administration/UserAdmin";
 import ProjectAdmin from "./components/Administration/ProjectAdmin";
 import ProjectConfig from "./components/Configuration/ProjectConfig";
@@ -27,6 +28,7 @@ function App() {
           <Route path="happiness" element={<Happiness />} />
           <Route path="/code-activity" element={<CodeActivity />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="course-participation" element={<CourseParticipation />} />
           <Route path="user-admin" element={<UserAdmin />} />
           <Route path="project-admin" element={<ProjectAdmin />} />
           <Route path="project-config" element={<ProjectConfig />} />

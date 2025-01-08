@@ -74,6 +74,10 @@ const Dashboard: React.FC = () => {
     navigate("/settings");
   }
 
+  function goCourseParticipation() {
+    navigate("/course-participation");
+  }
+
   function goProjectConfig() {
     navigate("/project-config");
   }
@@ -135,6 +139,9 @@ const Dashboard: React.FC = () => {
         <div className="Container">
           <div onClick={goSettings} className="components">
             Settings
+          </div>
+          <div onClick={goCourseParticipation} className="components">
+            Course Participation
           </div>
           <div onClick={goProjectConfig} className="components">
             Project Config
