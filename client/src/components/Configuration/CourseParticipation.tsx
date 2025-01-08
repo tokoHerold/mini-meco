@@ -31,15 +31,15 @@ const CourseParticipation: React.FC = () => {
 
   const [role, setRole] = useState("");
   const [message, setMessage] = useState("");
-  const [githubUsername, setGithubUsername] = useState("");
+
 
   const [user, setUser] = useState<{
     name: string;
     email: string;
-    UserGithubUsername: string;
   } | null>(null);
 
   const [projectGroups, setProjectGroups] = useState<string[]>([]);
+  const [userProjects, setUserProjects] = useState<string[]>([]);
 
   const [enrolledProjects, setEnrolledProjects] = useState<
     { id: number; projectName: string; projectGroupName: string }[]
@@ -55,32 +55,13 @@ const CourseParticipation: React.FC = () => {
     const fetchUserData = async () => {
       const userName = localStorage.getItem("username");
       const userEmail = localStorage.getItem("email");
-      const userGithubUsername = localStorage.getItem("githubUsername");
       if (userName && userEmail) {
         setUser({
           name: userName,
           email: userEmail,
-          UserGithubUsername: userGithubUsername || "",
         });
       } else {
         console.warn("User data not found in localStorage");
-      }
-
-      if (userEmail) {
-        try {
-          const response = await fetch(
-            `http://localhost:3000/getUserGitHubUsername?email=${userEmail}`
-          );
-          const data = await response.json();
-          if (!response.ok) {
-            throw new Error(data.message || "Something went wrong");
-          }
-          setGithubUsername(data.githubUsername || "");
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      } else {
-        console.warn("User email not found in localStorage");
       }
     };
 
@@ -100,6 +81,22 @@ const CourseParticipation: React.FC = () => {
     };
 
     fetchProjectGroups();
+
+    const fetchUserProjects = async() => {
+      try {
+        const userEmail = localStorage.getItem("email")
+        const response = await fetch(`http://localhost:3000/userProjects?userEmail=${userEmail}`);
+        const data = await response.json();
+        setUserProjects(data.map((item: any) => item.projectName));
+        console.log("Fetched user projects:", data);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
+    };
+
+    fetchUserProjects();
   }, []);
 
   useEffect(() => {
@@ -115,7 +112,10 @@ const CourseParticipation: React.FC = () => {
             projectName: item.projectName,
             projectGroupName: item.projectGroupName || selectedEnrolledProjectGroup,
           }));
-          setEnrolledProjects(mappedProjects);
+
+          const enrolledProjects = mappedProjects.filter((item: { projectName: any; }) => userProjects.includes(item.projectName));
+
+          setEnrolledProjects(enrolledProjects);
         } catch (error: unknown) {
           if (error instanceof Error) {
             console.error(error.message);
@@ -146,7 +146,10 @@ const CourseParticipation: React.FC = () => {
             projectName: item.projectName,
             projectGroupName: item.projectGroupName || selectedAvailableProjectGroup,
           }));
-          setAvailableProjects(mappedProjects);
+
+          const availableProjectsWithoutEnrolled = mappedProjects.filter((item: { projectName: any; }) => !userProjects.includes(item.projectName));
+
+          setAvailableProjects(availableProjectsWithoutEnrolled);
         } catch (error: unknown) {
           if (error instanceof Error) {
             console.error(error.message);
