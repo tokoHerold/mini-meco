@@ -49,48 +49,30 @@ initializeDB().then((db) => {
 
   app.post('/user', (req, res) => register(req, res, db));
   app.post('/courseProject/:courseProjectId/user/:userId', async (req, res) => {
-    //   const user = await objectHandler.getUser(req.params.userId);
-    //   const courseProject = await objectHandler.getCourseProject(req.params.courseProjectId);
-    //   if (!user || !courseProject) { return; }
-    // if (!user.joinProject(courseProject)) { 
-    //   res.status(400).json({ message: 'Project join failed' });
-    //   return;
-    // }
-    // res.status(200).json({ message: 'Project join successful' });
+    // objectHandler.joinProject(req, res, db); //loads user object and invokes its joinProject method
     joinProject(req, res, db);
   });
 
   app.delete('/courseProject/:courseProjectId/user/:userId', async (req, res) => {
-    // const user = await objectHandler.getUser(req.params.userId);
-    // const courseProject = await objectHandler.getCourseProject(req.params.courseProjectId);
-    // if (!user || !courseProject) { return; }
-    // if (!user.leaveProject(courseProject)) { 
-    //   res.status(400).json({ message: 'Project leave failed' });
-    //   return;
-    // }
-    // res.status(200).json({ message: 'Project leave successful' });
+    // objectHandler.leaveProject(req, res, db);
     leaveProject(req, res, db)
     }
   );
 
   app.post('/user/:userMail/email', async (req, res) => {
-    // const user = await objectHandler.getUserByMail(req.params.userMail);
-    // if (!user) { res.status(400).json({ message: 'User not found' }); return; }
-    // user.changeEmail(req.body.email);
+    // objectHandler.changeEmail(req, res, db);
     changeEmail(req, res, db)
   });
 
   app.post('/user/:userMail/password', async (req, res) => {
-    // const user = await objectHandler.getUserByMail(req.params.userMail);
-    // if (!user) { res.status(400).json({ message: 'User not found' }); return; }
-    // user.changePassword(req, res, db);
+    // objectHandler.changePassword(req, res, db);
     changePassword(req, res, db)
   });
   app.post('/session', (req, res) => login(req, res, db));
   app.post('/user/password/forgotMail', (req, res) => forgotPassword(req, res, db));
   app.post('/user/password', (req, res) => resetPassword(req, res, db));
   app.post('/course', (req, res) => createProjectGroup(req, res, db));
-  app.post('/project', (req, res) => createProject(req, res, db));
+  app.post('/courseProject', (req, res) => createProject(req, res, db));
   app.put('/course', (req, res) => editProjectGroup(req, res, db));
   app.put('/courseProject', (req, res) => editProject(req, res, db));
   app.post('/user/githubUsername', (req, res) => setUserGitHubUsername(req, res, db));
