@@ -54,8 +54,8 @@ initializeDB().then((db) => {
   app.post('/happiness', (req, res) => saveHappinessMetric(req, res, db));
   app.post('/happiness/sprint', (req, res) => createSprints(req, res, db));
   app.post('/user/project/url', (req, res) => setUserProjectURL(req, res, db));
-  app.post('/confirmEmail', (req, res) => confirmEmail(req, res, db));
-  app.post('/updateUserStatus', (req, res) => updateUserStatus(req, res, db));
+  app.post('/user/conformation/email', (req, res) => confirmEmail(req, res, db));
+  app.post('/user/status', (req, res) => updateUserStatus(req, res, db));
   app.post('/sendConfirmationEmail', (req, res) => sendConfirmationEmail(req, res, db))
   app.post('/updateAllConfirmedUsers', (req, res) => updateAllConfirmedUsers(req, res, db));
 

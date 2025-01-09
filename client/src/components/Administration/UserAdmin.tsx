@@ -63,9 +63,8 @@ const UserAdmin: React.FC = () => {
   }, [status]);
 
   const handleUserStatusChange = async (email: string, status: string) => {
-
     try {
-      const response = await fetch("http://localhost:3000/updateUserStatus", {
+      const response = await fetch("http://localhost:3000/user/status", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -115,7 +114,6 @@ const UserAdmin: React.FC = () => {
   };
 
   const changeAllConfirmedUsersStatus = async (status: string) => {
-    
     try {
       const response = await fetch(
         "http://localhost:3000/updateAllConfirmedUsers",
