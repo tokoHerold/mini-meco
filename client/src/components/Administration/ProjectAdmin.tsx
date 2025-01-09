@@ -112,10 +112,7 @@ const ProjectAdmin: React.FC = () => {
   }, [selectedProjectGroup]);
 
   const handleCreate = async () => {
-    const endpoint =
-      action === "CreateProjectGroup"
-        ? "/course"
-        : "/project";
+    const endpoint = action === "CreateProjectGroup" ? "/course" : "/project";
     const body: { [key: string]: string } = { semester, projectGroupName };
 
     if (action === "CreateProject") {
@@ -123,16 +120,13 @@ const ProjectAdmin: React.FC = () => {
     }
 
     try {
-      const response = await fetch(
-        `http://localhost:3000/${endpoint}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        }
-      );
+      const response = await fetch(`http://localhost:3000${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
 
       const data = await response.json();
 
@@ -160,8 +154,7 @@ const ProjectAdmin: React.FC = () => {
   );
 
   const HandleEdit = async () => {
-    const endpoint =
-      action === "EditProjectGroup" ? "/course" : "/project";
+    const endpoint = action === "EditProjectGroup" ? "/course" : "/project";
     const body: { [key: string]: string } = {
       projectGroupName: selectToEditProjectGroup,
       newSemester,
@@ -177,16 +170,13 @@ const ProjectAdmin: React.FC = () => {
       body.newProjectGroupName = newProjectGroupName;
     }
     try {
-      const response = await fetch(
-        `http://localhost:3000/${endpoint}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        }
-      );
+      const response = await fetch(`http://localhost:3000/${endpoint}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
 
       const data = await response.json();
 
@@ -222,7 +212,10 @@ const ProjectAdmin: React.FC = () => {
             <h3>Project Group Lists</h3>
             <div className="Add">
               <Dialog>
-                <DialogTrigger className="DialogTrigger" data-cy="add-project-group-button">
+                <DialogTrigger
+                  className="DialogTrigger"
+                  data-cy="add-project-group-button"
+                >
                   <img src={Add} alt="Add" />
                 </DialogTrigger>
                 <DialogContent className="DialogContent">
@@ -360,7 +353,10 @@ const ProjectAdmin: React.FC = () => {
             <h3>Project Lists</h3>
             <div className="Add">
               <Dialog>
-                <DialogTrigger className="DialogTrigger" data-cy="add-project-button">
+                <DialogTrigger
+                  className="DialogTrigger"
+                  data-cy="add-project-button"
+                >
                   <img src={Add} alt="Add" />
                 </DialogTrigger>
                 <DialogContent className="DialogContent">
