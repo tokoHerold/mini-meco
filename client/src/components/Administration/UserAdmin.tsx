@@ -89,7 +89,7 @@ const UserAdmin: React.FC = () => {
   const sendConfirmationEmail = async (email: string) => {
     try {
       const response = await fetch(
-        "http://localhost:3000/sendConfirmationEmail",
+        "http://localhost:3000/user/confirmation/email",
         {
           method: "POST",
           headers: {
@@ -115,16 +115,13 @@ const UserAdmin: React.FC = () => {
 
   const changeAllConfirmedUsersStatus = async (status: string) => {
     try {
-      const response = await fetch(
-        "http://localhost:3000/updateAllConfirmedUsers",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status }),
-        }
-      );
+      const response = await fetch("http://localhost:3000/user/status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
       const data = await response.json();
       if (response.ok) {
         setMessage(

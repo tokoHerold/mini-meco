@@ -6,7 +6,7 @@ import { initializeDB } from './databaseInitializer';
 import dotenv from 'dotenv';
 import { createProjectGroup, createProject, editProjectGroup, editProject,getProjectGroups, getProjects, getSemesters, joinProject, leaveProject, getUserProjects, getUserProjectGroups, getUsersByStatus, updateUserStatus, updateAllConfirmedUsers } from './projectManagement';
 import { sendStandupsEmail, saveHappinessMetric, createSprints, getProjectHappinessMetrics, getSprints, getProjectCurrentSprint, getProjectURL } from './projectFeatures';
-import { changeEmail, changePassword, setUserGitHubUsername, getUserGitHubUsername, setUserProjectURL, getUserProjectURL, changeUserProjectURL } from './userConfig';
+import { changeEmail, changePassword, setUserGitHubUsername, getUserGitHubUsername, setUserProjectURL, getUserProjectURL } from './userConfig';
 
 dotenv.config();
 
@@ -54,10 +54,10 @@ initializeDB().then((db) => {
   app.post('/happiness', (req, res) => saveHappinessMetric(req, res, db));
   app.post('/happiness/sprint', (req, res) => createSprints(req, res, db));
   app.post('/user/project/url', (req, res) => setUserProjectURL(req, res, db));
-  app.post('/user/conformation/email', (req, res) => confirmEmail(req, res, db));
+  app.post('/user/confirmation/email', (req, res) => confirmEmail(req, res, db));
   app.post('/user/status', (req, res) => updateUserStatus(req, res, db));
-  app.post('/sendConfirmationEmail', (req, res) => sendConfirmationEmail(req, res, db))
-  app.post('/updateAllConfirmedUsers', (req, res) => updateAllConfirmedUsers(req, res, db));
+  app.post('/user/confirmation/trigger', (req, res) => sendConfirmationEmail(req, res, db))
+  app.post('/user/status', (req, res) => updateAllConfirmedUsers(req, res, db));
 
   app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
