@@ -7,6 +7,19 @@ import { Course } from "./shared_models/Course";
 
 export class ObjectHandler { 
 
+    public async resetPassword(req: Request, res: Response, db: Database): Promise<void> {
+        const user = await this.getUserByMail(req.params.userMail, db);
+        if (!user) {
+            res.status(400).json({ message: 'User not found' });
+            return;
+        }
+        if (!user.sendPasswordResetEmail(req.body.email)) { 
+            res.status(400).json({ message: 'Password reset email failed' });
+            return;
+        }
+        res.status(200).json({ message: 'Password reset email sent successfully' });
+    }
+
     public async joinProject(req: Request, res: Response, db: Database): Promise<void> {
           const user = await this.getUser(req.params.userId, db);
           const courseProject = await this.getCourseProject(req.params.courseProjectId, db);
@@ -41,6 +54,19 @@ export class ObjectHandler {
             return;
         }
         res.status(200).json({ message: 'Password changed successfully' });
+    }
+
+    public async sendPasswordResetEmail(req: Request, res: Response, db: Database): Promise<void> {
+        const user = await this.getUserByMail(req.params.userMail, db);
+        if (!user) {
+            res.status(400).json({ message: 'User not found' });
+            return;
+        }
+        if (!user.sendPasswordResetEmail(req.body.email)) { 
+            res.status(400).json({ message: 'Password reset email failed' });
+            return;
+        }
+        res.status(200).json({ message: 'Password reset email sent successfully' });
     }
 
     public async leaveProject(req: Request, res: Response, db: Database): Promise<void> {

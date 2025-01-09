@@ -22,4 +22,9 @@ export class User extends Visitor {
         // Implementation here
         return true;
     }
+
+    public sendPasswordResetEmail(email: string): boolean { 
+        // Implementation here
+        return true;
+    }
 }

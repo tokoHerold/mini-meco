@@ -69,8 +69,16 @@ initializeDB().then((db) => {
     changePassword(req, res, db)
   });
   app.post('/session', (req, res) => login(req, res, db));
-  app.post('/user/password/forgotMail', (req, res) => forgotPassword(req, res, db));
-  app.post('/user/password', (req, res) => resetPassword(req, res, db));
+
+  app.post('/user/password/forgotMail', (req, res) => {
+    // objectHandler.sendPasswordResetEmail(req, res, db);
+    forgotPassword(req, res, db)
+  });
+
+  app.post('/user/password', (req, res) => {
+    // objectHandler.resetPassword(req, res, db);
+    resetPassword(req, res, db)
+  });
   app.post('/course', (req, res) => createProjectGroup(req, res, db));
   app.post('/courseProject', (req, res) => createProject(req, res, db));
   app.put('/course', (req, res) => editProjectGroup(req, res, db));
