@@ -1,8 +1,20 @@
 import { Visitor } from "./Visitor";
-import { joinProject } from "../projectManagement";
+import { CourseProject } from "./CourseProject";
+import { Response } from "express";
 
 export class User extends Visitor {
-    public joinProject(id: string): void {
-        joinProject();
+    public joinProject(courseProject: CourseProject): boolean {
+        // Implementation here
+        return true;
+    }
+
+    public leaveProject(courseProject: CourseProject): boolean {
+        // Implementation here
+        return true;
+    }
+
+    public changeEmail(email: string): boolean {
+        // Implementation here
+        return true;
     }
 }

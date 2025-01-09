@@ -143,13 +143,16 @@ const Settings: React.FC = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/project/user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
+      const response = await fetch(
+        `http://localhost:3000/courseProject/${projectName}/user/${user.email}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
 
       const data = await response.json();
       if (!response.ok) {
@@ -180,13 +183,16 @@ const Settings: React.FC = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/project/user", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
+      const response = await fetch(
+        `http://localhost:3000/courseProject/${projectName}/user/${user.email}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Something went wrong");
@@ -216,13 +222,16 @@ const Settings: React.FC = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/user/email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
+      const response = await fetch(
+        `http://localhost:3000/user/${user.email}/email`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Something went wrong");
