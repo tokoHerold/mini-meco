@@ -143,16 +143,13 @@ const Settings: React.FC = () => {
     };
 
     try {
-      const response = await fetch(
-        "http://localhost:3000/user/project",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        }
-      );
+      const response = await fetch("http://localhost:3000/user/project", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
 
       const data = await response.json();
       if (!response.ok) {
@@ -183,16 +180,13 @@ const Settings: React.FC = () => {
     };
 
     try {
-      const response = await fetch(
-        "http://localhost:3000/user/project",
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        }
-      );
+      const response = await fetch("http://localhost:3000/user/project", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Something went wrong");
@@ -222,16 +216,13 @@ const Settings: React.FC = () => {
     };
 
     try {
-      const response = await fetch(
-        "http://localhost:3000/user/email",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        }
-      );
+      const response = await fetch("http://localhost:3000/user/email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Something went wrong");
@@ -264,16 +255,13 @@ const Settings: React.FC = () => {
     };
 
     try {
-      const response = await fetch(
-        "http://localhost:3000/user/password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(body),
-        }
-      );
+      const response = await fetch("http://localhost:3000/user/password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Something went wrong");
@@ -292,12 +280,11 @@ const Settings: React.FC = () => {
   };
 
   const handleAddGithubUsername = async () => {
-
     if (!githubUsername) {
       setMessage("GitHub username cannot be empty");
       return;
     }
-  
+
     const body = {
       email: user?.email,
       newGithubUsername: githubUsername,
@@ -305,7 +292,7 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/addGitHubUsername",
+        "http://localhost:3000/user/githubUsername",
         {
           method: "POST",
           headers: {
