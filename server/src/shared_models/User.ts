@@ -17,4 +17,9 @@ export class User extends Visitor {
         // Implementation here
         return true;
     }
+
+    public changePassword(req: any, res: Response, db: any): boolean {
+        // Implementation here
+        return true;
+    }
 }

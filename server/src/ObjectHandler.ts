@@ -15,17 +15,22 @@ export class ObjectHandler {
     private res?: Response;
 
 
-
     constructor(db: Database, res: Response | undefined = undefined) { 
         this.db = db;
         this.res = res;
     }
 
 
-
-
     public async getUser(id: string): Promise<User | null> {
         const userRow = await this.db.get('SELECT * FROM users WHERE id = ?', [id]);
+        if (!userRow) {
+            return null;
+        }
+        return new User(); // fill user object with data from row, e.g. userRow.id;
+    }
+
+    public async getUserByMail(email: string): Promise<User | null> {
+        const userRow = await this.db.get('SELECT * FROM users WHERE email = ?', [email]);
         if (!userRow) {
             return null;
         }

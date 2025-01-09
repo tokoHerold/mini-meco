@@ -73,14 +73,19 @@ initializeDB().then((db) => {
     }
   );
 
-  app.post('/user/:userId/email', async (req, res) => {
-    // const user = await objectHandler.getUser(req.params.userId);
+  app.post('/user/:userMail/email', async (req, res) => {
+    // const user = await objectHandler.getUserByMail(req.params.userMail);
     // if (!user) { res.status(400).json({ message: 'User not found' }); return; }
     // user.changeEmail(req.body.email);
     changeEmail(req, res, db)
   });
 
-  app.post('/user/password', (req, res) => changePassword(req, res, db));
+  app.post('/user/:userMail/password', async (req, res) => {
+    // const user = await objectHandler.getUserByMail(req.params.userMail);
+    // if (!user) { res.status(400).json({ message: 'User not found' }); return; }
+    // user.changePassword(req, res, db);
+    changePassword(req, res, db)
+  });
   app.post('/session', (req, res) => login(req, res, db));
   app.post('/user/password/forgotMail', (req, res) => forgotPassword(req, res, db));
   app.post('/user/password', (req, res) => resetPassword(req, res, db));
