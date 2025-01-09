@@ -27,6 +27,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "src/components/Components", "src/screens/Auth", "../shared_models/*.ts"],
+  "include": ["src", "src/components/Components", "src/screens/Auth"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

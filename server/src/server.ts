@@ -38,8 +38,8 @@ initializeDB().then((db) => {
 
 
   app.post('/user', (req, res) => register(req, res, db));
-  app.post('/user/project', (req, res) => joinProject(req, res, db));
-  app.delete('/user/project', (req, res) => leaveProject(req, res, db));
+  app.post('/project/user', (req, res) => joinProject(req, res, db));
+  app.delete('/project/user', (req, res) => leaveProject(req, res, db));
   app.post('/user/email', (req, res) => changeEmail(req, res, db));
   app.post('/user/password', (req, res) => changePassword(req, res, db));
   app.post('/session', (req, res) => login(req, res, db));

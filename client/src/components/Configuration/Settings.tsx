@@ -143,7 +143,7 @@ const Settings: React.FC = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/user/project", {
+      const response = await fetch("http://localhost:3000/project/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -180,7 +180,7 @@ const Settings: React.FC = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/user/project", {
+      const response = await fetch("http://localhost:3000/project/user", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
