@@ -26,7 +26,7 @@ initializeDB().then((db) => {
 
 
   
-  const objectHandler = new ObjectHandler(db);
+  const objectHandler = new ObjectHandler();
   console.log("Database initialized, starting server...");
 
   app.get('/', (req, res) => {
