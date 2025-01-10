@@ -41,8 +41,11 @@ initializeDB().then((db) => {
   app.get('/sprints', (req, res) => { getSprints(req, res, db) });
   app.get('/currentSprint', (req, res) => { getProjectCurrentSprint(req, res, db) });
   app.get('/getGitURL', (req, res) => { getUserProjectURL(req, res, db) });
-  app.get('/getUserGitHubUsername', (req, res) => { getUserGitHubUsername(req, res, db) });
-  app.get('/getUserProjectGroups', (req, res) => { getUserProjectGroups(req, res, db) });
+  app.get('/user/githubUsername', (req, res) => {
+    // objectHandler.getGithubUsername(req, res, db);
+    getUserGitHubUsername(req, res, db)
+  });
+  app.get('/course/user', (req, res) => { getUserProjectGroups(req, res, db) });
   app.get('/getProjectGitHubURL', (req, res) => { getProjectURL(req, res, db) });
   app.get('/getUserStatus', (req, res) => { getUsersByStatus(req, res, db) });
 

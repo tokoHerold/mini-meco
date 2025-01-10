@@ -7,6 +7,15 @@ import { Course } from "./shared_models/Course";
 
 export class ObjectHandler { 
 
+    public async getGithubUsername(req: Request, res: Response, db: Database): Promise<void> { 
+        const user = await this.getUserByMail(req.params.userMail, db);
+        if (!user) {
+            res.status(400).json({ message: 'User not found' });
+            return;
+        }
+        res.status(200).json({ username: user.getGithubUsername() });
+    }
+
     public async resetPassword(req: Request, res: Response, db: Database): Promise<void> {
         const user = await this.getUserByMail(req.params.userMail, db);
         if (!user) {

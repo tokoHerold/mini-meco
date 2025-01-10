@@ -65,7 +65,7 @@ const Settings: React.FC = () => {
       if (userEmail) {
         try {
           const response = await fetch(
-            `http://localhost:3000/getUserGitHubUsername?email=${userEmail}`
+            `http://localhost:3000/user/githubUsername?email=${userEmail}`
           );
           const data = await response.json();
           if (!response.ok) {

@@ -3,6 +3,11 @@ import { CourseProject } from "./CourseProject";
 import { Response } from "express";
 
 export class User extends Visitor {
+    public getGithubUsername(): string {
+        // Implementation here
+        return "";
+    }
+
     public joinProject(courseProject: CourseProject): boolean {
         // Implementation here
         return true;
