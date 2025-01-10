@@ -40,14 +40,17 @@ initializeDB().then((db) => {
   app.get('/getHappinessData', (req, res) => { getProjectHappinessMetrics(req, res, db) });
   app.get('/sprints', (req, res) => { getSprints(req, res, db) });
   app.get('/currentSprint', (req, res) => { getProjectCurrentSprint(req, res, db) });
-  app.get('/getGitURL', (req, res) => { getUserProjectURL(req, res, db) });
+  app.get('/getGitURL', (req, res) => { getUserProjectURL(req, res, db) }); // to be removed, duplicate of /user/userProject
   app.get('/user/githubUsername', (req, res) => {
     // objectHandler.getGithubUsername(req, res, db);
     getUserGitHubUsername(req, res, db)
   });
-  app.get('/course/user', (req, res) => { getUserProjectGroups(req, res, db) });
-  app.get('/getProjectGitHubURL', (req, res) => { getProjectURL(req, res, db) });
-  app.get('/getUserStatus', (req, res) => { getUsersByStatus(req, res, db) });
+  app.get('/course/user', (req, res) => {
+    // objectHandler.getUserCourses(req, res, db);
+    getUserProjectGroups(req, res, db)
+  });
+  app.get('/user/userProject', (req, res) => { getProjectURL(req, res, db) });
+  app.get('/user/status', (req, res) => { getUsersByStatus(req, res, db) });
 
 
   app.post('/user', (req, res) => register(req, res, db));
@@ -82,8 +85,14 @@ initializeDB().then((db) => {
     // objectHandler.resetPassword(req, res, db);
     resetPassword(req, res, db)
   });
-  app.post('/course', (req, res) => createProjectGroup(req, res, db));
-  app.post('/courseProject', (req, res) => createProject(req, res, db));
+  app.post('/course', (req, res) => {
+    // objectHandler.createCourse(req, res, db);
+    createProjectGroup(req, res, db)
+  });
+  app.post('/courseProject', (req, res) => {
+    // objectHandler.createCourseProject(req, res, db);
+    createProject(req, res, db)
+  });
   app.put('/course', (req, res) => editProjectGroup(req, res, db));
   app.put('/courseProject', (req, res) => editProject(req, res, db));
   app.post('/user/githubUsername', (req, res) => setUserGitHubUsername(req, res, db));

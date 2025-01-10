@@ -667,7 +667,7 @@ Updates the status of a user.
     - 400 Bad Request: Validation errors.
  
   
-GET /getUserStatus<br>
+GET /user/status<br>
 Fetches the current status of a user.
 - Response:
     - 200 OK: User status data returned.

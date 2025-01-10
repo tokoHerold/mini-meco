@@ -1,1 +1,6 @@
-export class Course {}
+export class Course {
+    getUserCourses() {
+        // Implementation here
+        return [];
+    }
+}

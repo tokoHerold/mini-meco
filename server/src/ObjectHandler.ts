@@ -4,8 +4,32 @@ import { User } from "./shared_models/User";
 import { CourseProject } from "./shared_models/CourseProject";
 import { CourseSchedule } from "./shared_models/CourseSchedule";
 import { Course } from "./shared_models/Course";
+import { createProject, createProjectGroup } from "./projectManagement";
 
 export class ObjectHandler { 
+
+    public async createCourse(req: Request, res: Response, db: Database): Promise<Course> {
+        const course = new Course(); // fill course object with data from req.body
+        createProjectGroup(req, res, db);
+        res.status(200).json({ message: 'Course created successfully' });
+        return course;
+    }
+
+    public async createCourseProject(req: Request, res: Response, db: Database): Promise<CourseProject> {
+        const courseProject = new CourseProject(); // fill courseProject object with data from req.body
+        createProject(req, res, db);
+        res.status(200).json({ message: 'Course project created successfully' });
+        return courseProject;
+    }
+
+    public async getUserCourses(req: Request, res: Response, db: Database): Promise<void> {
+        const course = await this.getCourse(req.query.projectName as string, db);
+        if (!course) {
+            res.status(400).json({ message: 'Course not found' });
+            return;
+        }
+        res.status(200).json({ courses: course.getUserCourses() });
+    }
 
     public async getGithubUsername(req: Request, res: Response, db: Database): Promise<void> { 
         const user = await this.getUserByMail(req.params.userMail, db);

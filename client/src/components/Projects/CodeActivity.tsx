@@ -121,7 +121,7 @@ const CodeActivity: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/getProjectGitHubURL?email=${encodeURIComponent(
+        `http://localhost:3000/user/userProject?email=${encodeURIComponent(
           user.email
         )}&projectName=${encodeURIComponent(projectName)}`
       );

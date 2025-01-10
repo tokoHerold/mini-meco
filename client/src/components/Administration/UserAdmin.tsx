@@ -36,7 +36,7 @@ const UserAdmin: React.FC = () => {
   const fetchUserStatus = async (status: string) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/getUserStatus?status=${status}`,
+        `http://localhost:3000/user/status?status=${status}`,
         {
           method: "GET",
           headers: {

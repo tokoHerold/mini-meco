@@ -1,1 +1,3 @@
-export class CourseProject {}
+export class CourseProject {
+    
+}
