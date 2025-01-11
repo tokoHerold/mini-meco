@@ -8,6 +8,8 @@ import { createProject, createProjectGroup } from "./projectManagement";
 
 export class ObjectHandler { 
 
+
+
     public async invokeOnUser(functionName: string, req: Request, res: Response, db: Database): Promise<void> {
         const userEmail = req.body.userEmail;
 

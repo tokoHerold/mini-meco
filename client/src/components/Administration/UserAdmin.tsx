@@ -23,6 +23,8 @@ import Button from "react-bootstrap/esm/Button";
 const UserAdmin: React.FC = () => {
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("token");
+
   const [status, setStatus] = useState<string | null>("");
   const [newStatus, setNewStatus] = useState<string | null>("");
   const [users, setUsers] = useState<{ name: string; email: string }[]>([]);
@@ -68,8 +70,9 @@ const UserAdmin: React.FC = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ email, status }),
+        body: JSON.stringify({ token, email, status }),
       });
       const data = await response.json();
       if (!response.ok) {

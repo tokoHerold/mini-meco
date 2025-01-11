@@ -20,6 +20,7 @@ import {
     changeEmail, changePassword, setUserGitHubUsername, getUserGitHubUsername, setUserProjectURL, 
     getUserProjectURL 
 } from './userConfig';
+import { checkOwnership } from './middleware/authorize';
 
 dotenv.config();
 
@@ -30,16 +31,20 @@ app.use(bodyParser.json());
 app.use(cors({ origin: 'http://localhost:5173' }));
 
 initializeDB().then((db) => {
-    const objectHandler = new ObjectHandler();
+    const oh = new ObjectHandler();
     console.log("Database initialized, starting server...");
 
+
+
+    
     app.get('/', (req, res) => {
         res.send('Server is running!');
     });
 
-    app.get('/user/test', (req, res) => { objectHandler.invokeOnUser("testEcho", req, res, db) });
-    app.get('/courseProject/test', (req, res) => { objectHandler.invokeOnCourseProject("testEcho", req, res, db) });
-    app.get('/course/test', (req, res) => { objectHandler.invokeOnCourse("testEcho", req, res, db) });
+    app.get('/user/test', (req, res) => { oh.invokeOnUser("testEcho", req, res, db) });
+    app.get('/courseProject/test', (req, res) => { oh.invokeOnCourseProject("testEcho", req, res, db) });
+    app.get('/course/test', (req, res) => { oh.invokeOnCourse("testEcho", req, res, db) });
+    app.post('/user/protectedTest', checkOwnership(db, oh), (req, res) => { oh.invokeOnUser("testEcho", req, res, db) });
 
     app.get('/semesters', (req, res) => { getSemesters(req, res, db) });
     app.get('/course', (req, res) => { getProjectGroups(req, res, db) });
@@ -73,9 +78,9 @@ initializeDB().then((db) => {
     app.post('/courseProject/sprints', (req, res) => { createSprints(req, res, db); });
     app.post('/user/project/url', (req, res) => { setUserProjectURL(req, res, db); });
     app.post('/user/confirmation/email', (req, res) => { confirmEmail(req, res, db); });
-    app.post('/user/status', (req, res) => { updateUserStatus(req, res, db); });
+    app.post('/user/status',checkOwnership(db, oh), (req, res) => { updateUserStatus(req, res, db); });
     app.post('/user/confirmation/trigger', (req, res) => { sendConfirmationEmail(req, res, db); });
-    app.post('/user/status', (req, res) => { updateAllConfirmedUsers(req, res, db); });
+    //app.post('/user/status', (req, res) => { updateAllConfirmedUsers(req, res, db); });
 
     app.listen(port, () => {
         console.log(`Server running on http://localhost:${port}`);
