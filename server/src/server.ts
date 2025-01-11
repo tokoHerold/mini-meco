@@ -49,7 +49,9 @@ initializeDB().then((db) => {
     // objectHandler.getUserCourses(req, res, db);
     getUserProjectGroups(req, res, db)
   });
-  app.get('/user/userProject', (req, res) => { getProjectURL(req, res, db) });
+  app.get('/user/userProject', (req, res) => { 
+    // objectHandler.getUserProjectURL(req, res, db);
+    getProjectURL(req, res, db) });
   app.get('/user/status', (req, res) => { getUsersByStatus(req, res, db) });
 
 
@@ -93,13 +95,33 @@ initializeDB().then((db) => {
     // objectHandler.createCourseProject(req, res, db);
     createProject(req, res, db)
   });
-  app.put('/course', (req, res) => editProjectGroup(req, res, db));
-  app.put('/courseProject', (req, res) => editProject(req, res, db));
-  app.post('/user/githubUsername', (req, res) => setUserGitHubUsername(req, res, db));
-  app.post('/project/standupsEmail', (req, res) => sendStandupsEmail(req, res, db));
-  app.post('/happiness', (req, res) => saveHappinessMetric(req, res, db));
-  app.post('/happiness/sprint', (req, res) => createSprints(req, res, db));
-  app.post('/user/project/url', (req, res) => setUserProjectURL(req, res, db));
+  app.put('/course', (req, res) => {
+    // use objectHandler.getCourse() and use object methods to edit course
+    editProjectGroup(req, res, db)
+  });
+
+  app.put('/courseProject', (req, res) => {
+    // use objectHandler.getCourseProject() and use object methods to edit course project
+    editProject(req, res, db)
+  });
+  app.post('/user/githubUsername', (req, res) => {
+    setUserGitHubUsername(req, res, db)
+  });
+  app.post('/project/standupsEmail', (req, res) => {
+    // objectHandler.getCourse() and use object methods to send standups email
+    sendStandupsEmail(req, res, db)
+  });
+  app.post('/couseProject/happiness', (req, res) => {
+    // objectHandler.saveHappinessMetric(req, res, db);
+    saveHappinessMetric(req, res, db)});
+  app.post('/courseProject/sprints', (req, res) => {
+    // objectHandler.createSprints(req, res, db);
+    createSprints(req, res, db)});
+  app.post('/user/project/url', (req, res) => {
+    // objectHandler.setUserProjectURL(req, res, db);
+    setUserProjectURL(req, res, db)
+  });
+
   app.post('/user/confirmation/email', (req, res) => confirmEmail(req, res, db));
   app.post('/user/status', (req, res) => updateUserStatus(req, res, db));
   app.post('/user/confirmation/trigger', (req, res) => sendConfirmationEmail(req, res, db))

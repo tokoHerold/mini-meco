@@ -8,6 +8,42 @@ import { createProject, createProjectGroup } from "./projectManagement";
 
 export class ObjectHandler { 
 
+    public async getUserProjectURL(req: Request, res: Response, db: Database): Promise<void> {
+        const user = await this.getUser(req.params.userId, db);
+        const courseProject = await this.getCourseProject(req.params.courseProjectId, db);
+        if (!user || !courseProject) { 
+            res.status(400).json({ message: 'User or Course Project not found' });
+            return; 
+        }
+        res.status(200).json({ url: user.getProjectURL(courseProject) });
+    }
+
+    public async setHappinessMetric(req: Request, res: Response, db: Database): Promise<void> {
+        const courseProject = await this.getCourseProject(req.params.userId, db);
+        if (!courseProject) {
+            res.status(400).json({ message: 'User not found' });
+            return;
+        }
+        if (!courseProject.setHappinessMetric(req.body.metric)) { 
+            res.status(400).json({ message: 'Happiness metric set failed' });
+            return;
+        }
+        res.status(200).json({ message: 'Happiness metric set successfully' });
+    }
+
+    public async createSprints(req: Request, res: Response, db: Database): Promise<void> {
+        const courseProject = await this.getCourseProject(req.params.userId, db);
+        if (!courseProject) {
+            res.status(400).json({ message: 'User not found' });
+            return;
+        }
+        if (!courseProject.createSprints()) { 
+            res.status(400).json({ message: 'Sprints creation failed' });
+            return;
+        }
+        res.status(200).json({ message: 'Sprints created successfully' });
+    }
+
     public async createCourse(req: Request, res: Response, db: Database): Promise<Course> {
         const course = new Course(); // fill course object with data from req.body
         createProjectGroup(req, res, db);
@@ -51,6 +87,20 @@ export class ObjectHandler {
             return;
         }
         res.status(200).json({ message: 'Password reset email sent successfully' });
+    }
+
+    public async setUserProjectURL(req: Request, res: Response, db: Database): Promise<void> {
+        const user = await this.getUser(req.params.userId, db);
+        const courseProject = await this.getCourseProject(req.params.courseProjectId, db);
+        if (!user || !courseProject) { 
+            res.status(400).json({ message: 'User or Course Project not found' });
+            return; 
+        }
+        if (!user.setUserProjectURL(courseProject, req.body.url)) {
+            res.status(400).json({ message: 'Project URL set failed' });
+            return;
+        }
+        res.status(200).json({ message: 'Project URL set successfully' });
     }
 
     public async joinProject(req: Request, res: Response, db: Database): Promise<void> {

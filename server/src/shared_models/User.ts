@@ -4,6 +4,16 @@ import { Response } from "express";
 
 export class User extends Visitor {
 
+    public getProjectURL(courseProject: CourseProject): string {
+        // Implementation here
+        return "";
+    }
+
+    public setUserProjectURL(courseProject: CourseProject, url: string): boolean {
+        // Implementation here
+        return true;
+    }
+
     public getGithubUsername(): string {
         // Implementation here
         return "";
