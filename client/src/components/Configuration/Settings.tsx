@@ -65,7 +65,7 @@ const Settings: React.FC = () => {
       if (userEmail) {
         try {
           const response = await fetch(
-            `http://localhost:3000/getUserGitHubUsername?email=${userEmail}`
+            `http://localhost:3000/user/githubUsername?email=${userEmail}`
           );
           const data = await response.json();
           if (!response.ok) {
@@ -84,7 +84,7 @@ const Settings: React.FC = () => {
 
     const fetchProjectGroups = async () => {
       try {
-        const response = await fetch("http://localhost:3000/project-groups");
+        const response = await fetch("http://localhost:3000/course");
         const data = await response.json();
         setProjectGroups(data.map((item: any) => item.projectGroupName));
         console.log("Fetched project groups:", data);
@@ -144,7 +144,7 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/joinProject",
+        `http://localhost:3000/courseProject/${projectName}/user/${user.email}`,
         {
           method: "POST",
           headers: {
@@ -184,9 +184,9 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/leaveProject",
+        `http://localhost:3000/courseProject/${projectName}/user/${user.email}`,
         {
-          method: "POST",
+          method: "DELETE",
           headers: {
             "Content-Type": "application/json",
           },
@@ -223,7 +223,7 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/changeEmail",
+        `http://localhost:3000/user/${user.email}/email`,
         {
           method: "POST",
           headers: {
@@ -265,7 +265,7 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/changePassword",
+        `http://localhost:3000/user/${encodeURIComponent(user.email)}/password`,
         {
           method: "POST",
           headers: {
@@ -292,12 +292,11 @@ const Settings: React.FC = () => {
   };
 
   const handleAddGithubUsername = async () => {
-
     if (!githubUsername) {
       setMessage("GitHub username cannot be empty");
       return;
     }
-  
+
     const body = {
       email: user?.email,
       newGithubUsername: githubUsername,
@@ -305,7 +304,7 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/addGitHubUsername",
+        "http://localhost:3000/user/githubUsername",
         {
           method: "POST",
           headers: {

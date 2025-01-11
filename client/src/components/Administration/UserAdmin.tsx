@@ -23,6 +23,8 @@ import Button from "react-bootstrap/esm/Button";
 const UserAdmin: React.FC = () => {
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("token");
+
   const [status, setStatus] = useState<string | null>("");
   const [newStatus, setNewStatus] = useState<string | null>("");
   const [users, setUsers] = useState<{ name: string; email: string }[]>([]);
@@ -36,7 +38,7 @@ const UserAdmin: React.FC = () => {
   const fetchUserStatus = async (status: string) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/getUserStatus?status=${status}`,
+        `http://localhost:3000/user/status?status=${status}`,
         {
           method: "GET",
           headers: {
@@ -63,14 +65,14 @@ const UserAdmin: React.FC = () => {
   }, [status]);
 
   const handleUserStatusChange = async (email: string, status: string) => {
-
     try {
-      const response = await fetch("http://localhost:3000/updateUserStatus", {
+      const response = await fetch("http://localhost:3000/user/status", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ email, status }),
+        body: JSON.stringify({ token, email, status }),
       });
       const data = await response.json();
       if (!response.ok) {
@@ -90,7 +92,7 @@ const UserAdmin: React.FC = () => {
   const sendConfirmationEmail = async (email: string) => {
     try {
       const response = await fetch(
-        "http://localhost:3000/sendConfirmationEmail",
+        "http://localhost:3000/user/confirmation/email",
         {
           method: "POST",
           headers: {
@@ -115,18 +117,14 @@ const UserAdmin: React.FC = () => {
   };
 
   const changeAllConfirmedUsersStatus = async (status: string) => {
-    
     try {
-      const response = await fetch(
-        "http://localhost:3000/updateAllConfirmedUsers",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status }),
-        }
-      );
+      const response = await fetch("http://localhost:3000/user/status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
       const data = await response.json();
       if (response.ok) {
         setMessage(

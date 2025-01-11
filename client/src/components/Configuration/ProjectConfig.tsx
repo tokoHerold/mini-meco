@@ -45,7 +45,7 @@ const ProjectConfig: React.FC = () => {
       if (userEmail) {
         try {
           const response = await fetch(
-            `http://localhost:3000/userProjects?userEmail=${userEmail}`
+            `http://localhost:3000/user/projects?userEmail=${userEmail}`
           );
           const data = await response.json();
           setProjects(
@@ -61,7 +61,6 @@ const ProjectConfig: React.FC = () => {
   }, [navigate]);
 
   const handleProjectChange = (projectName: string) => {
-
     setSelectedProject(projectName);
     fetchProjectURL(projectName);
   };
@@ -95,7 +94,6 @@ const ProjectConfig: React.FC = () => {
       }
 
       const data = await response.json();
-      
 
       if (data && data.url) {
         setURL(data.url || "");
@@ -113,20 +111,17 @@ const ProjectConfig: React.FC = () => {
     const userEmail = localStorage.getItem("email");
     if (userEmail && selectedProject) {
       try {
-        const response = await fetch(
-          "http://localhost:3000/projConfig/addURL",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: userEmail,
-              URL: url,
-              project: selectedProject,
-            }),
-          }
-        );
+        const response = await fetch("http://localhost:3000/user/project/url", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: userEmail,
+            URL: url,
+            project: selectedProject,
+          }),
+        });
         const data = await response.json();
         if (!response.ok) {
           const errorData = await response.json();
@@ -149,20 +144,17 @@ const ProjectConfig: React.FC = () => {
     const userEmail = localStorage.getItem("email");
     if (userEmail && selectedProject) {
       try {
-        const response = await fetch(
-          "http://localhost:3000/projConfig/addURL",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: userEmail,
-              URL: newURL,
-              project: selectedProject,
-            }),
-          }
-        );
+        const response = await fetch("http://localhost:3000/user/project/url", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: userEmail,
+            URL: newURL,
+            project: selectedProject,
+          }),
+        });
         const data = await response.json();
         if (!response.ok) {
           const errorData = await response.json();
