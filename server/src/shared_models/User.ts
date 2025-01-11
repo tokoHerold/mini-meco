@@ -1,8 +1,13 @@
 import { Visitor } from "./Visitor";
 import { CourseProject } from "./CourseProject";
 import { Response } from "express";
+import { get } from "http";
 
 export class User extends Visitor {
+    public getProjects(): string[] {
+        // Implementation here
+        return [];
+    }
 
     public getProjectURL(courseProject: CourseProject): string {
         // Implementation here

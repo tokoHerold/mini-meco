@@ -201,7 +201,7 @@ const Happiness: React.FC = (): React.ReactNode => {
   const fetchHappinessData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/getHappinessData?projectName=${encodeURIComponent(
+        `http://localhost:3000/courseProject/happiness?projectName=${encodeURIComponent(
           projectName ?? ""
         )}`
       );

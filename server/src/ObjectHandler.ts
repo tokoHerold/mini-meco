@@ -8,6 +8,15 @@ import { createProject, createProjectGroup } from "./projectManagement";
 
 export class ObjectHandler { 
 
+    public async getCourseProjects(req: Request, res: Response, db: Database): Promise<void> {
+        const courseProjects = await db.all('SELECT * FROM project');
+        if (!courseProjects || courseProjects.length === 0) {
+            res.status(400).json({ message: 'No Course Projects found' });
+            return;
+        }
+        res.status(200).json({ courseProjects });
+    }
+
     public async getUserProjectURL(req: Request, res: Response, db: Database): Promise<void> {
         const user = await this.getUser(req.params.userId, db);
         const courseProject = await this.getCourseProject(req.params.courseProjectId, db);
@@ -16,6 +25,15 @@ export class ObjectHandler {
             return; 
         }
         res.status(200).json({ url: user.getProjectURL(courseProject) });
+    }
+
+    public async getUserProjects(req: Request, res: Response, db: Database): Promise<void> {
+        const user = await this.getUser(req.params.userId, db);
+        if (!user) {
+            res.status(400).json({ message: 'User not found' });
+            return;
+        }
+        res.status(200).json({ projects: user.getProjects() });
     }
 
     public async setHappinessMetric(req: Request, res: Response, db: Database): Promise<void> {

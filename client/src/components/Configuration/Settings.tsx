@@ -84,7 +84,7 @@ const Settings: React.FC = () => {
 
     const fetchProjectGroups = async () => {
       try {
-        const response = await fetch("http://localhost:3000/project-groups");
+        const response = await fetch("http://localhost:3000/course");
         const data = await response.json();
         setProjectGroups(data.map((item: any) => item.projectGroupName));
         console.log("Fetched project groups:", data);

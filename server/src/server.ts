@@ -34,13 +34,18 @@ initializeDB().then((db) => {
   });
 
   app.get('/semesters', (req, res) => { getSemesters(req, res, db) });
-  app.get('/project-groups', (req, res) => { getProjectGroups(req, res, db) });
-  app.get('/projects', (req, res) => { getProjects(req, res, db) });
-  app.get('/userProjects', (req, res) => { getUserProjects(req, res, db) });
-  app.get('/getHappinessData', (req, res) => { getProjectHappinessMetrics(req, res, db) });
+  app.get('/course', (req, res) => { getProjectGroups(req, res, db) });
+  app.get('/courseProject', (req, res) => { 
+    // objectHandler.getCourseProjects(req, res, db);
+    getProjects(req, res, db)
+   });
+  app.get('/user/projects', (req, res) => { 
+    // objectHandler.getUserProjects(req, res, db);
+    getUserProjects(req, res, db) });
+  app.get('/courseProject/happiness', (req, res) => { getProjectHappinessMetrics(req, res, db) });
   app.get('/sprints', (req, res) => { getSprints(req, res, db) });
   app.get('/currentSprint', (req, res) => { getProjectCurrentSprint(req, res, db) });
-  app.get('/getGitURL', (req, res) => { getUserProjectURL(req, res, db) }); // to be removed, duplicate of /user/userProject
+  app.get('/getGitURL', (req, res) => { getUserProjectURL(req, res, db) }); // to be removed, duplicate of /user/user/project/url
   app.get('/user/githubUsername', (req, res) => {
     // objectHandler.getGithubUsername(req, res, db);
     getUserGitHubUsername(req, res, db)
@@ -49,7 +54,7 @@ initializeDB().then((db) => {
     // objectHandler.getUserCourses(req, res, db);
     getUserProjectGroups(req, res, db)
   });
-  app.get('/user/userProject', (req, res) => { 
+  app.get('/user/user/projects', (req, res) => { 
     // objectHandler.getUserProjectURL(req, res, db);
     getProjectURL(req, res, db) });
   app.get('/user/status', (req, res) => { getUsersByStatus(req, res, db) });
@@ -111,7 +116,7 @@ initializeDB().then((db) => {
     // objectHandler.getCourse() and use object methods to send standups email
     sendStandupsEmail(req, res, db)
   });
-  app.post('/couseProject/happiness', (req, res) => {
+  app.post('/courseProject/happiness', (req, res) => {
     // objectHandler.saveHappinessMetric(req, res, db);
     saveHappinessMetric(req, res, db)});
   app.post('/courseProject/sprints', (req, res) => {

@@ -600,7 +600,7 @@ Saves the happiness rating of a user.
     - 400 Bad Request: Validation errors.
 
 
-GET /getHappinessData<br>
+GET /courseProject/happiness<br>
 Fetches happiness data for analysis.
 - Response:
     - 200 OK: Returns happiness data.

@@ -66,7 +66,7 @@ const ProjectAdmin: React.FC = () => {
       if (semester) {
         try {
           const response = await fetch(
-            `http://localhost:3000/project-groups?semester=${semester}`
+            `http://localhost:3000/course?semester=${semester}`
           );
           const data = await response.json();
           setProjectGroups(data.map((item: any) => item.projectGroupName));
