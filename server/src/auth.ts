@@ -73,7 +73,8 @@ export const login = async (req: Request, res: Response, db: Database) => {
       return res.status(400).json({ message: 'Invalid password' });
     }
 
-    const userStatus: UserStatus = user.status;
+    let st: string = user.status;
+    let userStatus: UserStatus = new UserStatus(st as UserStatusEnum);
     if (userStatus.getStatus() == UserStatusEnum.unconfirmed) {
       return res.status(400).json({ message: 'Email not confirmed. Please contact system admin.' });
     } else if (userStatus.getStatus() == UserStatusEnum.suspended) {
@@ -246,7 +247,9 @@ export const sendConfirmationEmail = async (req: Request, res: Response, db: any
   const { email } = req.body;
   try {
     const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
-    if (!user || user.status !== 'unconfirmed') {
+    let st: string = user.status;
+    let userStatus: UserStatus = new UserStatus(st as UserStatusEnum);
+    if (!user || userStatus.getStatus() != UserStatusEnum.unconfirmed) {
       return res.status(400).json({ message: 'User not found or not unconfirmed' });
     }
 
