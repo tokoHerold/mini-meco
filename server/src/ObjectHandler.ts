@@ -8,177 +8,73 @@ import { createProject, createProjectGroup } from "./projectManagement";
 
 export class ObjectHandler { 
 
-    public async getCourseProjects(req: Request, res: Response, db: Database): Promise<void> {
-        const courseProjects = await db.all('SELECT * FROM project');
-        if (!courseProjects || courseProjects.length === 0) {
-            res.status(400).json({ message: 'No Course Projects found' });
-            return;
-        }
-        res.status(200).json({ courseProjects });
-    }
+    public async invokeOnUser(functionName: string, req: Request, res: Response, db: Database): Promise<void> {
+        const userEmail = req.body.userEmail;
 
-    public async getUserProjectURL(req: Request, res: Response, db: Database): Promise<void> {
-        const user = await this.getUser(req.params.userId, db);
-        const courseProject = await this.getCourseProject(req.params.courseProjectId, db);
-        if (!user || !courseProject) { 
-            res.status(400).json({ message: 'User or Course Project not found' });
-            return; 
-        }
-        res.status(200).json({ url: user.getProjectURL(courseProject) });
-    }
-
-    public async getUserProjects(req: Request, res: Response, db: Database): Promise<void> {
-        const user = await this.getUser(req.params.userId, db);
+        const args = req.body.args || [];
+        const user = await this.getUserByMail(userEmail, db);
         if (!user) {
             res.status(400).json({ message: 'User not found' });
             return;
         }
-        res.status(200).json({ projects: user.getProjects() });
+
+        if (!(functionName in user) || typeof user[functionName as keyof User] !== 'function') {
+            res.status(400).json({ message: `Function ${functionName} not found on User` });
+            return;
+        }
+
+        try {
+            const result = await (user[functionName as keyof User] as Function).apply(user, args);
+            res.status(200).json({ result });
+        } catch (error) {
+            res.status(500).json({ message: `Error invoking function ${functionName}`, error });
+        }
     }
 
-    public async setHappinessMetric(req: Request, res: Response, db: Database): Promise<void> {
-        const courseProject = await this.getCourseProject(req.params.userId, db);
+    public async invokeOnCourseProject(functionName: string, req: Request, res: Response, db: Database): Promise<void> {
+        const courseProjectId = req.body.courseProjectId;
+
+        const args = req.body.args || [];
+        const courseProject = await this.getCourseProject(courseProjectId, db);
         if (!courseProject) {
-            res.status(400).json({ message: 'User not found' });
+            res.status(400).json({ message: 'Course Project not found' });
             return;
         }
-        if (!courseProject.setHappinessMetric(req.body.metric)) { 
-            res.status(400).json({ message: 'Happiness metric set failed' });
+
+        if (!(functionName in courseProject) || typeof courseProject[functionName as keyof CourseProject] !== 'function') {
+            res.status(400).json({ message: `Function ${functionName} not found on Course Project` });
             return;
         }
-        res.status(200).json({ message: 'Happiness metric set successfully' });
-    }
 
-    public async createSprints(req: Request, res: Response, db: Database): Promise<void> {
-        const courseProject = await this.getCourseProject(req.params.userId, db);
-        if (!courseProject) {
-            res.status(400).json({ message: 'User not found' });
-            return;
+        try {
+            const result = await (courseProject[functionName as keyof CourseProject] as Function).apply(courseProject, args);
+            res.status(200).json({ result });
+        } catch (error) {
+            res.status(500).json({ message: `Error invoking function ${functionName}`, error });
         }
-        if (!courseProject.createSprints()) { 
-            res.status(400).json({ message: 'Sprints creation failed' });
-            return;
-        }
-        res.status(200).json({ message: 'Sprints created successfully' });
     }
 
-    public async createCourse(req: Request, res: Response, db: Database): Promise<Course> {
-        const course = new Course(); // fill course object with data from req.body
-        createProjectGroup(req, res, db);
-        res.status(200).json({ message: 'Course created successfully' });
-        return course;
-    }
+    public async invokeOnCourse(functionName: string, req: Request, res: Response, db: Database): Promise<void> {
+        const courseId = req.body.courseId;
 
-    public async createCourseProject(req: Request, res: Response, db: Database): Promise<CourseProject> {
-        const courseProject = new CourseProject(); // fill courseProject object with data from req.body
-        createProject(req, res, db);
-        res.status(200).json({ message: 'Course project created successfully' });
-        return courseProject;
-    }
-
-    public async getUserCourses(req: Request, res: Response, db: Database): Promise<void> {
-        const course = await this.getCourse(req.query.projectName as string, db);
+        const args = req.body.args || [];
+        const course = await this.getCourse(courseId, db);
         if (!course) {
             res.status(400).json({ message: 'Course not found' });
             return;
         }
-        res.status(200).json({ courses: course.getUserCourses() });
-    }
 
-    public async getGithubUsername(req: Request, res: Response, db: Database): Promise<void> { 
-        const user = await this.getUserByMail(req.params.userMail, db);
-        if (!user) {
-            res.status(400).json({ message: 'User not found' });
+        if (!(functionName in course) || typeof course[functionName as keyof Course] !== 'function') {
+            res.status(400).json({ message: `Function ${functionName} not found on Course` });
             return;
-        }
-        res.status(200).json({ username: user.getGithubUsername() });
-    }
-
-    public async resetPassword(req: Request, res: Response, db: Database): Promise<void> {
-        const user = await this.getUserByMail(req.params.userMail, db);
-        if (!user) {
-            res.status(400).json({ message: 'User not found' });
-            return;
-        }
-        if (!user.sendPasswordResetEmail(req.body.email)) { 
-            res.status(400).json({ message: 'Password reset email failed' });
-            return;
-        }
-        res.status(200).json({ message: 'Password reset email sent successfully' });
-    }
-
-    public async setUserProjectURL(req: Request, res: Response, db: Database): Promise<void> {
-        const user = await this.getUser(req.params.userId, db);
-        const courseProject = await this.getCourseProject(req.params.courseProjectId, db);
-        if (!user || !courseProject) { 
-            res.status(400).json({ message: 'User or Course Project not found' });
-            return; 
-        }
-        if (!user.setUserProjectURL(courseProject, req.body.url)) {
-            res.status(400).json({ message: 'Project URL set failed' });
-            return;
-        }
-        res.status(200).json({ message: 'Project URL set successfully' });
-    }
-
-    public async joinProject(req: Request, res: Response, db: Database): Promise<void> {
-          const user = await this.getUser(req.params.userId, db);
-          const courseProject = await this.getCourseProject(req.params.courseProjectId, db);
-          if (!user || !courseProject) { return; }
-        if (!user.joinProject(courseProject)) { 
-          res.status(400).json({ message: 'Project join failed' });
-          return;
-        }
-        res.status(200).json({ message: 'Project join successful' });
-    }
-
-    public async changeEmail(req: Request, res: Response, db: Database): Promise<void> {
-        const user = await this.getUserByMail(req.params.userMail, db);
-        if (!user) {
-            res.status(400).json({ message: 'User not found' });
-            return;
-        }
-        if (!user.changeEmail(req.body.email)) { 
-            res.status(400).json({ message: 'Email change failed' });
-            return;
-        };
-        res.status(200).json({ message: 'Email changed successfully' });
         }
 
-    public async changePassword(req: Request, res: Response, db: Database): Promise<void> {
-        const user = await this.getUserByMail(req.params.userMail, db);
-        if (!user) {
-            res.status(400).json({ message: 'User not found' }); return;
+        try {
+            const result = await (course[functionName as keyof Course] as Function).apply(course, args);
+            res.status(200).json({ result });
+        } catch (error) {
+            res.status(500).json({ message: `Error invoking function ${functionName}`, error });
         }
-        if (!user.changePassword(req, res, db)) { 
-            res.status(400).json({ message: 'Password change failed' });
-            return;
-        }
-        res.status(200).json({ message: 'Password changed successfully' });
-    }
-
-    public async sendPasswordResetEmail(req: Request, res: Response, db: Database): Promise<void> {
-        const user = await this.getUserByMail(req.params.userMail, db);
-        if (!user) {
-            res.status(400).json({ message: 'User not found' });
-            return;
-        }
-        if (!user.sendPasswordResetEmail(req.body.email)) { 
-            res.status(400).json({ message: 'Password reset email failed' });
-            return;
-        }
-        res.status(200).json({ message: 'Password reset email sent successfully' });
-    }
-
-    public async leaveProject(req: Request, res: Response, db: Database): Promise<void> {
-        const user = await this.getUser(req.params.userId, db);
-        const courseProject = await this.getCourseProject(req.params.courseProjectId, db);
-        if (!user || !courseProject) { return; }
-        if (!user.leaveProject(courseProject)) {
-          res.status(400).json({ message: 'Project leave failed' });
-          return;
-        }
-        res.status(200).json({ message: 'Project leave successful' });
     }
 
 
@@ -187,7 +83,7 @@ export class ObjectHandler {
         if (!userRow) {
             return null;
         }
-        return new User(); // fill user object with data from row, e.g. userRow.id;
+        return new User(userRow.name); // fill user object with data from row, e.g. userRow.id;
     }
 
     public async getUserByMail(email: string, db: Database): Promise<User | null> {
@@ -195,7 +91,7 @@ export class ObjectHandler {
         if (!userRow) {
             return null;
         }
-        return new User(); // fill user object with data from row, e.g. userRow.id;
+        return new User(userRow.name); // fill user object with data from row, e.g. userRow.id;
     }
 
     public async getCourseProject(id: string, db: Database): Promise<CourseProject | null> {
@@ -221,4 +117,6 @@ export class ObjectHandler {
         }
         return new Course(); // fill course object with data from row, e.g. courseRow.id;
     }
+
+    
 }

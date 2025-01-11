@@ -7,4 +7,18 @@ export class CourseProject {
         // Implementation here
         return true;
     }
+
+    public getHappinessMetric(): number {
+        // Implementation here
+        return 0;
+    }
+
+    public getSprints(): string[] {
+        // Implementation here
+        return [];
+    }
+
+    public testEcho(str: string): string {
+        return str;
+    }
 }
