@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { Database } from 'sqlite';
+import { UserStatus, UserStatusEnum } from './userStatus';
 
 dotenv.config();
 
@@ -72,12 +73,12 @@ export const login = async (req: Request, res: Response, db: Database) => {
       return res.status(400).json({ message: 'Invalid password' });
     }
 
-    const userStatus = user.status;
-    if (userStatus == 'unconfirmed') {
+    const userStatus: UserStatus = user.status;
+    if (userStatus.getStatus() == UserStatusEnum.unconfirmed) {
       return res.status(400).json({ message: 'Email not confirmed. Please contact system admin.' });
-    } else if (userStatus == 'suspended') {
+    } else if (userStatus.getStatus() == UserStatusEnum.suspended) {
       return res.status(400).json({ message: 'User account is suspended. Please contact system admin.' }); 
-    } else if (userStatus == 'removed') {
+    } else if (userStatus.getStatus() == UserStatusEnum.removed) {
       return res.status(400).json({ message: 'User account is removed. Please contact system admin.' });
     }
 
