@@ -20,7 +20,7 @@ import {
     changeEmail, changePassword, setUserGitHubUsername, getUserGitHubUsername, setUserProjectURL, 
     getUserProjectURL 
 } from './userConfig';
-import { checkOwnership } from './middleware/authorize';
+import { checkOwnership } from './auth';
 
 dotenv.config();
 
