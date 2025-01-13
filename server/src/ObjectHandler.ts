@@ -1,10 +1,10 @@
 import { Database } from "sqlite";
 import { Response, Request } from "express";
-import { User } from "./shared_models/User";
-import { CourseProject } from "./shared_models/CourseProject";
-import { CourseSchedule } from "./shared_models/CourseSchedule";
-import { Course } from "./shared_models/Course";
+import { User } from "./Models/User";
+import { CourseProject } from "./Models/CourseProject";
+import { CourseSchedule } from "./Models/CourseSchedule";
 import { createProject, createProjectGroup } from "./projectManagement";
+import { Course } from "./Models/Course";
 
 export class ObjectHandler { 
 
@@ -49,7 +49,7 @@ export class ObjectHandler {
         }
 
         try {
-            const result = await (courseProject[functionName as keyof CourseProject] as Function).apply(courseProject, args);
+            const result = await (courseProject[functionName as keyof CourseProject] as unknown as Function).apply(courseProject, args);
             res.status(200).json({ result });
         } catch (error) {
             res.status(500).json({ message: `Error invoking function ${functionName}`, error });
