@@ -10,7 +10,10 @@ import {
 import { 
     createProjectGroup, createProject, editProjectGroup, editProject, getProjectGroups, getProjects, 
     getSemesters, joinProject, leaveProject, getUserProjects, getUserProjectGroups, getUsersByStatus, 
-    updateUserStatus, updateAllConfirmedUsers 
+    updateUserStatus, updateAllConfirmedUsers, 
+    getEnrolledCourses,
+    getProjectsForCourse,
+    getRoleForProject
 } from './projectManagement';
 import { 
     sendStandupsEmail, saveHappinessMetric, createSprints, getProjectHappinessMetrics, getSprints, 
@@ -31,20 +34,12 @@ app.use(bodyParser.json());
 app.use(cors({ origin: 'http://localhost:5173' }));
 
 initializeDB().then((db) => {
-    const oh = new ObjectHandler();
-    console.log("Database initialized, starting server...");
+  const oh = new ObjectHandler();
+  console.log("Database initialized, starting server...");
 
-
-
-    
-    app.get('/', (req, res) => {
-        res.send('Server is running!');
-    });
-
-    app.get('/user/test', (req, res) => { oh.invokeOnUser("testEcho", req, res, db) });
-    app.get('/courseProject/test', (req, res) => { oh.invokeOnCourseProject("testEcho", req, res, db) });
-    app.get('/course/test', (req, res) => { oh.invokeOnCourse("testEcho", req, res, db) });
-    app.post('/user/protectedTest', checkOwnership(db, oh), (req, res) => { oh.invokeOnUser("testEcho", req, res, db) });
+  app.get('/', (req, res) => {
+    res.send('Server is running!');
+  });
 
     app.get('/semesters', (req, res) => { getSemesters(req, res, db) });
     app.get('/course', (req, res) => { getProjectGroups(req, res, db) });
@@ -81,6 +76,14 @@ initializeDB().then((db) => {
     app.post('/user/status',checkOwnership(db, oh), (req, res) => { updateUserStatus(req, res, db); });
     app.post('/user/confirmation/trigger', (req, res) => { sendConfirmationEmail(req, res, db); });
     app.post('/user/status/all', (req, res) => { updateAllConfirmedUsers(req, res, db); });
+    app.post('/projConfig/joinProject', (req, res) => joinProject(req, res, db));
+    app.post('/projConfig/leaveProject', (req, res) => leaveProject(req, res, db));
+    app.post('/projConfig/createProject', (req, res) => createProject(req, res, db));
+    app.get('/enrolledCourses', (req, res) => getEnrolledCourses(req, res, db));
+    app.get('/projectsForCourse', (req, res) => getProjectsForCourse(req, res, db));
+    app.get('/roleForProject', (req, res) => getRoleForProject(req, res, db));
+    app.post('/createProject', (req, res) => createProject(req, res, db));
+
 
     app.listen(port, () => {
         console.log(`Server running on http://localhost:${port}`);
