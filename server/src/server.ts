@@ -80,7 +80,7 @@ initializeDB().then((db) => {
     app.post('/user/confirmation/email', (req, res) => { confirmEmail(req, res, db); });
     app.post('/user/status',checkOwnership(db, oh), (req, res) => { updateUserStatus(req, res, db); });
     app.post('/user/confirmation/trigger', (req, res) => { sendConfirmationEmail(req, res, db); });
-    //app.post('/user/status', (req, res) => { updateAllConfirmedUsers(req, res, db); });
+    app.post('/user/status/all', (req, res) => { updateAllConfirmedUsers(req, res, db); });
 
     app.listen(port, () => {
         console.log(`Server running on http://localhost:${port}`);
