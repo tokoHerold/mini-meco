@@ -4,20 +4,21 @@ import { send } from "process";
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
+import { Semester } from "./Models/Semester";
+
 dotenv.config();
 
 export const createProjectGroup = async (req: Request, res: Response, db: Database) => {
-    const { semester, projectGroupName } = req.body;
-    const semesterRegex = /^(SS|WS)\d{2,4}$/; // Format: SS24 or WS2425
+    const { semester: semesterInput, projectGroupName } = req.body;
+    console.log("Semester input: " + semesterInput)
 
-    if (!semester || !projectGroupName) {
+    if (!semesterInput || !projectGroupName) {
         return res.status(400).json({ message: "Please fill in semester and project group name" });
-    } else if (!semesterRegex.test(semester)) {
-        return res.status(400).json({ message: "Invalid semester format. Please use SSYY or WSYYYY format" });
     }
     
     try {
-        await db.run("INSERT INTO projectGroup (semester, projectGroupName) VALUES (?, ?)", [semester, projectGroupName]);
+        const semester = Semester.fromString(semesterInput);
+        await db.run("INSERT INTO projectGroup (semester, projectGroupName) VALUES (?, ?)", [semester.toString(), projectGroupName]);
         await db.exec(`
             CREATE TABLE IF NOT EXISTS "${projectGroupName}" (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
