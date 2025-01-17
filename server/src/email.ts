@@ -9,7 +9,7 @@ export class EmailAddress {
     }
   
     private isValidEmail(email: string): boolean {
-      // check for string without @ followed by @ and string without @ . string without @
+      // Valid email string format: must not contain '@', followed by '@', must include a '.', and end with a string without '@'
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
     }
