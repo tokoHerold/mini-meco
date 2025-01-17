@@ -19,16 +19,3 @@ export class EmailAddress {
     }
   }
   
-  const login = (email: EmailAddress, password: string) => {
-    console.log(`Logging in with email: ${email.toString()}`);
-  };
-  
-  try {
-    const _email = new EmailAddress('user@example.com');
-    login(_email, 'securepassword');
-  } catch (error) {
-    if (error instanceof Error) {
-    console.error(error.message);
-    }
-  }
-  

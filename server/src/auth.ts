@@ -35,7 +35,7 @@ export const register = async (req: Request, res: Response, db: Database) => {
     res.status(201).json({ message: 'User registered successfully' });
 
     // Generate confirm email TOKEN
-    const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [validatedEmail.toString()]);
     if (!user) {
       console.error('Email not found after registration');
       return;
@@ -48,10 +48,10 @@ export const register = async (req: Request, res: Response, db: Database) => {
 
     await db.run(
       'UPDATE users SET confirmEmailToken = ?, confirmEmailExpire = ? WHERE email = ?',
-      [token, expire, email]
+      [token, expire, validatedEmail.toString()]
     );
 
-    await sendConfirmEmail(email, token);
+    await sendConfirmEmail(validatedEmail, token);
 
     console.log('Confirmation email sent');
 
@@ -67,9 +67,16 @@ export const login = async (req: Request, res: Response, db: Database) => {
     return res.status(400).json({ message: 'Email and password are required' });
   }
 
+  let validatedEmail: EmailAddress;
+  try {
+    validatedEmail = new EmailAddress(email);
+  } catch (error) {
+    return res.status(400).json({ message: 'Invalid email address' });
+  }
+
 
   try {
-    const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [validatedEmail.toString()]);
     if (!user) {
       return res.status(400).json({ message: 'Invalid email' });
     }
@@ -100,7 +107,7 @@ export const login = async (req: Request, res: Response, db: Database) => {
 };
 
 
-const sendPasswordResetEmail = async (email: string, token: string) => {
+const sendPasswordResetEmail = async (email: EmailAddress, token: string) => {
 
   const transporter = nodemailer.createTransport({
     host: 'smtp-auth.fau.de',
@@ -116,7 +123,7 @@ const sendPasswordResetEmail = async (email: string, token: string) => {
 
   const mailOptions = {
     from: '"Mini-Meco" <shu-man.cheng@fau.de>',
-    to: email,
+    to: email.toString(),
     subject: 'Password Reset',
     text: `You requested a password reset. Click the link to reset your password: ${resetLink}`,
   };
@@ -133,10 +140,16 @@ const sendPasswordResetEmail = async (email: string, token: string) => {
 };
 
 export const forgotPassword = async (req: Request, res: Response, db: Database) => {
-  const { email } = req.body;
+  let email: EmailAddress;
+  try {
+    email = new EmailAddress(req.body.email); // Validate and construct the EmailAddress instance
+  } catch (error) {
+  return res.status(400).json({ message: 'Invalid email address' });
+}
+
 
   try {
-    const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [email.toString()]);
     if (!user) {
       return res.status(404).json({ message: 'Email not found' });
     }
@@ -148,7 +161,7 @@ export const forgotPassword = async (req: Request, res: Response, db: Database) 
 
     await db.run(
       'UPDATE users SET resetPasswordToken = ?, resetPasswordExpire = ? WHERE email = ?',
-      [token, expire, email]
+      [token, expire, email.toString()]
     );
 
     await sendPasswordResetEmail(email, token);
@@ -188,7 +201,7 @@ export const resetPassword = async (req: Request, res: Response, db: Database) =
   }
 };
 
-export const sendConfirmEmail = async (email: string, token: string) => {
+export const sendConfirmEmail = async (email: EmailAddress, token: string) => {
 
   const transporter = nodemailer.createTransport({
     host: 'smtp-auth.fau.de',
@@ -203,7 +216,7 @@ export const sendConfirmEmail = async (email: string, token: string) => {
 
   const mailOptions = {
     from: '"Mini-Meco" <shu-man.cheng@fau.de>',
-    to: email,
+    to: email.toString(),
     subject: 'Confirm Email',
     text: `You registered for Mini-Meco. Click the link to confirm your email: ${confirmedLink}`,
   };
@@ -249,9 +262,14 @@ export const confirmEmail = async (req: Request, res: Response, db: Database) =>
 }
 
 export const sendConfirmationEmail = async (req: Request, res: Response, db: Database) => {
-  const { email } = req.body;
+  let email: EmailAddress;
   try {
-    const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
+    email = new EmailAddress(req.body.email); // Validate and construct the EmailAddress instance
+  } catch (error) {
+    return res.status(400).json({ message: 'Invalid email address' });
+  }
+  try {
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [email.toString()]);
     if (!user || user.status !== 'unconfirmed') {
       return res.status(400).json({ message: 'User not found or not unconfirmed' });
     }
@@ -259,7 +277,7 @@ export const sendConfirmationEmail = async (req: Request, res: Response, db: Dat
     const token = crypto.randomBytes(20).toString('hex');
     const expire = Date.now() + 3600000;
 
-    await db.run('UPDATE users SET confirmEmailToken = ?, confirmEmailExpire = ? WHERE email = ?', [token, expire, email]);
+    await db.run('UPDATE users SET confirmEmailToken = ?, confirmEmailExpire = ? WHERE email = ?', [token, expire, email.toString()]);
     await sendConfirmEmail(email, token);
 
     res.status(200).json({ message: 'Confirmation email sent' });
