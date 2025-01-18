@@ -197,6 +197,7 @@ const UserPanel: React.FC = () => {
         }
       }
     }
+    console.log(message) //For later debugging
   };
 
   const handleSubmitAll = async () =>
@@ -214,8 +215,10 @@ const UserPanel: React.FC = () => {
     //fetchUserData();
     if(pwErrormessage == "" && emailErrormessage == "" && gitErrormessage == "")
     {
-      window.location.reload()
+      setMessage("Working");
+      window.location.reload();
     }
+    setMessage("Error");
   }
   return (
     
