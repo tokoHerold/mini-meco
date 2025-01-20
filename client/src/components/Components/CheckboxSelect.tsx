@@ -1,5 +1,13 @@
 import { useState } from "react";
 
+/**
+ * CheckboxSelect component provides a dropdown select menu. Using the checkboxes multiple selections are possible.
+ * @param options available options in selection dropdown
+ * @param active array of currently active selections
+ * @param setActive callback to modify active selection
+ * @param children Button text
+ * @returns 
+ */
 const CheckboxSelect = ({ options, active, setActive, children }: { options: Array<string>; active: Array<string>; setActive: (s: Array<string>) => void, children: string }) => {
     const [show, setShow] = useState<boolean>(false);
     return (

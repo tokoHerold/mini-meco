@@ -16,6 +16,19 @@ const ReloadButton = ({ loading, onClick }: { loading: boolean, onClick: () => v
     );
 }
 
+/**
+ * Table component. 
+ * When rowsPerPage is defined the table is automatically paginated.
+ * When filterOptions is defined the table provides a CheckboxSelect component to apply a filter on a selected column
+ * @param headings array of table headings
+ * @param loading signals the table that the data is still loading and will display a loading spinner
+ * @param loadData callback to load data. called once on page load and on reload button click
+ * @param data array of rows
+ * @param rowsPerPage number of rows to display per page
+ * @param filterOptions.key id of filtered column
+ * @param filterOptions.options array of values to filter by
+ * @returns 
+ */
 const Table = ({ headings, loading, loadData, data, rowsPerPage = 0, filterOptions }: { headings: Array<string>, loading: boolean, loadData: () => void | undefined, rowsPerPage?: number, data: Array<Array<string | JSX.Element>>, filterOptions?: { key: number, options: Array<string> } }) => {
     const [page, setPage] = useState<number>(0);
     const [filter, setFilter] = useState<Array<string>>(filterOptions ? filterOptions.options : []);

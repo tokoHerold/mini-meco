@@ -1,3 +1,10 @@
+/**
+ * Convenient pagination buttons
+ * @param curPage current page
+ * @param nbPages number of pages
+ * @param onChange callback to change current page
+ * @returns 
+ */
 const Pagination = ({ curPage, nbPages, onChange }: { curPage: number; nbPages: number; onChange: (p: number) => void }) => {
     const start = Math.max(Math.max(curPage - 2, 0) + Math.min(curPage + 3, nbPages) - curPage - 3, 0);
     const end = Math.min(Math.max(curPage - 2, 0) + Math.min(curPage + 3, nbPages) - curPage + 2, nbPages);
