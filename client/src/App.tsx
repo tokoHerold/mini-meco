@@ -13,6 +13,7 @@ import ProjectConfig from "./components/Configuration/ProjectConfig";
 import Standups from "./components/Projects/Standups";
 import Happiness from "./components/Projects/Happiness";
 import ConfirmedEmail from "./screens/Auth/ConfirmedEmail";
+import UserPanel from "./components/Configuration/UserPanel";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="project-admin" element={<ProjectAdmin />} />
           <Route path="project-config" element={<ProjectConfig />} />
           <Route path="confirmedEmail" element={<ConfirmedEmail />} />
+          <Route path="user-panel" element={<UserPanel />} />
         </Routes>
       </BrowserRouter>
     </div>

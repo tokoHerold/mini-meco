@@ -81,7 +81,9 @@ const Dashboard: React.FC = () => {
   function goProjectConfig() {
     navigate("/project-config");
   }
-
+  function goUserPanel() {
+    navigate("/user-panel");
+  }
   function goUserAdmin() {
     navigate("/user-admin");
   }
@@ -136,7 +138,11 @@ const Dashboard: React.FC = () => {
         <div className="Title ConfigTitle">
           <h2>Configuration</h2>
         </div>
+        
         <div className="Container">
+          <div onClick={goUserPanel} className="components">
+              User profile
+          </div>
           <div onClick={goSettings} className="components">
             Settings
           </div>
