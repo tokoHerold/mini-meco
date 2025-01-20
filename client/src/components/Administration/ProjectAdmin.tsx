@@ -23,7 +23,7 @@ const ProjectAdmin: React.FC = () => {
     navigate("/project-admin");
   };
 
-  {/* Helper method for fetching all projects of a course */}
+  /* Helper method for fetching all projects of a course */
   interface Project {
     id: string;
     projectName: string;
@@ -79,7 +79,7 @@ const ProjectAdmin: React.FC = () => {
       })
   };
 
-  {/* Helper method for fetching all projects of a course */}
+  /* Helper method for fetching all projects of a course */
   const getProjectsForCourse = (course: string): Promise<Project[]> => {
     return get(`projects?projectGroupName=${course}`)
       .then(projects => projects.map((project: { id: string; projectName: string; studentsCanJoinProject: boolean; }) => ({
@@ -95,7 +95,7 @@ const ProjectAdmin: React.FC = () => {
       });
   };
 
-  {/** Fetch courses and projects on page reload */}
+  /* Fetch courses and projects on page reload */
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -123,7 +123,7 @@ const ProjectAdmin: React.FC = () => {
     fetchData();
   }, []);
 
-  {/* Method for creating a course */}
+  /* Method for creating a course */
   const handleCreateCourse = async (semester: string, courseName: string,) => {
     const body: { [key: string]: string } = { semester, projectGroupName: courseName };
 
@@ -139,7 +139,7 @@ const ProjectAdmin: React.FC = () => {
     }
   };
 
-  {/* Method for creating a project */}
+  /* Method for creating a project */
   const handleCreateProject = async (projectName: string) => {
     if (!selectedCourse) return;
 
@@ -157,7 +157,7 @@ const ProjectAdmin: React.FC = () => {
     }
   };
 
-  {/* Method for editing a project */}
+  /* Method for editing a project */
   const handleEditProject = async (projectName: string, courseName: string) => {
     if (!selectedCourse || !selectedProject) return;
 
@@ -181,7 +181,7 @@ const ProjectAdmin: React.FC = () => {
     }
   };
 
-  {/* Method for editing a course */}
+  /* Method for editing a course */
   const handleEditCourse = async (editedCourse: Course) => {
     if (!selectedCourse) return;
 

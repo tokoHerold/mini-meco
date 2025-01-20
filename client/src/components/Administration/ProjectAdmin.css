@@ -1,6 +1,3 @@
-@tailwind components;
-@tailwind utilities;
-
 .ProjAdminPanel-DashboardContainer {
   display: flex;
   align-items: center;
