@@ -84,31 +84,31 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
     }
 
     return (
-        <div className="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full inset-0 h-full flex bg-gray-900/50 text-left">
-            <div className="relative p-4 w-full max-w-2xl max-h-full">
-                <div className="relative bg-white rounded-lg shadow">
-                    <div className="flex items-center justify-between p-5 border-b rounded-t">
+        <div className="fixed inset-0 z-50 flex size-full items-center justify-center overflow-y-auto overflow-x-hidden bg-gray-900/50 text-left">
+            <div className="relative max-h-full w-full max-w-2xl p-4">
+                <div className="relative rounded-lg bg-white shadow">
+                    <div className="flex items-center justify-between rounded-t border-b p-5">
                         <h3 className="text-xl font-semibold text-gray-900">
                             Edit user
                         </h3>
                     </div>
-                    <div className="p-5 space-y-4">
+                    <div className="space-y-4 p-5">
                         <form onSubmit={onSave}>
                             <div className="mb-5">
-                                <label className="block mb-2 text-sm font-medium text-gray-900">Username</label>
-                                <input value={user.name} disabled={true} className="bg-gray-50 border border-gray-200 text-gray-500 text-sm rounded-lg block w-full p-2.5" />
+                                <label className="mb-2 block text-sm font-medium text-gray-900">Username</label>
+                                <input value={user.name} disabled={true} className="block w-full rounded-lg border border-gray-200 bg-gray-50 p-2.5 text-sm text-gray-500" />
                             </div>
                             <div className="mb-5">
-                                <label className="block mb-2 text-sm font-medium text-gray-900">Email</label>
-                                <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" />
+                                <label className="mb-2 block text-sm font-medium text-gray-900">Email</label>
+                                <input type="email" value={email} onChange={e => setEmail(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" />
                             </div>
                             <div className="mb-5">
-                                <label className="block mb-2 text-sm font-medium text-gray-900">GitHub Username</label>
-                                <input value={githubUsername} onChange={e => setGithubUsername(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" />
+                                <label className="mb-2 block text-sm font-medium text-gray-900">GitHub Username</label>
+                                <input value={githubUsername} onChange={e => setGithubUsername(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" />
                             </div>
                             <div className="mb-5">
-                                <label className="block mb-2 text-sm font-medium text-gray-900">Status</label>
-                                <select value={status} onChange={e => setStatus(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5">
+                                <label className="mb-2 block text-sm font-medium text-gray-900">Status</label>
+                                <select value={status} onChange={e => setStatus(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900">
                                     <option>unconfirmed</option>
                                     <option>confirmed</option>
                                     <option>suspended</option>
@@ -116,14 +116,14 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
                                 </select>
                             </div>
                             <div className="mb-5">
-                                <label className="block mb-2 text-sm font-medium text-gray-900">New Password</label>
-                                <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" />
+                                <label className="mb-2 block text-sm font-medium text-gray-900">New Password</label>
+                                <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" />
                             </div>
                         </form>
                     </div>
-                    <div className="flex items-center p-5 border-t border-gray-200 rounded-b">
-                        <button onClick={onSave} className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Save</button>
-                        <button onClick={onCancel} className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700">Cancel</button>
+                    <div className="flex items-center rounded-b border-t border-gray-200 p-5">
+                        <button onClick={onSave} className="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800">Save</button>
+                        <button onClick={onCancel} className="ms-3 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -132,7 +132,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
 }
 
 const UserAdmin = () => {
-    const [users, setUsers] = useState<Array<User>>(Array());
+    const [users, setUsers] = useState<Array<User>>([]);
     const [editing, setEditing] = useState<User | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -162,7 +162,7 @@ const UserAdmin = () => {
         user.email,
         user.githubUsername ? user.githubUsername : "N/A",
         user.status,
-        <div className="flex flex-row gap-3">
+        <div key={user.id} className="flex flex-row gap-3">
             <img className="h-5" src={Edit} title="edit" onClick={() => setEditing(user)}></img>
             {user.status === "unconfirmed" && <img className="h-5" src={Email} title="send confirmation email" onClick={() => sendConfirmationEmail(user)}></img>}
         </div>
@@ -184,7 +184,7 @@ const UserAdmin = () => {
                     filterOptions={{ key: 3, options: userStatus }}
                 />
             </div>
-            {editing !== null && <UserEdit user={editing} onClose={(update) => { setEditing(null); update && fetchUsers(); }} />}
+            {editing !== null && <UserEdit user={editing} onClose={(update) => { setEditing(null); if(update) fetchUsers(); }} />}
         </>
     );
 }
