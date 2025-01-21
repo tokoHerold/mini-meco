@@ -4,7 +4,7 @@ import cors from 'cors';
 import { register, login, forgotPassword, resetPassword, confirmEmail, sendConfirmationEmail } from './auth';
 import { initializeDB } from './databaseInitializer';
 import dotenv from 'dotenv';
-import { createProjectGroup, createProject, editProjectGroup, editProject,getProjectGroups, getProjects, getSemesters, joinProject, leaveProject, getUserProjects, getUserProjectGroups, getUsersByStatus, updateUserStatus, updateAllConfirmedUsers, getEnrolledCourses, getProjectsForCourse, getRoleForProject} from './projectManagement';
+import { createProjectGroup, createProject, editProjectGroup, editProject,getProjectGroups, getProjects, getSemesters, joinProject, leaveProject, getUserProjects, getUserProjectGroups, getUsers, getUsersByStatus, updateUserStatus, updateAllConfirmedUsers, getEnrolledCourses, getProjectsForCourse, getRoleForProject} from './projectManagement';
 import { sendStandupsEmail, saveHappinessMetric, createSprints, getProjectHappinessMetrics, getSprints, getProjectCurrentSprint, getProjectURL } from './projectFeatures';
 import { changeEmail, changePassword, setUserGitHubUsername, getUserGitHubUsername, setUserProjectURL, getUserProjectURL, changeUserProjectURL } from './userConfig';
 
@@ -34,6 +34,7 @@ initializeDB().then((db) => {
   app.get('/getUserGitHubUsername', (req, res) => { getUserGitHubUsername(req, res, db) });
   app.get('/getUserProjectGroups', (req, res) => { getUserProjectGroups(req, res, db) });
   app.get('/getProjectGitHubURL', (req, res) => { getProjectURL(req, res, db) });
+  app.get('/getUsers', (req, res) => { getUsers(req, res, db) });
   app.get('/getUserStatus', (req, res) => { getUsersByStatus(req, res, db) });
 
 
