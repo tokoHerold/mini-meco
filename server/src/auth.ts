@@ -14,7 +14,7 @@ dotenv.config();
 
 const secret = process.env.JWT_SECRET || 'your_jwt_secret';
 
-export const register = async (req: Request, res: Response, db: any) => {
+export const register = async (req: Request, res: Response, db: Database) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -113,7 +113,7 @@ export const checkOwnership = (db: Database, oh: ObjectHandler) => {
                 return res.status(404).json({ message: 'User not found' });
             }
 
-            if (userFromTokenId?.name !== "admin" && userFromParamsId?.name !== userFromTokenId?.name) {
+            if (userFromTokenId?.getName() !== "admin" && userFromParamsId?.getName() !== userFromTokenId?.getName()) {
                 return res.status(403).json({ message: 'Forbidden: You can only edit your own data' });
             }
 
