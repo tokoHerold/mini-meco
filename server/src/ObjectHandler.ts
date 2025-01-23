@@ -3,7 +3,6 @@ import { Response, Request } from "express";
 import { User } from "./Models/User";
 import { CourseProject } from "./Models/CourseProject";
 import { CourseSchedule } from "./Models/CourseSchedule";
-import { createProject, createProjectGroup } from "./projectManagement";
 import { Course } from "./Models/Course";
 
 export class ObjectHandler { 

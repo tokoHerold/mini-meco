@@ -13,7 +13,8 @@ import {
     updateUserStatus, updateAllConfirmedUsers, 
     getEnrolledCourses,
     getProjectsForCourse,
-    getRoleForProject
+    getRoleForProject,
+    getUsers
 } from './projectManagement';
 import { 
     sendStandupsEmail, saveHappinessMetric, createSprints, getProjectHappinessMetrics, getSprints, 
@@ -56,14 +57,14 @@ initializeDB().then((db) => {
   app.get('/user/status', (req, res) => { getUsersByStatus(req, res, db) });
 
 
-  app.post('/register', (req, res) => register(req, res, db));
-  app.post('/login', (req, res) => login(req, res, db));
-  app.post('/forgotPassword', (req, res) => forgotPassword(req, res, db));
-  app.post('/resetPassword', (req, res) => resetPassword(req, res, db));
-  app.post('/project-admin/createProjectGroup', (req, res) => createProjectGroup(req, res, db));
-  app.post('/project-admin/createProject', (req, res) => createProject(req, res, db));
-  app.post('/project-admin/editProjectGroup', (req, res) => editProjectGroup(req, res, db));
-  app.post('/project-admin/editProject', (req, res) => editProject(req, res, db));
+  app.post('/user', (req, res) => register(req, res, db));
+  app.post('/session', (req, res) => login(req, res, db));
+  app.post('/user/password/forgotMail', (req, res) => forgotPassword(req, res, db));
+  app.post('/user/password', (req, res) => resetPassword(req, res, db));
+  app.post('/course', (req, res) => { createProjectGroup(req, res, db); });
+  app.post('/courseProject', (req, res) => { createProject(req, res, db); });
+  app.put('/course', (req, res) => { editProjectGroup(req, res, db); });
+  app.put('/courseProject', (req, res) => { editProject(req, res, db); });
   app.post('/settings/joinProject', (req, res) => joinProject(req, res, db));
   app.post('/settings/leaveProject', (req, res) => leaveProject(req, res, db));
   app.post('/settings/addGitHubUsername', (req, res) => setUserGitHubUsername(req, res, db));
@@ -72,20 +73,19 @@ initializeDB().then((db) => {
   app.post('/happiness/createSprints', (req, res) => createSprints(req, res, db));
   app.post('/settings/changeEmail', (req, res) => changeEmail(req, res, db));
   app.post('/settings/changePassword', (req, res) => changePassword(req, res, db));
-  app.post('/projConfig/addURL', (req, res) => setUserProjectURL(req, res, db));
-  app.post('/projConfig/changeURL', (req, res) => changeUserProjectURL(req, res, db));
-  app.post('/confirmEmail', (req, res) => confirmEmail(req, res, db));
-  app.post('/updateUserStatus', (req, res) => updateUserStatus(req, res, db));
-  app.post('/sendConfirmationEmail', (req, res) => sendConfirmationEmail(req, res, db))
-  app.post('/updateAllConfirmedUsers', (req, res) => updateAllConfirmedUsers(req, res, db));
+  app.post('/user/project/url', (req, res) => setUserProjectURL(req, res, db));
+  app.post('/projConfig/changeURL', (req, res) => getUserProjectURL(req, res, db));
+  app.post('/user/confirmation/email', (req, res) => confirmEmail(req, res, db));
+  app.post('/user/status',checkOwnership(db, oh), (req, res) => { updateUserStatus(req, res, db); });
+  app.post('/user/confirmation/trigger', (req, res) => sendConfirmationEmail(req, res, db))
+  app.post('/user/status/all', (req, res) => updateAllConfirmedUsers(req, res, db));
 
-  app.post('/projConfig/joinProject', (req, res) => joinProject(req, res, db));
   app.post('/projConfig/leaveProject', (req, res) => leaveProject(req, res, db));
   app.post('/projConfig/createProject', (req, res) => createProject(req, res, db));
   app.get('/enrolledCourses', (req, res) => getEnrolledCourses(req, res, db));
   app.get('/projectsForCourse', (req, res) => getProjectsForCourse(req, res, db));
   app.get('/roleForProject', (req, res) => getRoleForProject(req, res, db));
-  app.post('/createProject', (req, res) => createProject(req, res, db));
+
 
 
     app.listen(port, () => {

@@ -127,11 +127,10 @@ const ProjectAdmin: React.FC = () => {
   const handleCreateCourse = async (semester: string, courseName: string,) => {
     const body: { [key: string]: string } = { semester, projectGroupName: courseName };
 
-    const data = await post("project-admin/createProjectGroup", body)
-      .catch((error) => {
-        console.error("Error fetching data:", error.message);
-        return error;
-      });
+    const data = await post("/course", body).catch((error) => {
+      console.error("Error fetching data:", error.message);
+      return error;
+    });
 
     setMessage(data.message || "Success!");
     if (data.message.includes("successfully")) {
@@ -145,11 +144,10 @@ const ProjectAdmin: React.FC = () => {
 
     const body: { [key: string]: string } = { semester: selectedCourse.semester, projectGroupName: selectedCourse.courseName, projectName };
 
-    const data = await post("project-admin/createProject", body)
-      .catch((error) => {
-        console.error("Error fetching data:", error.message);
-        return error;
-      });
+    const data = await post("/courseProject", body).catch((error) => {
+      console.error("Error fetching data:", error.message);
+      return error;
+    });
 
     setMessage(data.message || "Success!");
     if (data.message.includes("successfully")) {
@@ -169,11 +167,10 @@ const ProjectAdmin: React.FC = () => {
       newProjectName: projectName,
     };
 
-    const data = await post("project-admin/editProject", body)
-      .catch((error) => {
-        console.error("Error fetching data:", error.message);
-        return error;
-      });
+    const data = await post("/courseProject", body).catch((error) => {
+      console.error("Error fetching data:", error.message);
+      return error;
+    });
 
     setMessage(data.message || "Success!");
     if (data.message.includes("successfully")) {
@@ -192,11 +189,10 @@ const ProjectAdmin: React.FC = () => {
       studentsCanCreateProject: editedCourse.studentsCanCreateProject,
     };
 
-    const data = await post("project-admin/editProjectGroup", body)
-      .catch((error) => {
-        console.error("Error fetching data:", error.message);
-        return error;
-      });
+    const data = await post("/course", body).catch((error) => {
+      console.error("Error fetching data:", error.message);
+      return error;
+    });
 
 
     setMessage(data.message || "Success!");
