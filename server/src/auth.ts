@@ -19,11 +19,13 @@ export const register = async (req: Request, res: Response, db: Database) => {
     return res.status(400).json({ message: 'Password must be at least 8 characters long' });
   } else if (name.length < 3) {
     return res.status(400).json({ message: 'Name must be at least 3 characters long' });
+  } else if(typeof email !== 'string') {
+    return res.status(400).json({ message: 'email has not the right format' });
   }
 
   let validatedEmail: EmailAddress;
   try {
-    validatedEmail = new EmailAddress(email);
+    validatedEmail = new EmailAddress(email as string);
   } catch (error) {
     return res.status(400).json({ message: 'Invalid email address' });
   }
@@ -63,13 +65,13 @@ export const register = async (req: Request, res: Response, db: Database) => {
 
 export const login = async (req: Request, res: Response, db: Database) => {
   const { email, password } = req.body;
-  if (!email || !password) {
+  if (!email || !password || typeof email !== 'string') {
     return res.status(400).json({ message: 'Email and password are required' });
   }
 
   let validatedEmail: EmailAddress;
   try {
-    validatedEmail = new EmailAddress(email);
+    validatedEmail = new EmailAddress(email as string);
   } catch (error) {
     return res.status(400).json({ message: 'Invalid email address' });
   }
@@ -141,8 +143,11 @@ const sendPasswordResetEmail = async (email: EmailAddress, token: string) => {
 
 export const forgotPassword = async (req: Request, res: Response, db: Database) => {
   let email: EmailAddress;
+  if (!req.body.email || typeof req.body.email !== 'string') {
+    return res.status(400).json({ message: 'User email is required' });
+  }
   try {
-    email = new EmailAddress(req.body.email); // Validate and construct the EmailAddress instance
+    email = new EmailAddress(req.body.email as string); // Validate and construct the EmailAddress instance
   } catch (error) {
   return res.status(400).json({ message: 'Invalid email address' });
 }
@@ -263,8 +268,11 @@ export const confirmEmail = async (req: Request, res: Response, db: Database) =>
 
 export const sendConfirmationEmail = async (req: Request, res: Response, db: Database) => {
   let email: EmailAddress;
+  if (!req.body.email || typeof req.body.email !== 'string') {
+    return res.status(400).json({ message: 'User email is required' });
+  }
   try {
-    email = new EmailAddress(req.body.email);
+    email = new EmailAddress(req.body.email as string);
   } catch (error) {
     return res.status(400).json({ message: 'Invalid email address' });
   }

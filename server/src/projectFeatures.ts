@@ -166,6 +166,9 @@ export const sendStandupsEmail = async (req: Request, res: Response, db: Databas
       const { projectName } = req.query;
 
       let email: EmailAddress;
+      if (!req.query.email || typeof req.query.email !== 'string') {
+        return res.status(400).json({ message: 'User email is required' });
+      }
       try {
         email = new EmailAddress(req.query.email as string);
       } catch (error) {

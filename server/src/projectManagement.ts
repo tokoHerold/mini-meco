@@ -171,11 +171,14 @@ export const joinProject = async (req: Request, res: Response, db: Database) => 
     const { projectName, memberName, memberRole } = req.body;
 
     let memberEmail: EmailAddress;
-          try {
-            memberEmail = new EmailAddress(req.query.email as string);
-          } catch (error) {
-            return res.status(400).json({ message: 'Invalid email address' });
-          }
+    if (!req.query.email || typeof req.query.email !== 'string') {
+        return res.status(400).json({ message: 'User email is required' });
+    }
+    try {
+        memberEmail = new EmailAddress(req.query.email as string);
+    } catch (error) {
+        return res.status(400).json({ message: 'Invalid email address' });
+    }
 
     if (!memberRole) {
         return res.status(400).json({ message: "Please fill in your role" });
@@ -222,11 +225,14 @@ export const leaveProject = async (req: Request, res: Response, db: Database) =>
 
 export const getUserProjects = async (req: Request, res: Response, db: Database) => {
     let userEmail : EmailAddress;
-      try {
+    if (!req.query.email || typeof req.query.email !== 'string') {
+        return res.status(400).json({ message: 'User email is required' });
+    }
+    try {
         userEmail = new EmailAddress(req.query.email as string);
-      } catch (error) {
+    } catch (error) {
         return res.status(400).json({ message: 'Invalid email address' });
-      }
+    }
   
     try {
       const projects = await db.all('SELECT projectName FROM user_projects WHERE userEmail = ?', [userEmail.toString()]);
