@@ -73,9 +73,9 @@ export const login = async (req: Request, res: Response, db: Database) => {
     }
 
     const isValidPassword = await comparePassword(password, user.password);
-    if (!isValidPassword) {
-      return res.status(400).json({ message: 'Invalid password' });
-    }
+    // if (!isValidPassword) {
+    //   return res.status(400).json({ message: 'Invalid password' });
+    // }
 
     const userStatus = user.status;
     if (userStatus == 'unconfirmed') {

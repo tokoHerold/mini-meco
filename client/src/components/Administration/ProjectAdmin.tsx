@@ -81,7 +81,7 @@ const ProjectAdmin: React.FC = () => {
 
   /* Helper method for fetching all projects of a course */
   const getProjectsForCourse = (course: string): Promise<Project[]> => {
-    return get(`projects?projectGroupName=${course}`)
+    return get(`courseProject?projectGroupName=${course}`)
       .then(projects => projects.map((project: { id: string; projectName: string; studentsCanJoinProject: boolean; }) => ({
         id: project.id,
         projectName: project.projectName,
@@ -99,7 +99,7 @@ const ProjectAdmin: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const coursesData = await get("project-groups");
+        const coursesData = await get("course");
 
         const coursesWithProjects: Course[] = await Promise.all(
           coursesData.map(async (course: { projectGroupName: string; semester: string; studentsCanCreateProject: boolean; }) => {
@@ -127,7 +127,7 @@ const ProjectAdmin: React.FC = () => {
   const handleCreateCourse = async (semester: string, courseName: string,) => {
     const body: { [key: string]: string } = { semester, projectGroupName: courseName };
 
-    const data = await post("/course", body).catch((error) => {
+    const data = await post("course", body).catch((error) => {
       console.error("Error fetching data:", error.message);
       return error;
     });
@@ -144,7 +144,7 @@ const ProjectAdmin: React.FC = () => {
 
     const body: { [key: string]: string } = { semester: selectedCourse.semester, projectGroupName: selectedCourse.courseName, projectName };
 
-    const data = await post("/courseProject", body).catch((error) => {
+    const data = await post("courseProject", body).catch((error) => {
       console.error("Error fetching data:", error.message);
       return error;
     });
@@ -167,7 +167,7 @@ const ProjectAdmin: React.FC = () => {
       newProjectName: projectName,
     };
 
-    const data = await post("/courseProject", body).catch((error) => {
+    const data = await post("courseProject", body).catch((error) => {
       console.error("Error fetching data:", error.message);
       return error;
     });
@@ -189,7 +189,7 @@ const ProjectAdmin: React.FC = () => {
       studentsCanCreateProject: editedCourse.studentsCanCreateProject,
     };
 
-    const data = await post("/course", body).catch((error) => {
+    const data = await post("course", body).catch((error) => {
       console.error("Error fetching data:", error.message);
       return error;
     });

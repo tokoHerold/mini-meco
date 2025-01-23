@@ -42,18 +42,18 @@ initializeDB().then((db) => {
     res.send('Server is running!');
   });
 
-    app.get('/semesters', (req, res) => { getSemesters(req, res, db) });
-    app.get('/course', (req, res) => { getProjectGroups(req, res, db) });
-    app.get('/courseProject', (req, res) => { getProjects(req, res, db) });
-    app.get('/user/projects', (req, res) => { getUserProjects(req, res, db) });
-    app.get('/courseProject/happiness', (req, res) => { getProjectHappinessMetrics(req, res, db) });
-    app.get('/sprints', (req, res) => { getSprints(req, res, db) });
-    app.get('/currentSprint', (req, res) => { getProjectCurrentSprint(req, res, db) });
-    app.get('/getGitURL', (req, res) => { getUserProjectURL(req, res, db) }); // to be removed, duplicate of /user/user/project/url
+  app.get('/semesters', (req, res) => { getSemesters(req, res, db) });
+  app.get('/course', (req, res) => { getProjectGroups(req, res, db) });
+  app.get('/courseProject', (req, res) => { getProjects(req, res, db) });
+  app.get('/user/projects', (req, res) => { getUserProjects(req, res, db) });
+  app.get('/courseProject/happiness', (req, res) => { getProjectHappinessMetrics(req, res, db) });
+  app.get('/sprints', (req, res) => { getSprints(req, res, db) });
+  app.get('/currentSprint', (req, res) => { getProjectCurrentSprint(req, res, db) });
+  app.get('/getGitURL', (req, res) => { getUserProjectURL(req, res, db) }); // to be removed, duplicate of /user/user/project/url
     app.get('/user/githubUsername', (req, res) => { getUserGitHubUsername(req, res, db) });
     app.get('/course/user', (req, res) => { getUserProjectGroups(req, res, db) });
     app.get('/user/projects', (req, res) => { getProjectURL(req, res, db) });
-    app.get('/getUsers', (req, res) => { getUsers(req, res, db) });
+  app.get('/getUsers', (req, res) => { getUsers(req, res, db) });
   app.get('/user/status', (req, res) => { getUsersByStatus(req, res, db) });
 
 
