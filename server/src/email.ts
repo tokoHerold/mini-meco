@@ -15,7 +15,23 @@ export class EmailAddress {
     }
   
     toString(): string {
+      if(!this.isValidEmail(this.value)) {
+        throw new Error('Invalid email address');
+      }
       return this.value;
     }
+
+    equals(email : EmailAddress): boolean {
+      return this.toString() === email.toString();
+    }
+
+    getDomain(): string {
+      // Split the email at the '@' symbol and return the domain part
+      const domain = this.value.split('@')[1];
+      if (!domain) {
+          throw new Error('Email does not contain a valid domain');
+      }
+      return domain;
+  }
   }
   

@@ -99,7 +99,7 @@ export const login = async (req: Request, res: Response, db: Database) => {
 
 
     const token = jwt.sign({ id: user.id }, 'your_jwt_secret', { expiresIn: '1h' });
-    res.status(200).json({ token, name: user.name, email: user.email, githubUsername: user.githubUsername });
+    res.status(200).json({ token, name: user.name, email: user.email.toString(), githubUsername: user.githubUsername });
   } catch (error) {
     console.error('Error during login:', error);
     res.status(500).json({ message: 'Login failed' });
@@ -252,7 +252,7 @@ export const confirmEmail = async (req: Request, res: Response, db: Database) =>
       return res.status(400).json({ message: 'Invalid or expired token' });
     }
 
-    await db.run('UPDATE users SET status = "confirmed", confirmEmailToken = NULL, confirmEmailExpire = NULL WHERE email = ?', [user.email]);
+    await db.run('UPDATE users SET status = "confirmed", confirmEmailToken = NULL, confirmEmailExpire = NULL WHERE email = ?', [user.email.toString()]);
 
     res.status(200).json({ message: 'Email has been confirmed' });
   } catch (error) {
@@ -264,7 +264,7 @@ export const confirmEmail = async (req: Request, res: Response, db: Database) =>
 export const sendConfirmationEmail = async (req: Request, res: Response, db: Database) => {
   let email: EmailAddress;
   try {
-    email = new EmailAddress(req.body.email); // Validate and construct the EmailAddress instance
+    email = new EmailAddress(req.body.email);
   } catch (error) {
     return res.status(400).json({ message: 'Invalid email address' });
   }

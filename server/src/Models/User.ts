@@ -1,5 +1,6 @@
 import { Visitor } from "./Visitor";
 import { CourseProject } from "./CourseProject";
+import { EmailAddress } from "../email";
 
 export class User extends Visitor {
 
@@ -7,7 +8,7 @@ export class User extends Visitor {
     protected id: number = 0,
     protected name: string = "",
     protected githubUsername: string = "",
-    protected email: string = "",
+    protected email: EmailAddress = new EmailAddress(""),
     protected status: string = "",
     protected password: string = "",
     protected resetPasswordToken: string = "",
@@ -32,7 +33,7 @@ export class User extends Visitor {
     return this.githubUsername;
   }
 
-  public getEmail(): string{
+  public getEmail(): EmailAddress{
     return this.email;
   }
 
@@ -77,7 +78,7 @@ export class User extends Visitor {
     this.githubUsername = githubUsername;
   }
 
-  public setEmail(email: string){
+  public setEmail(email: EmailAddress){
     this.email = email;
   }
 
