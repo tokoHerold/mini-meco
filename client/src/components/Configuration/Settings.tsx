@@ -1,16 +1,7 @@
 import "./Settings.css";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
-import Add from "./../../assets/Add.png";
 import Edit from "./../../assets/Edit.png";
-import Delete from "./../../assets/Line 20.png";
 import ReturnButton from "../Components/return";
 import {
   Dialog,
@@ -29,17 +20,10 @@ const Settings: React.FC = () => {
     navigate("/settings");
   };
 
-  const [role, setRole] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
   const [githubUsername, setGithubUsername] = useState("");
-
-  const [projectGroups, setProjectGroups] = useState<string[]>([]);
-  const [projects, setProjects] = useState<
-    { id: number; projectName: string; projectGroupName: string }[]
-  >([]);
-  const [selectedProjectGroup, setSelectedProjectGroup] = useState<string>("");
 
   const [user, setUser] = useState<{
     name: string;
@@ -81,21 +65,6 @@ const Settings: React.FC = () => {
     };
 
     fetchUserData();
-
-    const fetchProjectGroups = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/course");
-        const data = await response.json();
-        setProjectGroups(data.map((item: any) => item.projectGroupName));
-        console.log("Fetched project groups:", data);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error(error.message);
-        }
-      }
-    };
-
-    fetchProjectGroups();
   }, []);
 
   useEffect(() => {
@@ -144,7 +113,7 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/courseProject/${projectName}/user/${user.email}`,
+        "http://localhost:3000/settings/joinProject",
         {
           method: "POST",
           headers: {
@@ -184,9 +153,9 @@ const Settings: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/courseProject/${projectName}/user/${user.email}`,
+        "http://localhost:3000/settings/leaveProject",
         {
-          method: "DELETE",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
@@ -456,96 +425,6 @@ const Settings: React.FC = () => {
                 </DialogContent>
               </Dialog>
             </div>
-          </div>
-        </div>
-        <div className="ProjectContainer">
-          <div className="ProjectTitle">
-            <h3>Project Lists</h3>
-          </div>
-          <div className="SelectWrapper">
-            <Select
-              onValueChange={(value) => {
-                setSelectedProjectGroup(value);
-              }}
-            >
-              <SelectTrigger className="SelectTrigger">
-                <SelectValue placeholder="Select a project group" />
-              </SelectTrigger>
-              <SelectContent className="SelectContent">
-                {projectGroups.map((group, index) => (
-                  <SelectItem key={index} value={group}>
-                    {group}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            {filteredProjects.map((project) => (
-              <div className="ProjectItem3" key={project.id}>
-                <div className="ProjectName">{project.projectName}</div>
-                <div className="Imgs">
-                  <Dialog>
-                    <DialogTrigger className="DialogTrigger">
-                      <img className="Add" src={Add} alt="Add" />
-                    </DialogTrigger>
-                    <DialogContent className="DialogContent">
-                      <DialogHeader>
-                        <DialogTitle className="DialogTitle">
-                          Join Project
-                        </DialogTitle>
-                      </DialogHeader>
-                      <div className="RoleInput">
-                        <div className="Role">Role: </div>
-                        <input
-                          type="text"
-                          className="ProjAdmin-inputBox"
-                          placeholder="Enter your role"
-                          value={role}
-                          onChange={(e) => setRole(e.target.value)}
-                        />
-                      </div>
-                      <DialogFooter>
-                        <Button
-                          className="create"
-                          variant="primary"
-                          onClick={() => handleJoin(project.projectName)}
-                        >
-                          Join
-                        </Button>
-                      </DialogFooter>
-                      {message && <div className="Message">{message}</div>}
-                    </DialogContent>
-                  </Dialog>
-                  <Dialog>
-                    <DialogTrigger className="DialogTrigger">
-                      <img className="Delete" src={Delete} alt="Delete" />
-                    </DialogTrigger>
-                    <DialogContent className="DialogContent">
-                      <DialogHeader>
-                        <DialogTitle className="DialogTitle">
-                          Leave Project
-                        </DialogTitle>
-                      </DialogHeader>
-                      <div className="LeaveText">
-                        Are you sure you want to leave {project.projectName} ?{" "}
-                      </div>
-                      <DialogFooter>
-                        <Button
-                          className="create"
-                          variant="primary"
-                          onClick={() => handleLeave(project.projectName)}
-                        >
-                          Confirm
-                        </Button>
-                      </DialogFooter>
-                      {message && <div className="Message">{message}</div>}
-                    </DialogContent>
-                  </Dialog>
-                </div>
-                <hr className="ProjectDivider" />
-              </div>
-            ))}
           </div>
         </div>
       </div>
