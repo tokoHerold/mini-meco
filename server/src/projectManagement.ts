@@ -241,6 +241,19 @@ export const getUserProjectGroups = async (req: Request, res: Response, db: Data
     }
 };
 
+export const getUsers = async (req: Request, res: Response, db: Database) => {
+    try {
+        const user = await db.all('SELECT * FROM users');
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (error) {
+        console.error("Error during retrieving user status:", error);
+        res.status(500).json({ message: "Failed to retrieve user status", error });
+    }
+}
 
 export const getUsersByStatus = async (req: Request, res: Response, db: Database) => {
     const { status } = req.query;

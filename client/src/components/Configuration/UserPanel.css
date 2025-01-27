@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
     background: #D0E3FE;
     margin: 0;
@@ -41,20 +45,24 @@ body {
   }
   
   .BigContainer {
-    width: 1300px;
-    border-radius: 5px;
-    height: 1010px;
+    width: 700px;
+    height: 450px;
+    border-radius: 10px;
+    border-color: #000;
+    border-width: 2px;
     flex-shrink: 0;
     background: #FFF;
     padding: 10px;
     overflow-y: auto;
     overflow-x: hidden;
     position: relative;
+    align-content: center;
   }
   
   .AccountInfoContainer {
     width: 1232px;
-    height: 333px;
+    height: 650px;
+    color: #000;
     flex-shrink: 0;
     border-radius: 5px;
     border: 1px solid #D9D9D9;
@@ -65,6 +73,23 @@ body {
     margin-bottom: 50px;
     overflow-y: auto;
     overflow-x: hidden;
+    padding: 10px;
+    position: relative;
+  }
+  
+  .ProjectContainer {
+    width: 1232px;
+    height: 472px;
+    color: #000;
+    flex-shrink: 0;
+    border-radius: 5px;
+    border: 1px solid #D9D9D9;
+    margin-left: 20px;
+    background: #FFF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-bottom: 50px;
     padding: 10px;
     position: relative;
   }
@@ -97,9 +122,26 @@ body {
     text-align: start;
   }
   
+  .ProjectTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 73px;
+    color: #000;
+    font-family: "Kaisei Decol";
+    font-size: 25px;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 20px;
+    margin-left: 30px;
+    
+  }
+  
   .SelectTrigger {
     width: 300px;
     height: 50px;
+    color: black;
     flex-shrink: 0;
     font-size: 20px;
     border: 1px solid #000;
@@ -114,6 +156,7 @@ body {
   
   .SelectContent {
     font-size: 20px;
+    color: black;
     width: 300px;
     border: 1px solid #000;
     border-radius: 5px;
@@ -127,6 +170,33 @@ body {
     display: flex;
     position: relative;
   }
+  .Container{
+    width: 1044px;
+    height: 153px;
+    flex-shrink: 0;
+    background: #FFF;
+    box-shadow: none;
+    padding-top: 25px; 
+    box-sizing: border-box; 
+    padding: 20px; 
+    width: 100%; 
+    display: flex; 
+    justify-content: flex-start; 
+    align-items: center; 
+}
+  .ProjectItem {
+    display: flex;
+    color: black;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 30px;
+  }
+  
+  .ProjectName {
+    font-size: 20px;
+    font-family: "Kaisei Decol";
+  }
   
   .Edit {
     width: 40px;
@@ -134,6 +204,15 @@ body {
     cursor: pointer;
     transition: border-color 0.3s, background-color 0.3s;
 
+  }
+
+  
+  .ProjectDivider {
+    color: black;
+    border: none;
+    height: 2px;
+    background: #D9D9D9;
+    margin: 30px 40px;
   }
   
   .PersonalDataCOntainer{
@@ -195,6 +274,25 @@ margin-bottom: 50px;
   line-height: normal;
   }
   
+  .Role{
+    color: #000;
+    font-family: "Kaisei Decol";
+    font-size: 23px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-left: 20px;
+  }
+  
+  .ProjGroupName{
+    color: #000;
+    font-family: "Kaisei Decol";
+    font-size: 23px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  
   .DialogHeader {
     display: flex;
     justify-content: space-between;
@@ -222,6 +320,53 @@ margin-bottom: 50px;
     align-items: center;
   }
   
+  .ProjAdmin-input {
+    display: flex;
+    align-items: center;
+  }
+  
+  .ProjAdmin-inputBox {
+    border: none;
+    width: 70%;
+    height: 50px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.40);
+    font-size: medium;
+    margin-left: 176px;
+    font-family: var(--font-kaisei-decol);
+  
+  }
+  
+  .ProjAdmin-inputBox2 {
+    border: none;
+    width: 70%;
+    height: 50px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.40);
+    font-size: medium;
+    margin-left: 50px;
+    font-family: var(--font-kaisei-decol);
+  }
+  
+  .ProjAdmin-inputBox3 {
+    border: none;
+    width: 70%;
+    height: 50px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.40);
+    font-size: medium;
+    margin-left: 60px;
+    font-family: var(--font-kaisei-decol);
+  }
+  
+  
+  .ProjAdmin-inputBox4 {
+    border: none;
+    width: 70%;
+    height: 50px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.40);
+    font-size: medium;
+    margin-left: 60px;
+    font-family: var(--font-kaisei-decol);
+  }
+  
   .create {
     width: 152px;
     height: 54px;
@@ -236,6 +381,23 @@ margin-bottom: 50px;
     justify-content: center;
     align-items: center;
     margin: 0 auto; 
+  }
+  
+  .ProjectItem2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin: 30px;
+    
+  }
+
+  .ProjectItem3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 1200px;
+    margin: 30px;
   }
   
   .Add{
@@ -254,6 +416,10 @@ margin-bottom: 50px;
     display: flex;
     gap: 10px; 
     margin-right: -850px;
+  }
+
+  .RoleInput{
+display: flex;
   }
 
   .LeaveText{
