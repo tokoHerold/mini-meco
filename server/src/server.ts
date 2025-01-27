@@ -50,9 +50,9 @@ initializeDB().then((db) => {
   app.get('/sprints', (req, res) => { getSprints(req, res, db) });
   app.get('/currentSprint', (req, res) => { getProjectCurrentSprint(req, res, db) });
   app.get('/getGitURL', (req, res) => { getUserProjectURL(req, res, db) }); // to be removed, duplicate of /user/user/project/url
-    app.get('/user/githubUsername', (req, res) => { getUserGitHubUsername(req, res, db) });
-    app.get('/course/user', (req, res) => { getUserProjectGroups(req, res, db) });
-    app.get('/user/projects', (req, res) => { getProjectURL(req, res, db) });
+  app.get('/user/githubUsername', (req, res) => { getUserGitHubUsername(req, res, db) });
+  app.get('/course/user', (req, res) => { getUserProjectGroups(req, res, db) });
+  app.get('/user/projects', (req, res) => { getProjectURL(req, res, db) });
   app.get('/getUsers', (req, res) => { getUsers(req, res, db) });
   app.get('/user/status', (req, res) => { getUsersByStatus(req, res, db) });
 
@@ -76,7 +76,7 @@ initializeDB().then((db) => {
   app.post('/user/project/url', (req, res) => setUserProjectURL(req, res, db));
   app.post('/projConfig/changeURL', (req, res) => getUserProjectURL(req, res, db));
   app.post('/user/confirmation/email', (req, res) => confirmEmail(req, res, db));
-  app.post('/user/status',checkOwnership(db, oh), (req, res) => { updateUserStatus(req, res, db); });
+  app.post('/user/status', checkOwnership(db, oh), (req, res) => { updateUserStatus(req, res, db); });
   app.post('/user/confirmation/trigger', (req, res) => sendConfirmationEmail(req, res, db))
   app.post('/user/status/all', (req, res) => updateAllConfirmedUsers(req, res, db));
 
