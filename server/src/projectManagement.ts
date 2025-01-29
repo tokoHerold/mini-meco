@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { send } from "process";
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-import { EmailAddress } from './email';
+import { Email } from './email';
 
 dotenv.config();
 
@@ -170,12 +170,12 @@ export const getProjects = async (req: Request, res: Response, db: Database) => 
 export const joinProject = async (req: Request, res: Response, db: Database) => {
     const { projectName, memberName, memberRole } = req.body;
 
-    let memberEmail: EmailAddress;
+    let memberEmail: Email;
     if (!req.query.email || typeof req.query.email !== 'string') {
         return res.status(400).json({ message: 'User email is required' });
     }
     try {
-        memberEmail = new EmailAddress(req.query.email as string);
+        memberEmail = new Email(req.query.email as string);
     } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
     }
@@ -224,12 +224,12 @@ export const leaveProject = async (req: Request, res: Response, db: Database) =>
 }
 
 export const getUserProjects = async (req: Request, res: Response, db: Database) => {
-    let userEmail : EmailAddress;
+    let userEmail : Email;
     if (!req.query.email || typeof req.query.email !== 'string') {
         return res.status(400).json({ message: 'User email is required' });
     }
     try {
-        userEmail = new EmailAddress(req.query.email as string);
+        userEmail = new Email(req.query.email as string);
     } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
     }
@@ -402,12 +402,12 @@ export const sendRemovedEmail = async (email: string) => {
 
 export const getEnrolledCourses = async (req: Request, res: Response, db: Database) => {
     
-    let userEmail : EmailAddress;
+    let userEmail : Email;
     if (!req.query.email || typeof req.query.email !== 'string') {
         return res.status(400).json({ message: 'User email is required' });
       }
     try {
-        userEmail = new EmailAddress(req.query.email as string);
+        userEmail = new Email(req.query.email as string);
     } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
     }
@@ -430,12 +430,12 @@ export const getEnrolledCourses = async (req: Request, res: Response, db: Databa
 export const getProjectsForCourse = async (req: Request, res: Response, db: Database) => {
     const { courseName} = req.query;
 
-    let userEmail : EmailAddress;
+    let userEmail : Email;
     if (!req.query.email || typeof req.query.email !== 'string') {
         return res.status(400).json({ message: 'User email is required' });
       }
     try {
-        userEmail = new EmailAddress(req.query.email as string);
+        userEmail = new Email(req.query.email as string);
     } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
     }
@@ -471,12 +471,12 @@ export const getProjectsForCourse = async (req: Request, res: Response, db: Data
 export const getRoleForProject = async (req: Request, res: Response, db: Database) => {
     const { projectName } = req.query;
 
-    let userEmail : EmailAddress;
+    let userEmail : Email;
     if (!req.query.email || typeof req.query.email !== 'string') {
         return res.status(400).json({ message: 'User email is required' });
       }
     try {
-        userEmail = new EmailAddress(req.query.email as string);
+        userEmail = new Email(req.query.email as string);
     } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
     }

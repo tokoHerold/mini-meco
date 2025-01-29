@@ -1,8 +1,8 @@
-import { EmailAddress } from "../email";
+import { Email } from "../email";
 
 export class CourseProject {
 
-    public userEmail: EmailAddress = new EmailAddress("");
+    public userEmail: Email = new Email("");
     public projectName: string = "";
     public url: string = "";
 

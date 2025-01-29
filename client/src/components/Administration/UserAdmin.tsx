@@ -6,15 +6,15 @@ import ReturnButton from "../Components/return";
 import Table from "../Components/Table";
 
 import Edit from "./../../assets/Edit.png";
-import Email from "./../../assets/EmailIcon.png";
+import EmailIcon from "./../../assets/EmailIcon.png";
 
-import { EmailAddress } from '../../../../server/src/email';
+import { Email } from '../../../../server/src/email';
 
 const userStatus = ["unconfirmed", "confirmed", "suspended", "removed"];
 
 interface User {
     id: number;
-    email: EmailAddress;
+    email: Email;
     name: string;
     githubUsername: string | null;
     status: string;
@@ -30,7 +30,7 @@ function checkError(response: Response) {
 }
 
 function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) => void }) {
-    const [email, setEmail] = useState<EmailAddress>(user.email);
+    const [email, setEmail] = useState<Email>(user.email);
     const [githubUsername, setGithubUsername] = useState<string>(user.githubUsername || "");
     const [status, setStatus] = useState<string>(user.status);
     const [password, setPassword] = useState<string>();
@@ -101,7 +101,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
                             </div>
                             <div className="mb-5">
                                 <label className="mb-2 block text-sm font-medium text-gray-900">Email</label>
-                                <input type="email" value={email.toString()} onChange={e => setEmail(new EmailAddress(e.target.value))} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" />
+                                <input type="email" value={email.toString()} onChange={e => setEmail(new Email(e.target.value))} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" />
                             </div>
                             <div className="mb-5">
                                 <label className="mb-2 block text-sm font-medium text-gray-900">GitHub Username</label>
@@ -165,7 +165,7 @@ const UserAdmin = () => {
         user.status,
         <div key={user.id} className="flex flex-row gap-3">
             <img className="h-5" src={Edit} title="edit" onClick={() => setEditing(user)}></img>
-            {user.status === "unconfirmed" && <img className="h-5" src={Email} title="send confirmation email" onClick={() => sendConfirmationEmail(user)}></img>}
+            {user.status === "unconfirmed" && <img className="h-5" src={EmailIcon} title="send confirmation email" onClick={() => sendConfirmationEmail(user)}></img>}
         </div>
     ]);
 

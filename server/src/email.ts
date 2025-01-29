@@ -1,12 +1,10 @@
 import { IllegalArgumentException } from "./Exeptions/IllegalArgumentException";
 
-export class EmailAddress {
+export class Email {
   private readonly value: string;
 
   constructor(email: string) {
-    if (!this.isValidEmail(email)) {
-      IllegalArgumentException.assert(!this.isValidEmail(email), 'Invalid email address');
-    }
+    IllegalArgumentException.assert(this.isValidEmail(email), 'Invalid email address');
     this.value = email;
   }
 
@@ -20,7 +18,7 @@ export class EmailAddress {
     return this.value;
   }
 
-  equals(email : EmailAddress): boolean {
+  equals(email : Email): boolean {
     return this.toString() === email.toString();
   }
 }

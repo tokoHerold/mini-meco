@@ -1,7 +1,7 @@
 import { Database } from "sqlite";
 import { Request, Response } from "express";
 import nodemailer from "nodemailer";
-import { EmailAddress } from './email';
+import { Email } from './email';
 
 export const sendStandupEmails = async (req: Request, res: Response, db: Database) => {
     const { projectName, userName, doneText, plansText, challengesText } = req.body;
@@ -93,9 +93,9 @@ export const sendStandupEmails = async (req: Request, res: Response, db: Databas
   
   export const saveHappinessMetric = async (req: Request, res: Response, db: Database) => {
       const { projectName, happiness, sprintName } = req.body;
-      let userEmail: EmailAddress;
+      let userEmail: Email;
       try {
-        userEmail = new EmailAddress(req.query.email as string);
+        userEmail = new Email(req.query.email as string);
       } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
       }
@@ -165,12 +165,12 @@ export const sendStandupEmails = async (req: Request, res: Response, db: Databas
     export const getProjectURL = async (req: Request, res: Response, db: Database) => {
       const { projectName } = req.query;
 
-      let email: EmailAddress;
+      let email: Email;
       if (!req.query.email || typeof req.query.email !== 'string') {
         return res.status(400).json({ message: 'User email is required' });
       }
       try {
-        email = new EmailAddress(req.query.email as string);
+        email = new Email(req.query.email as string);
       } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
       }

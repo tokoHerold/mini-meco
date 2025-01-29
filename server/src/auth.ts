@@ -5,7 +5,7 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { Database } from 'sqlite';
 import { comparePassword, hashPassword } from './hash';
-import { EmailAddress } from './email';
+import { Email } from './email';
 
 dotenv.config();
 
@@ -23,9 +23,9 @@ export const register = async (req: Request, res: Response, db: Database) => {
     return res.status(400).json({ message: 'email has not the right format' });
   }
 
-  let validatedEmail: EmailAddress;
+  let validatedEmail: Email;
   try {
-    validatedEmail = new EmailAddress(email as string);
+    validatedEmail = new Email(email as string);
   } catch (IllegalArgumentException) {
     return res.status(400).json({ message: 'Invalid email address' });
   }
@@ -69,9 +69,9 @@ export const login = async (req: Request, res: Response, db: Database) => {
     return res.status(400).json({ message: 'Email and password are required' });
   }
 
-  let validatedEmail: EmailAddress;
+  let validatedEmail: Email;
   try {
-    validatedEmail = new EmailAddress(email as string);
+    validatedEmail = new Email(email as string);
   } catch (IllegalArgumentException) {
     return res.status(400).json({ message: 'Invalid email address' });
   }
@@ -109,7 +109,7 @@ export const login = async (req: Request, res: Response, db: Database) => {
 };
 
 
-const sendPasswordResetEmail = async (email: EmailAddress, token: string) => {
+const sendPasswordResetEmail = async (email: Email, token: string) => {
 
   const transporter = nodemailer.createTransport({
     host: 'smtp-auth.fau.de',
@@ -142,12 +142,12 @@ const sendPasswordResetEmail = async (email: EmailAddress, token: string) => {
 };
 
 export const forgotPassword = async (req: Request, res: Response, db: Database) => {
-  let email: EmailAddress;
+  let email: Email;
   if (!req.body.email || typeof req.body.email !== 'string') {
     return res.status(400).json({ message: 'User email is required' });
   }
   try {
-    email = new EmailAddress(req.body.email as string); // Validate and construct the EmailAddress instance
+    email = new Email(req.body.email as string); // Validate and construct the Email instance
   } catch (IllegalArgumentException) {
   return res.status(400).json({ message: 'Invalid email address' });
 }
@@ -206,7 +206,7 @@ export const resetPassword = async (req: Request, res: Response, db: Database) =
   }
 };
 
-export const sendConfirmEmail = async (email: EmailAddress, token: string) => {
+export const sendConfirmEmail = async (email: Email, token: string) => {
 
   const transporter = nodemailer.createTransport({
     host: 'smtp-auth.fau.de',
@@ -267,12 +267,12 @@ export const confirmEmail = async (req: Request, res: Response, db: Database) =>
 }
 
 export const sendConfirmationEmail = async (req: Request, res: Response, db: Database) => {
-  let email: EmailAddress;
+  let email: Email;
   if (!req.body.email || typeof req.body.email !== 'string') {
     return res.status(400).json({ message: 'User email is required' });
   }
   try {
-    email = new EmailAddress(req.body.email as string);
+    email = new Email(req.body.email as string);
   } catch (IllegalArgumentException) {
     return res.status(400).json({ message: 'Invalid email address' });
   }
