@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import nodemailer from "nodemailer";
 import { EmailAddress } from './email';
 
-export const sendStandupsEmail = async (req: Request, res: Response, db: Database) => {
+export const sendStandupEmails = async (req: Request, res: Response, db: Database) => {
     const { projectName, userName, doneText, plansText, challengesText } = req.body;
 
   
@@ -96,7 +96,7 @@ export const sendStandupsEmail = async (req: Request, res: Response, db: Databas
       let userEmail: EmailAddress;
       try {
         userEmail = new EmailAddress(req.query.email as string);
-      } catch (error) {
+      } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
       }
 
@@ -171,7 +171,7 @@ export const sendStandupsEmail = async (req: Request, res: Response, db: Databas
       }
       try {
         email = new EmailAddress(req.query.email as string);
-      } catch (error) {
+      } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
       }
   

@@ -176,7 +176,7 @@ export const joinProject = async (req: Request, res: Response, db: Database) => 
     }
     try {
         memberEmail = new EmailAddress(req.query.email as string);
-    } catch (error) {
+    } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
     }
 
@@ -230,7 +230,7 @@ export const getUserProjects = async (req: Request, res: Response, db: Database)
     }
     try {
         userEmail = new EmailAddress(req.query.email as string);
-    } catch (error) {
+    } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
     }
   
@@ -408,7 +408,7 @@ export const getEnrolledCourses = async (req: Request, res: Response, db: Databa
       }
     try {
         userEmail = new EmailAddress(req.query.email as string);
-    } catch (error) {
+    } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
     }
 
@@ -436,7 +436,7 @@ export const getProjectsForCourse = async (req: Request, res: Response, db: Data
       }
     try {
         userEmail = new EmailAddress(req.query.email as string);
-    } catch (error) {
+    } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
     }
 
@@ -477,7 +477,7 @@ export const getRoleForProject = async (req: Request, res: Response, db: Databas
       }
     try {
         userEmail = new EmailAddress(req.query.email as string);
-    } catch (error) {
+    } catch (IllegalArgumentException) {
         return res.status(400).json({ message: 'Invalid email address' });
     }
   

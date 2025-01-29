@@ -26,7 +26,7 @@ export const register = async (req: Request, res: Response, db: Database) => {
   let validatedEmail: EmailAddress;
   try {
     validatedEmail = new EmailAddress(email as string);
-  } catch (error) {
+  } catch (IllegalArgumentException) {
     return res.status(400).json({ message: 'Invalid email address' });
   }
 
@@ -72,7 +72,7 @@ export const login = async (req: Request, res: Response, db: Database) => {
   let validatedEmail: EmailAddress;
   try {
     validatedEmail = new EmailAddress(email as string);
-  } catch (error) {
+  } catch (IllegalArgumentException) {
     return res.status(400).json({ message: 'Invalid email address' });
   }
 
@@ -148,7 +148,7 @@ export const forgotPassword = async (req: Request, res: Response, db: Database) 
   }
   try {
     email = new EmailAddress(req.body.email as string); // Validate and construct the EmailAddress instance
-  } catch (error) {
+  } catch (IllegalArgumentException) {
   return res.status(400).json({ message: 'Invalid email address' });
 }
 
@@ -273,7 +273,7 @@ export const sendConfirmationEmail = async (req: Request, res: Response, db: Dat
   }
   try {
     email = new EmailAddress(req.body.email as string);
-  } catch (error) {
+  } catch (IllegalArgumentException) {
     return res.status(400).json({ message: 'Invalid email address' });
   }
   try {
