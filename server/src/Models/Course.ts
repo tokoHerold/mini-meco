@@ -1,14 +1,11 @@
 import { CourseProject } from "./CourseProject";
 export class Course {
-  protected name: string;
-  protected semester: string;
-  protected projects: CourseProject[];
 
-  constructor(name: string, semester: string, projects: CourseProject[] = []) {
-    this.name = name;
-    this.semester = semester;
-    this.projects = projects;
-  }
+  constructor(
+    protected name: string,
+    protected semester: string,
+    protected projects: CourseProject[]
+  ) { }
 
   // Getters
   public getName(): string {

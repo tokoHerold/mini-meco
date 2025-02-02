@@ -2,31 +2,37 @@ import { CourseProject } from "./CourseProject";
 import { User } from "./User";
 
 export class ProjectMember {
+  constructor(
+    protected project: CourseProject,
+    protected user: User,
+    protected role: string,
+    protected userProjectUrl: string
+  ) { }
 
-  protected project: CourseProject;
-  protected user: User;
-  protected role: string;
 
-  constructor(project: CourseProject, user: User, role: string) {
-    this.project = project
-    this.user = user;
-    this.role = role;
-  }
   // Getters
-  public getProject(): CourseProject{
+  public getProject(): CourseProject {
     return this.project;
   }
 
-  public getUser(): User{
+  public getUser(): User {
     return this.user;
   }
 
-  public getRole(): string{
+  public getRole(): string {
     return this.role;
   }
 
+  public getUserProjectUrl(): string {
+    return this.userProjectUrl;
+  }
+
   // Setters
-  setRole(role: string){
+  public setRole(role: string) {
     this.role = role;
+  }
+
+  public setUserProjectUrl(url: string) {
+    this.userProjectUrl = url;
   }
 }
