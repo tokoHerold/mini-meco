@@ -74,7 +74,7 @@ const ProjectConfig: React.FC = () => {
       if (userEmail) {
         try {
           const response = await fetch(
-            `http://localhost:3000/enrolledCourses?userEmail=${userEmail}`
+            `http://localhost:3000/user/courses?userEmail=${userEmail}`
           );
           const data = await response.json();
           setCourses(data.map((course: { projectGroupName: string }) => course.projectGroupName));
