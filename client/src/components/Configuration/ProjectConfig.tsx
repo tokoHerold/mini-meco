@@ -296,7 +296,7 @@ const ProjectConfig: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/projConfig/createProject`,
+        `http://localhost:3000/courseProject`,
         {
           method: "POST",
           headers: {
