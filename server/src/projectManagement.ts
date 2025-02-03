@@ -9,7 +9,7 @@ import { Semester } from "./Models/Semester";
 dotenv.config();
 
 export const createProjectGroup = async (req: Request, res: Response, db: Database) => {
-    const { semester: semesterInput, projectGroupName } = req.body;
+    const { semesterInput, projectGroupName } = req.body;
     // debug
     console.log("Semester input: " + semesterInput)
 
@@ -18,7 +18,7 @@ export const createProjectGroup = async (req: Request, res: Response, db: Databa
     }
     
     try {
-        const semester = Semester.fromString(semesterInput);
+        const semester = Semester.create(semesterInput); // Uses the Semester's internal validation
         await db.run("INSERT INTO projectGroup (semester, projectGroupName) VALUES (?, ?)", [semester.toString(), projectGroupName]);
         await db.exec(`
             CREATE TABLE IF NOT EXISTS "${projectGroupName}" (
@@ -72,7 +72,7 @@ export const editProjectGroup = async (req: Request, res: Response, db: Database
     }
 
     try {
-        const semester = Semester.fromString(newSemester);
+        const semester = Semester.create(newSemester); // @todo Shared ValueType method?
         console.log(`Executing SQL: UPDATE projectGroup SET semester = '${semester.toString()}', projectGroupName = '${newProjectGroupName}' WHERE projectGroupName = '${projectGroupName}'`);
 
         await db.run(

@@ -1,101 +1,93 @@
+import { ValueType, ValueTypeError } from "./ValueType";
+
+type SemesterAlias = "winter" | "summer" | "ws" | "ss";
+
 export enum SemesterType {
-  Winter = "WS",
-  Summer = "SS",
+  Winter = "winter",
+  Summer = "summer",
 }
 
-export class Semester {
-  private readonly type: SemesterType;
-  private readonly academicYear: string;
+// In another world, it might be called SemesterProps
+export interface SemesterValueTypes {
+  typeName: SemesterAlias;
+  academicYear: string;
+  // semesterInput: string;
+}
 
-  constructor(type: SemesterType, academicYear: string) {
-    this.type = type;
-    this.academicYear = academicYear;
+export class Semester extends ValueType<SemesterValueTypes> {
+  private readonly _type: SemesterAlias;
+
+  private constructor(other: SemesterValueTypes) {
+    super(other);
+    this._type = other.typeName;
   }
 
-  /**
-   * Factory method to create a Semester object from a string input.
-   * @param input Supported formats: "WS32", "Winter2032", "SS2025", "Summer25".
-   */
-  public static fromString(input: string): Semester {
-    if (!input || input.length < 4) {
-      throw new Error(
-        "Invalid semester format. Use 'WSYY', 'WSYYYY', 'SSYY', or 'SSYYYY' formats."
-      );
-    }
-
-    // Normalize the input format to lowercase
-    const normalizedInput = input.trim().toLowerCase();
-
-    let type: SemesterType;
-    let yearPart: string;
-
-    if (
-      normalizedInput.startsWith("ws") ||
-      normalizedInput.startsWith("winter")
-    ) {
-      type = SemesterType.Winter;
-      yearPart = normalizedInput.replace(/^(ws|winter)/, "").trim();
-    } else if (
-      normalizedInput.startsWith("ss") ||
-      normalizedInput.startsWith("summer")
-    ) {
-      type = SemesterType.Summer;
-      yearPart = normalizedInput.replace(/^(ss|summer)/, "").trim();
-    } else {
-      throw new Error(
-        "Invalid semester type. Use 'WS', 'Winter', 'SS', or 'Summer'."
-      );
-    }
-
-    // Process and validate the year part of the semester
-    const year = this.parseYear(yearPart);
-
-    // Calculate the academic year based on the semester type
-    if (type === SemesterType.Winter) {
-      const nextYear = year + 1;
-      const academicYear = `${year}/${
-        nextYear.toString().length > 2 ? nextYear.toString().slice(2) : nextYear
-      }`;
-      return new Semester(type, academicYear);
-    } else {
-      return new Semester(type, `${year}`);
-    }
+  // Factory method to create a Semester value object
+  static create(input : SemesterValueTypes): Semester {
+    return new Semester(input);
   }
 
-  /**
-   * Helper function to process and validate the year part of the semester.
-   * Supports both two-digit and four-digit year representations.
-   * @param yearPart - The year part as a string (e.g., "32" or "2032").
-   * @returns The year as a four-digit number.
-   */
-  private static parseYear(yearPart: string): number {
-    const year = parseInt(yearPart, 10);
+  // Validate the input and create a Value object
+  protected init(others: SemesterValueTypes): SemesterValueTypes {
+    const { typeName, academicYear } = others;
+    if (!typeName || !academicYear) throw new ValueTypeError("Semester type and academic year must be provided.");
+    
+    const type = typeName.trim().toLowerCase() as SemesterAlias;
+    const validSemesterTypes: SemesterAlias[] = ["winter", "summer", "ws", "ss"];
+    const year = parseInt(academicYear, 10); // todo: check if this is correct
+
+    if (!validSemesterTypes.includes(type)) {
+      throw new ValueTypeError(`Invalid semester type: ${type}. Must be '{ws|winter}' or '{ss|summer}'.`);
+    }
 
     if (isNaN(year)) {
-      throw new Error(`Invalid year part in semester: ${yearPart}`);
+      throw new ValueTypeError(`Invalid year in semester: ${year}`);
     }
 
-    if (yearPart.length === 2) {
-      return 2000 + year; // assumes 2000s
-    } else if (yearPart.length === 4) {
-      return year;
-    } else {
-      throw new Error(`Invalid year length: ${yearPart}`);
+    let validSemesterType = type === 'ws' ? 'winter' : type === 'ss' ? 'summer' : type; // Normalize to 'winter' or 'summer'
+    let validAcademicYear = this.parseAcademicYear(year, validSemesterType as SemesterType); // Normalize to academic year format
+
+    return {
+      typeName: validSemesterType as SemesterType,
+      academicYear: validAcademicYear as string, // todo: check if its use AcademicYear as type
     }
   }
 
+  // Getter methods
   public getType(): SemesterType {
-    return this.type;
+    return this._type === 'winter' ? SemesterType.Winter : SemesterType.Summer;
   }
 
   public getAcademicYear(): string {
-    return this.academicYear;
+    return this.value.academicYear;
   }
 
-  /**
-   * Returns a string representation of the Semester object.
-   */
+  // Returns a string representation of the Semester object.
   public toString(): string {
-    return `${this.type} ${this.academicYear}`;
+    return `${this.value.typeName} Semester ${this.value.academicYear}`;
+  }
+
+  // Helper method to calculate the academic year based on the semester type. 
+  // Alos convert 2-digit years to 4-digit years but assumes 21st century.
+  private parseAcademicYear(year: number, type: SemesterType): string {
+    let academicYear: string;
+
+    if (type === SemesterType.Winter) {
+      if (year < 100) {
+        academicYear = `20${year}/${year + 1}`; // e.g. 2024/25
+      } else {
+        let nextYear = year + 1;
+        academicYear = `${year}/${(nextYear).toString().slice(-2)}`;
+      }
+      return academicYear;
+
+    } else {
+      if (year < 100) { 
+        academicYear = `20${year}`; // e.g. 2024
+      } else { 
+        academicYear = `${year}`; 
+      }
+      return academicYear;
+    }
   }
 }
