@@ -10,6 +10,7 @@ dotenv.config();
 
 export const createProjectGroup = async (req: Request, res: Response, db: Database) => {
     const { semester: semesterInput, projectGroupName } = req.body;
+    // debug
     console.log("Semester input: " + semesterInput)
 
     if (!semesterInput || !projectGroupName) {
@@ -65,21 +66,19 @@ export const createProject = async (req: Request, res: Response, db: Database) =
 
 export const editProjectGroup = async (req: Request, res: Response, db: Database) => {
     const { projectGroupName, newSemester, newProjectGroupName } = req.body;
-    const semesterRegex = /^(SS|WS)\d{2,4}$/; // Format: SS24 or WS2425
  
     if (!newSemester || !newProjectGroupName) {
         return res.status(400).json({ message: "Please fill in semester and project group name" });
-    } else if (!semesterRegex.test(newSemester)) {
-        return res.status(400).json({ message: "Invalid semester format. Please use SSYY or WSYYYY format" });
     }
 
     try {
-        console.log(`Executing SQL: UPDATE projectGroup SET semester = '${newSemester}', projectGroupName = '${newProjectGroupName}' WHERE projectGroupName = '${projectGroupName}'`);
+        const semester = Semester.fromString(newSemester);
+        console.log(`Executing SQL: UPDATE projectGroup SET semester = '${semester.toString()}', projectGroupName = '${newProjectGroupName}' WHERE projectGroupName = '${projectGroupName}'`);
 
         await db.run(
             
             `UPDATE projectGroup SET semester = ?, projectGroupName = ? WHERE projectGroupName = ?`, 
-            [newSemester, newProjectGroupName, projectGroupName]
+            [semester.toString(), newProjectGroupName, projectGroupName]
         );        
 
         res.status(201).json({ message: "Project group edited successfully" });
