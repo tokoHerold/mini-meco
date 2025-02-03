@@ -96,7 +96,7 @@ const Happiness: React.FC = (): React.ReactNode => {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/sprints?projectGroupName=${encodeURIComponent(
+          `http://localhost:3000/courseProject/sprints?projectGroupName=${encodeURIComponent(
             selectedProjectGroup
           )}`
         );
@@ -122,7 +122,7 @@ const Happiness: React.FC = (): React.ReactNode => {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/currentSprint?projectName=${encodeURIComponent(
+          `http://localhost:3000/courseProject/currentSprint?projectName=${encodeURIComponent(
             projectName
           )}`
         );

@@ -55,11 +55,11 @@ initializeDB().then((db) => {
   app.post('/courseProject', (req, res) => { createProject(req, res, db); });
   app.put('/courseProject', (req, res) => { editProject(req, res, db); });
   app.get('/courseProject/happiness', (req, res) => { getProjectHappinessMetrics(req, res, db) });
-  app.post('/happiness/saveHappiness', (req, res) => saveHappinessMetric(req, res, db));
-  app.post('/happiness/createSprints', (req, res) => createSprints(req, res, db));
-  app.post('/projects/sendStandupsEmail', (req, res) => sendStandupsEmail(req, res, db));
-  app.get('/currentSprint', (req, res) => { getProjectCurrentSprint(req, res, db) });
-  app.get('/sprints', (req, res) => { getSprints(req, res, db) });
+  app.post('/courseProject/happiness', (req, res) => saveHappinessMetric(req, res, db));
+  app.post('/courseProject/sprints', (req, res) => createSprints(req, res, db));
+  app.post('/courseProject/standupsEmail', (req, res) => sendStandupsEmail(req, res, db));
+  app.get('/courseProject/currentSprint', (req, res) => { getProjectCurrentSprint(req, res, db) });
+  app.get('/courseProject/sprints', (req, res) => { getSprints(req, res, db) });
 
 
   // user endpoints
