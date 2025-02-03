@@ -69,7 +69,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
 
         Promise.all(promises).then(() =>
             email !== user.email ?
-                fetch(`http://localhost:3000/settings/changeEmail`,
+                fetch(`http://localhost:3000/user/mail`,
                     {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
