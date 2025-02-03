@@ -123,7 +123,7 @@ const UserPanel: React.FC = () => {
     };
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/changePassword",
+        "http://localhost:3000/user/password",
         {
           method: "POST",
           headers: {

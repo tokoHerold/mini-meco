@@ -57,7 +57,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
                 .catch(console.error));
         }
         if (password) {
-            promises.push(fetch(`http://localhost:3000/settings/changePassword`,
+            promises.push(fetch(`http://localhost:3000/user/password`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
