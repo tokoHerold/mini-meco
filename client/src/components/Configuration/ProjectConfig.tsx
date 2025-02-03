@@ -98,7 +98,7 @@ const ProjectConfig: React.FC = () => {
     if (userEmail) {
       try {
         const response = await fetch(
-          `http://localhost:3000/projectsForCourse?courseName=${courseName}&userEmail=${userEmail}`
+          `http://localhost:3000/course/courseProjects?courseName=${courseName}&userEmail=${userEmail}`
         );
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
