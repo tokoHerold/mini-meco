@@ -110,7 +110,7 @@ const ProjectConfig: React.FC = () => {
         for (const project of data.enrolledProjects) {
           try {
             const roleResponse = await fetch(
-              `http://localhost:3000/roleForProject?projectName=${project.projectName}&userEmail=${userEmail}`
+              `http://localhost:3000/courseProject/user/role?projectName=${project.projectName}&userEmail=${userEmail}`
             );
 
             const roleData = await roleResponse.json();

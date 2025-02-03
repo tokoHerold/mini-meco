@@ -83,7 +83,7 @@ initializeDB().then((db) => {
   app.post('/projConfig/leaveProject', (req, res) => leaveProject(req, res, db));
   app.get('/user/courses', (req, res) => getEnrolledCourses(req, res, db));
   app.get('/course/courseProjects', (req, res) => getProjectsForCourse(req, res, db));
-  app.get('/roleForProject', (req, res) => getRoleForProject(req, res, db));
+  app.get('/courseProject/user/role', (req, res) => getRoleForProject(req, res, db));
 
 
 
