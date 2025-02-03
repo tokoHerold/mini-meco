@@ -80,7 +80,7 @@ initializeDB().then((db) => {
   app.post('/user/password', (req, res) => changePassword(req, res, db));
   app.post('/user/project', (req, res) => joinProject(req, res, db));
   app.delete('/user/project', (req, res) => leaveProject(req, res, db));
-  app.post('/settings/addGitHubUsername', (req, res) => setUserGitHubUsername(req, res, db));
+  app.post('/user/gitubUsername', (req, res) => setUserGitHubUsername(req, res, db));
   app.get('/user/status', (req, res) => { getUsersByStatus(req, res, db) });
 
 

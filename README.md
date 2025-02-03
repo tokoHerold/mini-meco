@@ -356,7 +356,7 @@ Note: The structure shown above includes only the most important files and direc
           - Example: standupsTest.cy.ts, authTest.cy.ts
 6. API Routes and Endpoints
     - Use camelCase for URL paths<br>
-           - Example: /api/saveHappiness or /api/addGitHubUsername
+           - Example: /api/saveHappiness or /api/user/githubUsername
 
 
 ### 4.3 Key Files and Directories

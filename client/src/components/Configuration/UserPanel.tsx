@@ -165,7 +165,7 @@ const UserPanel: React.FC = () => {
     let msg = document.getElementById('ErrorMessageGithub');
     try {
       const response = await fetch(
-        "http://localhost:3000/settings/addGitHubUsername",
+        "http://localhost:3000/user/githubUsername",
         {
           method: "POST",
           headers: {

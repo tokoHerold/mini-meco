@@ -37,7 +37,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
     function onSave() {
         const promises = []
         if (githubUsername && githubUsername !== user.githubUsername) {
-            promises.push(fetch(`http://localhost:3000/settings/addGitHubUsername`,
+            promises.push(fetch(`http://localhost:3000/user/githubUsername`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
