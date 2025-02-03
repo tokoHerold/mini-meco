@@ -18,7 +18,7 @@ import {
 } from './projectManagement';
 import { 
     sendStandupsEmail, saveHappinessMetric, createSprints, getProjectHappinessMetrics, getSprints, 
-    getProjectCurrentSprint, getProjectURL 
+    getProjectCurrentSprint
 } from './projectFeatures';
 import { 
     changeEmail, changePassword, setUserGitHubUsername, getUserGitHubUsername, setUserProjectURL, 
