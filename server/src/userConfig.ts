@@ -89,7 +89,7 @@ export const setUserGitHubUsername = async (req: Request, res: Response, db: Dat
   try {
     await db.run(`UPDATE users SET githubUsername = ? WHERE email = ?`, [newGithubUsername, email]);
     res.status(200).json({ message: "GitHub username added successfully" });
-  } catch (error) {-
+  } catch (error) {
     console.error("Error adding GitHub username:", error);
     res.status(500).json({ message: "Failed to add GitHub username}", error });
   }

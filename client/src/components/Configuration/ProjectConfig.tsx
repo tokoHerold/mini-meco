@@ -147,7 +147,7 @@ const ProjectConfig: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/getGitURL?email=${localStorage.getItem(
+        `http://localhost:3000/user/project/url?email=${localStorage.getItem(
           "email"
         )}&project=${projectName}`,
         {
