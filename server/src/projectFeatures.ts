@@ -30,11 +30,12 @@ export const sendStandupsEmail = async (req: Request, res: Response, db: Databas
       },
     });
 
+    // fixme fetch userName and Project name in stead of ids
     const mailOptions = {
       from: '"Mini-Meco" <shu-man.cheng@fau.de>',
       to: recipientEmails,
-      subject: `Standup Update for ${projectName}`,
-      text: `Standup report from ${userName}\n\nDone: ${doneText}\nPlans: ${plansText}\nChallenges: ${challengesText}`,
+      subject: `Standup Update for ${projectId}`,
+      text: `Standup report from ${userId}\n\nDone: ${doneText}\nPlans: ${plansText}\nChallenges: ${challengesText}`,
     };
 
     // @todo: Uncomment the following lines to send email
