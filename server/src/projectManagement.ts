@@ -9,14 +9,12 @@ import { Semester } from "./Models/Semester";
 dotenv.config();
 
 export const createProjectGroup = async (req: Request, res: Response, db: Database) => {
-    const { semesterInput, projectGroupName } = req.body;
-    // debug
-    console.log("Semester input: " + semesterInput)
-
-    if (!semesterInput || !projectGroupName) {
+    const { semester, projectGroupName } = req.body;
+    if (!semester || !projectGroupName) {
         return res.status(400).json({ message: "Please fill in semester and project group name" });
     }
     
+    let semesterInput = semester; // Raw input from the request
     try {
         const semester = Semester.create(semesterInput); // Uses the Semester's internal validation
         await db.run("INSERT INTO projectGroup (semester, projectGroupName) VALUES (?, ?)", [semester.toString(), projectGroupName]);

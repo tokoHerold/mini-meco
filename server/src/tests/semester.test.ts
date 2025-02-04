@@ -1,54 +1,116 @@
 import { describe, it, expect } from 'vitest';
-import { ValueTypeError } from '../Models/ValueType';
-import { Semester, SemesterType, SemesterValueTypes } from '../Models/Semester';
+import { ModelTypesError } from '../Models/ModelType';
+import { Semester, SemesterType } from '../Models/Semester';
 
-describe('Semester Value Object creation:', () => {
+describe('Value Object creation:', () => {
     describe('Winter Semester Validation', () => {
-    const testCases = [
-        { input: { typeName: "winter", academicYear: "2024/25" }, expected: "Winter Semester 2024/25" },
-        { input: { typeName: "ws", academicYear: "2024/25" }, expected: "Winter Semester 2024/25" },
-        ];
-  
-      testCases.forEach(input => {
-        it(`should create winter semester from input: ${input}`, () => {
-          const semester = Semester.create("winter2024");
-          expect(semester.getType()).toBe(SemesterType.Winter);
-          expect(semester.getValue()).toMatch(/^\d{4}\/\d{2}$/);
-          expect(semester.getAcademicYear).toBe("Winter Semester 2024/25");
+      const expectedType = SemesterType.Winter;
+      const expectedYear = "2024/25";
+      const expectedValue = "Winter 2024/25";
+
+      const testCases = [
+        { input: "ws24",}, 
+        { input: "WS24",},
+        { input: "Winter 24",},
+        { input: "winter 2024",},
+        { input: "WS2024",},
+        { input: "ws 2024",}
+      ];
+
+      testCases.forEach(({ input}) => {
+        it(`should create winter semester from input: "${input}"`, () => {
+            const semester = Semester.create(input);
+            expect(semester.getType()).toBe(expectedType);
+            expect(semester.getAcademicYear()).toBe(expectedYear);
+            expect(semester.toString()).toBe(expectedValue);
         });
       });
     });
 
     describe('Summer Semester Validation', () => {
-        const testCases = [
-          'SS25', 'ss25', 'Summer 25', 'summer 2025', 
-          'SS2025', 'ss 2025'
-        ];
+      const expectedType = SemesterType.Summer;
+      const expectedYear = "2025";
+      const expectedValue = "Summer 2025";
+
+      const testCases = [
+          { input: "SS25"},
+          { input: "ss25"},
+          { input: "Summer 25"},
+          { input: "summer 2025"},
+          { input: "SS2025"},
+          { input: "ss 2025"}
+      ];
     
-        testCases.forEach(input => {
+        testCases.forEach(({input}) => {
           it(`should create summer semester from input: ${input}`, () => {
-            const semester = Semester.create({ semesterInput: input });
-            expect(semester.getType()).toBe(SemesterType.Summer);
-            expect(semester.getValue()).toMatch(/^\d{4}$/);
-            expect(semester.getAcademicYear()).toBe(2025);
+            const semester = Semester.create(input);
+            expect(semester.getType()).toBe(expectedType);
+            expect(semester.getAcademicYear()).toBe(expectedYear);
+            expect(semester.toString()).toBe(expectedValue);
           });
         });
       });
     
-      describe('Invalid Input Handling', () => {
-        const invalidInputs = [
-          '', 
-          'invalid', 
-          '202', 
-          'WW24', 
-          'Summer', 
-          '2024/25'
-        ];
-    
-        invalidInputs.forEach(input => {
-          it(`should throw ValueError for invalid input: ${input}`, () => {
-            expect(() => Semester.create({ semesterInput: input })).toThrow(ValueTypeError);
-          });
+    describe('Input Handling Validation', () => {
+      const invalidInputs = [
+        "",
+        " ", 
+        "invalid", 
+        "202", 
+        "WW24", 
+        "Summer", 
+        "2024/25",
+        "s25ws", 
+        "2024 ws",
+        "wintersemester2024",
+        "wintersemester 2024",
+        "winter semester2024",
+        "sssemester25",
+        "sssemester 25",
+        "ss semester25",
+      ];
+  
+      invalidInputs.forEach(input => {
+        it(`should throw ModelTypeError for invalid input: ${input}`, () => {
+          expect(() => Semester.create(input)).toThrow(ModelTypesError);
         });
       });
+    });
+});
+
+describe('Value Object immutability:', () => {
+  it('should maintain original values after attempted modifications', () => {
+    const semester = Semester.create("WS24");
+    const originalValue = semester.getValue();
+    
+    // Attempt to modify the internal value (this should have no effect)
+    const value = semester.getValue();
+    try {
+      (value as any).type = SemesterType.Summer;
+      (value as any).year = "2025";
+    } catch (e) {}
+
+    expect(semester.getType()).toBe(SemesterType.Winter);
+    expect(semester.getAcademicYear()).toBe("2024/25");
+    expect(semester.getValue()).toEqual(originalValue);
+  });
+});
+
+describe('Value Object instances:', () => {
+  it('should create identical instances for the same input', () => {
+      const semester1 = Semester.create("WS24");
+      const semester2 = Semester.create("winter24");
+
+      expect(semester1).toEqual(semester2); // Same value
+      expect(semester1 === semester2).toBe(false); // Different instances
+  });
+
+  it('should treat different semester inputs as separate instances', () => {
+      const winterSemester = Semester.create("WS24");
+      const summerSemester = Semester.create("SS25");
+
+      expect(winterSemester.getType()).toBe(SemesterType.Winter);
+      expect(summerSemester.getType()).toBe(SemesterType.Summer);
+      expect(winterSemester).not.toEqual(summerSemester);
+  });
 });
