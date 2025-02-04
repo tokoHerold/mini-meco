@@ -7,7 +7,6 @@ export enum SemesterType {
   Summer = "Summer",
 }
 
-// In another world, it might be called SemesterProps
 interface SemesterValueTypes {
   type: SemesterType;
   year: AcademicYear;
@@ -30,13 +29,13 @@ export class Semester extends ModelType<SemesterValueTypes> {
     const { type: typeName, year: academicYear } = value;   
     
     let type = typeName as SemesterType;
-    let year = parseInt(academicYear, 10); // todo: check if this is correct
+    let year = parseInt(academicYear, 10);
 
     if (isNaN(year)) {
       throw new ModelTypeError(`Invalid year in semester: ${year}`);
     }
 
-    let validYear = this.parseAcademicYear(year, type); // Normalize to academic year format
+    let validYear = this.parseAcademicYear(year, type);
 
     return {
       type: type as SemesterType,
@@ -52,7 +51,6 @@ export class Semester extends ModelType<SemesterValueTypes> {
     return this.value.year;
   }
 
-  // Returns a string representation of the Semester object.
   public toString(): string {
     return `${this.value.type} ${this.value.year}`;
   }
