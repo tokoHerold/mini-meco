@@ -1,4 +1,4 @@
-import { ModelTypes, ModelTypesError } from "./ModelType";
+import { ModelType, ModelTypeError } from "./ModelType";
 
 type AcademicYear = `${number}/${number}` | `${number}`;
 
@@ -13,7 +13,7 @@ interface SemesterValueTypes {
   year: AcademicYear;
 }
 
-export class Semester extends ModelTypes<SemesterValueTypes> {
+export class Semester extends ModelType<SemesterValueTypes> {
 
   private constructor(type: SemesterType, year: AcademicYear) {
     super({type, year});
@@ -33,7 +33,7 @@ export class Semester extends ModelTypes<SemesterValueTypes> {
     let year = parseInt(academicYear, 10); // todo: check if this is correct
 
     if (isNaN(year)) {
-      throw new ModelTypesError(`Invalid year in semester: ${year}`);
+      throw new ModelTypeError(`Invalid year in semester: ${year}`);
     }
 
     let validYear = this.parseAcademicYear(year, type); // Normalize to academic year format
@@ -60,14 +60,14 @@ export class Semester extends ModelTypes<SemesterValueTypes> {
   // Parse the input string to extract the semester type and year
   private static parseSemesterInput(input: string): SemesterValueTypes {
     if (!input || input === undefined) {
-      throw new ModelTypesError('Semester value cannot be empty');
+      throw new ModelTypeError('Semester value cannot be empty');
     }
     const cleanInput = input.trim().toLowerCase();
     const regex = /^(ws|winter|ss|summer)?\s*(\d{2}|\d{4})$/;
     const match = cleanInput.match(regex);
   
     if (!match || !match[2]) {
-      throw new ModelTypesError(`Invalid semester input: ${input}. Use formats like 'WS24', 'Winter 2024', 'SS25', or 'Summer 2025'.`);
+      throw new ModelTypeError(`Invalid semester input: ${input}. Use formats like 'WS24', 'Winter 2024', 'SS25', or 'Summer 2025'.`);
     }
     
     return {

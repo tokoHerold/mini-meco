@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ModelTypesError } from '../Models/ModelType';
+import { ModelTypeError } from '../Models/ModelType';
 import { Semester, SemesterType } from '../Models/Semester';
 
 describe('Value Object creation:', () => {
@@ -72,7 +72,7 @@ describe('Value Object creation:', () => {
   
       invalidInputs.forEach(input => {
         it(`should throw ModelTypeError for invalid input: ${input}`, () => {
-          expect(() => Semester.create(input)).toThrow(ModelTypesError);
+          expect(() => Semester.create(input)).toThrow(ModelTypeError);
         });
       });
     });

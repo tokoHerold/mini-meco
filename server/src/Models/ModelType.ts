@@ -1,7 +1,7 @@
 /**
  * Abstract base class for immutable value objects.
  */
-export abstract class ModelTypes<T extends Object> {
+export abstract class ModelType<T extends Object> {
   protected readonly value: Readonly<T>; // domain-specific value type
 
   constructor(others: T) {
@@ -18,14 +18,14 @@ export abstract class ModelTypes<T extends Object> {
     return Object.freeze({...this.value});
   }
 
-  public equals(other: ModelTypes<T>): boolean {
+  public equals(other: ModelType<T>): boolean {
     return JSON.stringify(this.value) === JSON.stringify(other.value);
   }
 
 }
 
 // Custom error class for value errors
-export class ModelTypesError extends Error {
+export class ModelTypeError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "ModelTypeError";
