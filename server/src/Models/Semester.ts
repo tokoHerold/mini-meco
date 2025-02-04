@@ -5,11 +5,6 @@ export enum SemesterType {
   Summer = "Summer",
 }
 
-interface SemesterValueTypes {
-  type: SemesterType;
-  year: AcademicYear;
-}
-
 export class Semester {
   private constructor(
     private readonly type: SemesterType,
