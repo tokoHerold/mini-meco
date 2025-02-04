@@ -4,7 +4,7 @@ import cors from 'cors';
 import { register, login, forgotPassword, resetPassword, confirmEmail, sendConfirmationEmail } from './auth';
 import { initializeDB } from './databaseInitializer';
 import dotenv from 'dotenv';
-import { createProjectGroup, createProject, editProjectGroup, editProject,getProjectGroups, getProjects, getSemesters, joinProject, leaveProject, getUserProjects, getUserProjectGroups, getUsers, getUsersByStatus, updateUserStatus, updateAllConfirmedUsers, getEnrolledCourses, getProjectsForCourse, getRoleForProject} from './projectManagement';
+import { createCourse, createProject, editCourse, editProject,getCourses, getProjects, getSemesters, joinProject, leaveProject, getUserProjects, getUserCourses, getUsers, getUsersByStatus, updateUserStatus, updateAllConfirmedUsers, getEnrolledCourses, getProjectsForCourse, getRoleForProject} from './projectManagement';
 import { sendStandupsEmail, saveHappinessMetric, createSprints, getProjectHappinessMetrics, getSprints, getProjectCurrentSprint, getProjectURL } from './projectFeatures';
 import { changeEmail, changePassword, setUserGitHubUsername, getUserGitHubUsername, setUserProjectURL, getUserProjectURL, changeUserProjectURL } from './userConfig';
 
@@ -24,7 +24,7 @@ initializeDB().then((db) => {
   });
 
   app.get('/semesters', (req, res) => { getSemesters(req, res, db) });
-  app.get('/project-groups', (req, res) => { getProjectGroups(req, res, db) });
+  app.get('/project-groups', (req, res) => { getCourses(req, res, db) });
   app.get('/projects', (req, res) => { getProjects(req, res, db) });
   app.get('/userProjects', (req, res) => { getUserProjects(req, res, db) });
   app.get('/getHappinessData', (req, res) => { getProjectHappinessMetrics(req, res, db) });
@@ -32,7 +32,7 @@ initializeDB().then((db) => {
   app.get('/currentSprint', (req, res) => { getProjectCurrentSprint(req, res, db) });
   app.get('/getGitURL', (req, res) => { getUserProjectURL(req, res, db) });
   app.get('/getUserGitHubUsername', (req, res) => { getUserGitHubUsername(req, res, db) });
-  app.get('/getUserProjectGroups', (req, res) => { getUserProjectGroups(req, res, db) });
+  app.get('/getUserProjectGroups', (req, res) => { getUserCourses(req, res, db) });
   app.get('/getProjectGitHubURL', (req, res) => { getProjectURL(req, res, db) });
   app.get('/getUsers', (req, res) => { getUsers(req, res, db) });
   app.get('/getUserStatus', (req, res) => { getUsersByStatus(req, res, db) });
@@ -42,9 +42,9 @@ initializeDB().then((db) => {
   app.post('/login', (req, res) => login(req, res, db));
   app.post('/forgotPassword', (req, res) => forgotPassword(req, res, db));
   app.post('/resetPassword', (req, res) => resetPassword(req, res, db));
-  app.post('/project-admin/createProjectGroup', (req, res) => createProjectGroup(req, res, db));
+  app.post('/project-admin/createProjectGroup', (req, res) => createCourse(req, res, db));
   app.post('/project-admin/createProject', (req, res) => createProject(req, res, db));
-  app.post('/project-admin/editProjectGroup', (req, res) => editProjectGroup(req, res, db));
+  app.post('/project-admin/editProjectGroup', (req, res) => editCourse(req, res, db));
   app.post('/project-admin/editProject', (req, res) => editProject(req, res, db));
   app.post('/settings/joinProject', (req, res) => joinProject(req, res, db));
   app.post('/settings/leaveProject', (req, res) => leaveProject(req, res, db));
