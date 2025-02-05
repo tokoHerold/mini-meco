@@ -3,15 +3,16 @@ import { Request, Response } from "express";
 import nodemailer from "nodemailer";
 
 export const sendStandupsEmail = async (req: Request, res: Response, db: Database) => {
-  const { projectId, userId, doneText, plansText, challengesText } = req.body;
+  const { projectName, userName, doneText, plansText, challengesText } = req.body;
 
 
   try {
     const members = await db.all(
-      `SELECT users.email FROM user_projects
-              INNER JOIN users ON user_projects.userId = users.id
-              WHERE user_projects.projectId = ? AND user_projects.userId = ?`,
-      [projectId, userId]);
+      `SELECT users.email FROM users
+              INNER JOIN user_projects ON user_projects.userId = users.id
+              INNER JOIN projects ON user_projects.projectId = projects.id
+              WHERE projects.projectName = ?`,
+      [projectName]);
 
 
     if (members.length === 0) {
@@ -34,8 +35,8 @@ export const sendStandupsEmail = async (req: Request, res: Response, db: Databas
     const mailOptions = {
       from: '"Mini-Meco" <shu-man.cheng@fau.de>',
       to: recipientEmails,
-      subject: `Standup Update for ${projectId}`,
-      text: `Standup report from ${userId}\n\nDone: ${doneText}\nPlans: ${plansText}\nChallenges: ${challengesText}`,
+      subject: `Standup Update for ${projectName}`,
+      text: `Standup report from ${userName}\n\nDone: ${doneText}\nPlans: ${plansText}\nChallenges: ${challengesText}`,
     };
 
     // @todo: Uncomment the following lines to send email
@@ -51,11 +52,21 @@ export const sendStandupsEmail = async (req: Request, res: Response, db: Databas
 
 export const createSprints = async (req: Request, res: Response, db: Database) => {
 
-  const { courseId, dates } = req.body;
+  const { courseName, dates } = req.body;
 
 
   try {
-    const existingSprints = await db.all(`SELECT endDate FROM sprints WHERE courseId = ?`, [courseId]);
+    const courseIdObj = await db.get(`SELECT id
+      FROM courses
+      WHERE courses.name = ?`, [courseName]);
+    if (courseIdObj === undefined) {
+      throw new Error("Unknown Course Name!");
+    }
+    const courseId = courseIdObj.id;
+
+    const existingSprints = await db.all(`SELECT endDate 
+      FROM sprints 
+      WHERE courseId = ?`, [courseId]);
     /*
         for (let i = 0; i < dates.length; i++) {
           const endDate = dates[i];
@@ -68,7 +79,10 @@ export const createSprints = async (req: Request, res: Response, db: Database) =
         }
           */
 
-    const latestSprint = await db.get(`SELECT sprintName FROM sprints WHERE courseId = ? ORDER BY sprintName DESC LIMIT 1`, [courseId]);
+    const latestSprint = await db.get(`SELECT sprintName 
+      FROM sprints 
+      WHERE courseId = ? 
+      ORDER BY sprintName DESC LIMIT 1`, [courseId]);
     let newSprintNumber = 0;
     if (latestSprint && latestSprint.sprintName) {
       newSprintNumber = parseInt(latestSprint.sprintName.replace("sprint", "")) + 1;
@@ -95,13 +109,20 @@ export const createSprints = async (req: Request, res: Response, db: Database) =
 
 
 export const saveHappinessMetric = async (req: Request, res: Response, db: Database) => {
-  const { projectId, userId, happiness, sprintId } = req.body;
+  const { projectName, userEmail, happiness, sprintName } = req.body;
   const timestamp = new Date().toISOString();
 
   try {
     //this return { projectGroupName: "AMOSXX" } [object Object], so we need to change it into string
-    await db.run(`INSERT INTO happiness (projectId, userId, happiness, sprintId, timestamp ) VALUES (?, ?, ?, ?, ?, ? )`,
-      [projectId, userId, happiness, sprintId, timestamp]);
+    await db.run(`INSERT INTO happiness (projectId, userId, happiness, sprintId, timestamp) 
+      SELECT 
+        (SELECT id AS projectId FROM projects WHERE projectName = ?),
+        (SELECT id AS userId FROM users WHERE userEmail = ?),
+        ?,
+        (SELECT id AS sprintId FROM sprints WHERE sprintName = ?),
+        ?
+      `,
+      [projectName, userEmail, happiness, sprintName, timestamp]);
     res.status(200).json({ message: "Happiness updated successfully" });
   } catch (error) {
     console.error("Error updating happiness:", error);
@@ -110,11 +131,13 @@ export const saveHappinessMetric = async (req: Request, res: Response, db: Datab
 }
 
 export const getProjectHappinessMetrics = async (req: Request, res: Response, db: Database) => {
-  const { projectId } = req.query;
+  const { projectName } = req.query;
   try {
     const happinessData = await db.all(
-      `SELECT * FROM happiness WHERE projectId = ? ORDER BY sprintName ASC, timestamp ASC`,
-      [projectId]
+      `SELECT * FROM happiness
+      WHERE projectId = (SELECT id FROM projects WHERE projectName = ?)
+      ORDER BY sprintName ASC, timestamp ASC`,
+      [projectName]
     );
     res.json(happinessData);
   } catch (error) {
@@ -124,12 +147,13 @@ export const getProjectHappinessMetrics = async (req: Request, res: Response, db
 };
 
 export const getSprints = async (req: Request, res: Response, db: Database) => {
-  const { courseId } = req.query;
+  const { courseName } = req.query;
 
   try {
     const sprints = await db.all(
-      `SELECT * FROM sprints WHERE courseId = ? ORDER BY endDate ASC`,
-      [courseId]
+      `SELECT * FROM sprints 
+      WHERE courseId = (SELECT id FROM courses WHERE courseName = ?) ORDER BY endDate ASC`,
+      [courseName]
     );
     res.json(sprints);
   } catch (error) {
@@ -139,15 +163,15 @@ export const getSprints = async (req: Request, res: Response, db: Database) => {
 };
 
 export const getProjectCurrentSprint = async (req: Request, res: Response, db: Database) => {
-  const { projectId } = req.query;
+  const { projectName } = req.query;
 
   try {
-    const courseIdObj = await db.get(`SELECT courseId FROM projects WHERE id = ?`, [projectId]);
-    const courseId = courseIdObj?.courseId;
-
     const sprints = await db.all(
-      `SELECT * FROM sprints WHERE courseId = ? ORDER BY endDate ASC`,
-      [courseId]
+      `SELECT * 
+      FROM sprints 
+      WHERE courseId = (SELECT courseId FROM projects WHERE projectName = ?)
+      ORDER BY endDate ASC`,
+      [projectName]
     );
 
     res.json(sprints);
@@ -158,14 +182,17 @@ export const getProjectCurrentSprint = async (req: Request, res: Response, db: D
 };
 
 export const getProjectURL = async (req: Request, res: Response, db: Database) => {
-  const { projectId, userId } = req.query;
+  const { projectName, userEmail } = req.query;
 
   try {
-    const projectURL = await db.get(`SELECT url FROM user_projects WHERE projectId = ? AND userId = ?`, [projectId, userId]);
+    const projectURL = await db.get(`SELECT url 
+      FROM user_projects 
+      WHERE projectId = (SELECT id FROM projects WHERE projectName = ?) 
+      AND userId = (SELECT id FROM users WHERE email = ?)`, [projectName, userEmail]);
     if (projectURL) {
       res.json(projectURL);
     } else {
-      console.warn(`No URL found for project: ${projectId} and user: ${userId}`);
+      console.warn(`No URL found for project: ${projectName} and user: ${userEmail}`);
       res.status(404).json({ message: 'Project URL not found' });
     }
   } catch (error) {
