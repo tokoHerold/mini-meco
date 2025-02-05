@@ -81,7 +81,7 @@ const ProjectAdmin: React.FC = () => {
 
   /* Helper method for fetching all projects of a course */
   const getProjectsForCourse = (course: string): Promise<Project[]> => {
-    return get(`projects?projectGroupName=${course}`)
+    return get(`projects?courseName=${course}`)
       .then(projects => projects.map((project: { id: string; projectName: string; studentsCanJoinProject: boolean; }) => ({
         id: project.id,
         projectName: project.projectName,
@@ -102,11 +102,11 @@ const ProjectAdmin: React.FC = () => {
         const coursesData = await get("project-groups");
 
         const coursesWithProjects: Course[] = await Promise.all(
-          coursesData.map(async (course: { projectGroupName: string; semester: string; studentsCanCreateProject: boolean; }) => {
-            const projects = await getProjectsForCourse(course.projectGroupName);
+          coursesData.map(async (course: { courseName: string; semester: string; studentsCanCreateProject: boolean; }) => {
+            const projects = await getProjectsForCourse(course.courseName);
             return {
               semester: course.semester,
-              courseName: course.projectGroupName,
+              courseName: course.courseName,
               projects: projects,
               studentsCanCreateProject: course?.studentsCanCreateProject || false,
             };
@@ -125,7 +125,7 @@ const ProjectAdmin: React.FC = () => {
 
   /* Method for creating a course */
   const handleCreateCourse = async (semester: string, courseName: string,) => {
-    const body: { [key: string]: string } = { semester, projectGroupName: courseName };
+    const body: { [key: string]: string } = { semester, courseName: courseName };
 
     const data = await post("project-admin/createProjectGroup", body)
       .catch((error) => {
@@ -143,7 +143,7 @@ const ProjectAdmin: React.FC = () => {
   const handleCreateProject = async (projectName: string) => {
     if (!selectedCourse) return;
 
-    const body: { [key: string]: string } = { semester: selectedCourse.semester, projectGroupName: selectedCourse.courseName, projectName };
+    const body: { [key: string]: string } = { semester: selectedCourse.semester, courseName: selectedCourse.courseName, projectName };
 
     const data = await post("project-admin/createProject", body)
       .catch((error) => {
@@ -162,9 +162,9 @@ const ProjectAdmin: React.FC = () => {
     if (!selectedCourse || !selectedProject) return;
 
     const body: { [key: string]: string } = {
-      projectGroupName: selectedCourse.courseName,
-      newSemester: selectedCourse.semester,
-      newProjectGroupName: courseName,
+      courseName: selectedCourse.courseName,
+      newSemester: selectedCourse.semester, // ToDo remove
+      newcourseName: courseName,
       projectName: selectedProject.projectName,
       newProjectName: projectName,
     };
@@ -186,9 +186,9 @@ const ProjectAdmin: React.FC = () => {
     if (!selectedCourse) return;
 
     const body: { [key: string]: string | boolean } = {
-      projectGroupName: selectedCourse.courseName,
+      courseName: selectedCourse.courseName,
       newSemester: editedCourse.semester,
-      newProjectGroupName: editedCourse.courseName,
+      newcourseName: editedCourse.courseName,
       studentsCanCreateProject: editedCourse.studentsCanCreateProject,
     };
 
