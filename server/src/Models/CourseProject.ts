@@ -14,7 +14,7 @@ export class CourseProject {
     return this.name;
   }
 
-  public getCouse(): Course {
+  public getCourse(): Course {
     return this.course;
   }
 
@@ -38,7 +38,7 @@ export class CourseProject {
 
   // Command methods
   public addMember(member: ProjectMember) {
-    this.members.push(member);
+    this.members = [...this.members, member];
   }
   public removeMember(member: ProjectMember) {
     this.members = this.members.filter(projectMember => projectMember !== member);
