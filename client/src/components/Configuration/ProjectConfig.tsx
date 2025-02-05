@@ -189,9 +189,9 @@ const ProjectConfig: React.FC = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              email: userEmail,
+              userEmail: userEmail,
               URL: newURL,
-              project: selectedProject,
+              projectName: selectedProject,
             }),
           }
         );

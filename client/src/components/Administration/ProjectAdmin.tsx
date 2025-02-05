@@ -164,7 +164,7 @@ const ProjectAdmin: React.FC = () => {
     const body: { [key: string]: string } = {
       courseName: selectedCourse.courseName,
       newSemester: selectedCourse.semester, // ToDo remove
-      newcourseName: courseName,
+      newCourseName: courseName,
       projectName: selectedProject.projectName,
       newProjectName: projectName,
     };
@@ -188,7 +188,7 @@ const ProjectAdmin: React.FC = () => {
     const body: { [key: string]: string | boolean } = {
       courseName: selectedCourse.courseName,
       newSemester: editedCourse.semester,
-      newcourseName: editedCourse.courseName,
+      newCourseName: editedCourse.courseName,
       studentsCanCreateProject: editedCourse.studentsCanCreateProject,
     };
 
