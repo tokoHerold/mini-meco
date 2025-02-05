@@ -58,7 +58,7 @@ export const createSprints = async (req: Request, res: Response, db: Database) =
   try {
     const courseIdObj = await db.get(`SELECT id
       FROM courses
-      WHERE courses.name = ?`, [courseName]);
+      WHERE courses.courseName = ?`, [courseName]);
     if (courseIdObj === undefined) {
       throw new Error("Unknown Course Name!");
     }

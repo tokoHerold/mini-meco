@@ -42,7 +42,7 @@ export async function initializeDB() {
   await db.exec(`
     CREATE TABLE IF NOT EXISTS projects (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      projectName TEXT,
+      projectName TEXT UNIQUE,
       courseId INTEGER,
       FOREIGN KEY (courseId) REFERENCES courses(id)
     )
@@ -86,7 +86,6 @@ export async function initializeDB() {
       happiness INTEGER,
       sprintId INTEGER,
       timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (courseId) REFERENCES courses(id),
       FOREIGN KEY (userId) REFERENCES users(id),
       FOREIGN KEY (projectId) REFERENCES projects(id)
     )

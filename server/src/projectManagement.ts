@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { send } from "process";
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import { DatabaseManager } from "./Models/DatabaseManager";
 
 dotenv.config();
 
@@ -26,13 +27,14 @@ export const createCourse = async (req: Request, res: Response, db: Database) =>
 }
 
 export const createProject = async (req: Request, res: Response, db: Database) => {
-  const { courseId, projectName } = req.body;
+  const { courseName, projectName } = req.body;
 
-  if (!courseId || !projectName) {
+  if (!courseName || !projectName) {
     return res.status(400).json({ message: "Please fill in project group name and project name" });
   }
 
   try {
+    const courseId = DatabaseManager.getCourseIdFromName(db, courseName);
     const user = await db.get('SELECT * FROM courses WHERE id = ?', [courseId]);
     if (!user) {
       return res.status(400).json({ message: 'Course Not Found' });
@@ -49,7 +51,7 @@ export const createProject = async (req: Request, res: Response, db: Database) =
 
 
 export const editCourse = async (req: Request, res: Response, db: Database) => {
-  const { courseId, newSemester, newCourseName } = req.body;
+  const { courseName, newSemester, newCourseName } = req.body;
   const semesterRegex = /^(SS|WS)\d{2,4}$/; // Format: SS24 or WS2425
 
   if (!newSemester || !newCourseName) {
@@ -59,10 +61,10 @@ export const editCourse = async (req: Request, res: Response, db: Database) => {
   }
 
   try {
+    const courseId = DatabaseManager.getCourseIdFromName(db, courseName);
     console.log(`Executing SQL: UPDATE courses SET semester = '${newSemester}', courseName = '${newCourseName}' WHERE id = '${courseId}'`);
 
     await db.run(
-
       `UPDATE courses SET semester = ?, courseName = ? WHERE id = ?`,
       [newSemester, newCourseName, courseId]
     );
@@ -75,13 +77,15 @@ export const editCourse = async (req: Request, res: Response, db: Database) => {
 }
 
 export const editProject = async (req: Request, res: Response, db: Database) => {
-  const { newCourseId, projectId, newProjectName } = req.body;
+  const { newCourseName, projectName, newProjectName } = req.body;
 
-  if (!newCourseId || !newProjectName) {
+  if (!newCourseName || !newProjectName) {
     return res.status(400).json({ message: "Please fill in project group name and project name" });
   }
 
   try {
+    const newCourseId = DatabaseManager.getCourseIdFromName(db, newCourseName);
+    const projectId = DatabaseManager.getProjectIdFromName(db, projectName);
     await db.run(
       `UPDATE projects SET projectName = ?, courseId = ? WHERE id = ?`,
       [newProjectName, newCourseId, projectId]
@@ -126,35 +130,38 @@ export const getCourses = async (req: Request, res: Response, db: Database) => {
 };
 
 export const getProjects = async (req: Request, res: Response, db: Database) => {
-  const { courseId } = req.query;
+  const { courseName } = req.query;
 
-  if (!courseId) {
+  if (!courseName) {
     return res.status(400).json({ message: "Course id is required" });
   }
 
   try {
+    const courseId = DatabaseManager.getCourseIdFromName(db, courseName.toString());
     const projects = await db.all("SELECT * FROM projects WHERE courseId = ?", [courseId]);
     res.json(projects);
   } catch (error) {
     console.error("Error during project retrieval:", error);
-    res.status(500).json({ message: `Failed to retrieve projects for course with id ${courseId}`, error });
+    res.status(500).json({ message: `Failed to retrieve projects for course ${courseName}`, error });
   }
 };
 
 export const joinProject = async (req: Request, res: Response, db: Database) => {
-  const { projectId, userId, memberRole } = req.body;
+  const { projectName, userEmail, role } = req.body;
 
-  if (!memberRole) {
+  if (!role) {
     return res.status(400).json({ message: "Please fill in your role" });
   }
 
   try {
+    const projectId = DatabaseManager.getProjectIdFromName(db, projectName);
+    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail);
     const isMember = await db.get(`SELECT * FROM user_projects WHERE userId = ? AND projectId = ?`, [userId, projectId]);
     if (isMember) {
       return res.status(400).json({ message: "You have already joined this project" });
     }
 
-    await db.run('INSERT INTO user_projects (userId, projectId, memberRole ) VALUES (?, ?, ?)', [userId, projectId, memberRole]);
+    await db.run('INSERT INTO user_projects (userId, projectId, memberRole ) VALUES (?, ?, ?)', [userId, projectId, role]);
     res.status(201).json({ message: "Joined project successfully" });
 
   } catch (error) {
@@ -164,9 +171,11 @@ export const joinProject = async (req: Request, res: Response, db: Database) => 
 };
 
 export const leaveProject = async (req: Request, res: Response, db: Database) => {
-  const { userId, projectId } = req.body;
+  const { userEmail, projectName } = req.body;
 
   try {
+    const projectId = DatabaseManager.getProjectIdFromName(db, projectName);
+    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail);
     const isMember = await db.get(`SELECT * FROM user_projects WHERE userId = ? AND projectId = ?`, [userId, projectId]);
     if (!isMember) {
       return res.status(400).json({ message: "You are not a member of this project" });
@@ -182,9 +191,14 @@ export const leaveProject = async (req: Request, res: Response, db: Database) =>
 }
 
 export const getUserProjects = async (req: Request, res: Response, db: Database) => {
-  const { userId } = req.query;
+  const { userEmail } = req.query;
+
+  if (!userEmail) {
+    return res.status(400).json({ message: "User Email is required" });
+  }
 
   try {
+    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail.toString());
     const projects = await db.all('SELECT projectId FROM user_projects WHERE userId = ?', [userId]);
     res.json(projects);
   } catch (error) {
@@ -194,9 +208,15 @@ export const getUserProjects = async (req: Request, res: Response, db: Database)
 };
 
 export const getUserCourses = async (req: Request, res: Response, db: Database) => {
-  const { projectId } = req.query;
+  const { projectName } = req.query;
+
+  if (!projectName) {
+    return res.status(400).json({ message: "Project Name is required" });
+  }
+
 
   try {
+    const projectId = DatabaseManager.getProjectIdFromName(db, projectName?.toString());
     const projectGroups = await db.get('SELECT DISTINCT courseId FROM projects WHERE id = ?', [projectId]);
     if (projectGroups) {
       res.json(projectGroups);
@@ -240,20 +260,20 @@ export const getUsersByStatus = async (req: Request, res: Response, db: Database
 }
 
 export const updateUserStatus = async (req: Request, res: Response, db: Database) => {
-  const { email, status } = req.body;
+  const { userEmail, status } = req.body;
 
-  if (!email || !status) {
+  if (!userEmail || !status) {
     return res.status(400).json({ message: "Please provide email and status" });
   }
 
   if (status == "suspended") {
-    sendSuspendedEmail(email);
+    sendSuspendedEmail(userEmail);
   } else if (status == "removed") {
-    sendRemovedEmail(email);
+    sendRemovedEmail(userEmail);
   }
 
   try {
-    await db.run('UPDATE users SET status = ? WHERE email = ?', [status, email]);
+    await db.run('UPDATE users SET status = ? WHERE email = ?', [status, userEmail]);
     res.status(200).json({ message: "User status updated successfully" });
   } catch (error) {
     console.error("Error during updating user status:", error);
@@ -268,10 +288,7 @@ export const updateAllConfirmedUsers = async (req: Request, res: Response, db: D
     return res.status(400).json({ message: 'Status is required' });
   }
 
-
-
   try {
-
     const confirmedUsers = await db.all('SELECT * FROM users WHERE status = "confirmed"');
 
 
@@ -279,8 +296,6 @@ export const updateAllConfirmedUsers = async (req: Request, res: Response, db: D
       'UPDATE users SET status = ? WHERE status = "confirmed"',
       [status]
     );
-
-
 
     if (result.changes === 0) {
       return res.status(404).json({ message: 'No confirmed users found to update' });
@@ -351,14 +366,13 @@ export const sendRemovedEmail = async (email: string) => {
 
 
 export const getEnrolledCourses = async (req: Request, res: Response, db: Database) => {
-
-  const { userId } = req.query;
-
-  if (!userId) {
+  const { userEmail } = req.query;
+  if (!userEmail) {
     return res.status(400).json({ message: "User id is required" });
   }
 
   try {
+    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail.toString());
     const courses = await db.all(
       `SELECT DISTINCT projects.courseId 
          FROM user_projects 
@@ -374,13 +388,16 @@ export const getEnrolledCourses = async (req: Request, res: Response, db: Databa
 };
 
 export const getProjectsForCourse = async (req: Request, res: Response, db: Database) => {
-  const { courseId, userId } = req.query;
+  const { courseName, userEmail } = req.query;
 
-  if (!courseId || !userId) {
-    return res.status(400).json({ message: "Course id and user id are required" });
+  if (!courseName || !userEmail) {
+    return res.status(400).json({ message: "Course Name and user Email are required" });
   }
 
   try {
+    const courseId = DatabaseManager.getCourseIdFromName(db, courseName.toString());
+    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail.toString());
+
     const enrolledProjects = await db.all(
       `SELECT projects.id
              FROM user_projects
@@ -405,14 +422,15 @@ export const getProjectsForCourse = async (req: Request, res: Response, db: Data
 };
 
 export const getRoleForProject = async (req: Request, res: Response, db: Database) => {
-  const { projectId, userId } = req.query;
+  const { projectName, userEmail } = req.query;
 
-  if (!projectId || !userId) {
+  if (!projectName || !userEmail) {
     return res.status(400).json({ message: "Project Id and user Id are required" });
   }
 
   try {
-
+    const projectId = DatabaseManager.getProjectIdFromName(db, projectName.toString());
+    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail.toString());
     const role = await db.get(
       `SELECT memberRole
              FROM user_projects

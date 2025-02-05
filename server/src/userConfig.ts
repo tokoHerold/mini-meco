@@ -1,9 +1,10 @@
 import { Database } from "sqlite";
 import { Request, Response } from "express";
 import { hashPassword } from "./hash";
+import { DatabaseManager } from "./Models/DatabaseManager";
 
 export const changeEmail = async (req: Request, res: Response, db: Database) => {
-  const { newEmail, userId } = req.body;
+  const { newEmail, oldEmail } = req.body;
   if (!newEmail) {
     return res.status(400).json({ message: 'Please fill in new email!' });
   }
@@ -12,6 +13,7 @@ export const changeEmail = async (req: Request, res: Response, db: Database) => 
   }
 
   try {
+    const userId = DatabaseManager.getUserIdFromEmail(db, oldEmail);
     await db.run(`UPDATE users SET email = ? WHERE id = ?`, [newEmail, userId]);
     res.status(200).json({ message: "Email updated successfully" });
   } catch (error) {
@@ -21,7 +23,7 @@ export const changeEmail = async (req: Request, res: Response, db: Database) => 
 }
 
 export const changePassword = async (req: Request, res: Response, db: Database) => {
-  const { userId, password } = req.body;
+  const { userEmail, password } = req.body;
 
   if (!password) {
     return res.status(400).json({ message: 'Please fill in new password!' });
@@ -33,6 +35,7 @@ export const changePassword = async (req: Request, res: Response, db: Database) 
   const hashedPassword = await hashPassword(password);
 
   try {
+    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail);
     await db.run(`UPDATE users SET password = ? WHERE id = ?`, [hashedPassword, userId]);
     res.status(200).json({ message: "Password updated successfully" });
   } catch (error) {
@@ -42,7 +45,7 @@ export const changePassword = async (req: Request, res: Response, db: Database) 
 }
 
 export const setUserProjectURL = async (req: Request, res: Response, db: Database) => {
-  const { userId, URL, projectId } = req.body;
+  const { userEmail, URL, projectName } = req.body;
 
   if (!URL) {
     return res.status(400).json({ message: 'Please fill in URL!' });
@@ -52,6 +55,9 @@ export const setUserProjectURL = async (req: Request, res: Response, db: Databas
   }
 
   try {
+    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail);
+    const projectId = DatabaseManager.getProjectIdFromName(db, projectName);
+
     await db.run(`UPDATE user_projects SET url = ? WHERE userId = ? AND projectId = ?`, [URL, userId, projectId]);
     res.status(200).json({ message: "URL added successfully" });
   } catch (error) {
@@ -61,9 +67,15 @@ export const setUserProjectURL = async (req: Request, res: Response, db: Databas
 }
 
 export const getUserProjectURL = async (req: Request, res: Response, db: Database) => {
-  const { userId, projectId } = req.query;
+  const { userEmail, projectName } = req.query;
+
+  if(!userEmail || !projectName) {
+    return res.status(400).json({ message: 'User Email and Project Name are mandatory!' });
+  }
 
   try {
+    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail.toString());
+    const projectId = DatabaseManager.getProjectIdFromName(db, projectName.toString());
     const urlObj = await db.get(`SELECT url FROM user_projects WHERE userId = ? AND projectId = ?`, [userId, projectId]);
     const url = urlObj ? urlObj.url : null;
     res.status(200).json({ url });
@@ -74,28 +86,16 @@ export const getUserProjectURL = async (req: Request, res: Response, db: Databas
 }
 
 export const changeUserProjectURL = async (req: Request, res: Response, db: Database) => {
-  const { userId, URL, projectId } = req.body;
-  if (!URL) {
-    return res.status(400).json({ message: 'Please fill in URL!' });
-  }
-  else if (!URL.includes('git')) {
-    return res.status(400).json({ message: 'Invalid URL' });
-  }
-  try {
-    await db.run(`UPDATE user_projects SET url = ? WHERE userId = ? AND projectId = ?`, [URL, userId, projectId]);
-    res.status(200).json({ message: "URL added successfully" });
-  } catch (error) {
-    console.error("Error adding URL:", error);
-    res.status(500).json({ message: "Failed to add URL", error });
-  }
+  setUserProjectURL(req, res, db);
 }
 
 export const setUserGitHubUsername = async (req: Request, res: Response, db: Database) => {
-  const { userId, newGithubUsername } = req.body;
+  const { userEmail, newGithubUsername } = req.body;
   if (!newGithubUsername) {
     return res.status(400).json({ message: 'Please fill in GitHub username!' });
   }
   try {
+    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail);
     await db.run(`UPDATE users SET githubUsername = ? WHERE id = ?`, [newGithubUsername, userId]);
     res.status(200).json({ message: "GitHub username added successfully" });
   } catch (error) {
@@ -105,8 +105,14 @@ export const setUserGitHubUsername = async (req: Request, res: Response, db: Dat
 }
 
 export const getUserGitHubUsername = async (req: Request, res: Response, db: Database) => {
-  const { userId } = req.query;
+  const { userEmail } = req.query;
+
+  if(!userEmail) {
+    return res.status(400).json({ message: 'User Email is mandatory!' });
+  }
+
   try {
+    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail?.toString());
     const githubUsernameObj = await db.get(`SELECT githubUsername FROM users WHERE id = ?`, [userId]);
     const githubUsername = githubUsernameObj ? githubUsernameObj.githubUsername : null;
     res.status(200).json({ githubUsername });
