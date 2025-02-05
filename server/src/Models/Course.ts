@@ -22,7 +22,7 @@ export class Course {
 
   // Setters
   public setName(name: string) {
-    // validate uniqueness of name
+    // ToDo validate uniqueness of name
     this.name = name;
   }
 
@@ -32,5 +32,13 @@ export class Course {
 
   public setProjects(projects: CourseProject[]) {
     this.projects = projects;
+  }
+
+  // Command methods
+  public addProject(project: CourseProject) {
+    this.projects = [...this.projects, project];
+  }
+  public removeProject(project: CourseProject) {
+    this.projects = this.projects.filter(courseProject => courseProject !== project);
   }
 }
