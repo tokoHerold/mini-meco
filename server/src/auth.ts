@@ -1,14 +1,20 @@
-import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { Database } from 'sqlite';
+import { UserStatus, UserStatusEnum } from './userStatus';
+import { Request, Response, NextFunction } from 'express';
+import { ObjectHandler } from './ObjectHandler';
+
+
 import { comparePassword, hashPassword } from './hash';
 import { Email } from './email';
 
 dotenv.config();
 
+
+const secret = process.env.JWT_SECRET || 'your_jwt_secret';
 
 export const register = async (req: Request, res: Response, db: Database) => {
   const { name, email, password } = req.body;
@@ -88,12 +94,13 @@ export const login = async (req: Request, res: Response, db: Database) => {
       return res.status(400).json({ message: 'Invalid password' });
     }
 
-    const userStatus = user.status;
-    if (userStatus == 'unconfirmed') {
+    let st: string = user.status;
+    let userStatus: UserStatus = new UserStatus(st as UserStatusEnum);
+    if (userStatus.getStatus() == UserStatusEnum.unconfirmed) {
       return res.status(400).json({ message: 'Email not confirmed. Please contact system admin.' });
-    } else if (userStatus == 'suspended') {
+    } else if (userStatus.getStatus() == UserStatusEnum.suspended) {
       return res.status(400).json({ message: 'User account is suspended. Please contact system admin.' }); 
-    } else if (userStatus == 'removed') {
+    } else if (userStatus.getStatus() == UserStatusEnum.removed) {
       return res.status(400).json({ message: 'User account is removed. Please contact system admin.' });
     }
 
@@ -108,6 +115,32 @@ export const login = async (req: Request, res: Response, db: Database) => {
   }
 };
 
+export const checkOwnership = (db: Database, oh: ObjectHandler) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+        if (!token) {
+            return res.status(401).json({ message: 'Authentication required' });
+        }
+
+        try {
+            const decoded = jwt.verify(token, secret) as { id: string; email: string };
+            const userFromTokenId = await oh.getUser(decoded.id, db);
+            const userFromParamsId = await oh.getUserByMail(req.body.email, db);
+
+            if(!userFromTokenId || !userFromParamsId) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            if (userFromTokenId?.getName() !== "admin" && userFromParamsId?.getName() !== userFromTokenId?.getName()) {
+                return res.status(403).json({ message: 'Forbidden: You can only edit your own data' });
+            }
+
+            next();
+        } catch (error) {
+            return res.status(401).json({ message: 'Invalid token' });
+        }
+    };
+};
 
 const sendPasswordResetEmail = async (email: Email, token: string) => {
 
@@ -270,15 +303,16 @@ export const sendConfirmationEmail = async (req: Request, res: Response, db: Dat
   let email: Email;
   if (!req.body.email || typeof req.body.email !== 'string') {
     return res.status(400).json({ message: 'User email is required' });
-  }
-  try {
+  } try {
     email = new Email(req.body.email as string);
   } catch (IllegalArgumentException) {
     return res.status(400).json({ message: 'Invalid email address' });
   }
   try {
     const user = await db.get('SELECT * FROM users WHERE email = ?', [email.toString()]);
-    if (!user || user.status !== 'unconfirmed') {
+    let st: string = user.status;
+    let userStatus: UserStatus = new UserStatus(st as UserStatusEnum);
+    if (!user || userStatus.getStatus() != UserStatusEnum.unconfirmed) {
       return res.status(400).json({ message: 'User not found or not unconfirmed' });
     }
 
