@@ -15,12 +15,12 @@ dotenv.config();
 const secret = process.env.JWT_SECRET || 'your_jwt_secret';
 
 export const register = async (req: Request, res: Response, db: Database) => {
-  const { name, email, passwordString } = req.body;
-  const password = Password.create(passwordString);
+  const { name, email, password } = req.body;
+  const passwordObj = Password.create(password);
 
-  if (!name || !email || !password) {
+  if (!name || !email || !passwordObj) {
     return res.status(400).json({ message: 'Please fill in username, email and password!' });
-  } else if (password.getStrength() < 3) {
+  } else if (passwordObj.getStrength() < 3) {
     return res.status(400).json({ message: 'Password must be at least 8 characters long and should contain upper and lower case letters as well as numbers or special characters' });
   } else if (!email.includes('@')) {
     return res.status(400).json({ message: 'Invalid email address' });
@@ -28,7 +28,7 @@ export const register = async (req: Request, res: Response, db: Database) => {
     return res.status(400).json({ message: 'Name must be at least 3 characters long' });
   }
 
-  const hashedPassword = await hashPassword(password.toString());
+  const hashedPassword = await hashPassword(passwordObj.toString());
 
   try {
     await db.run('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [name, email, hashedPassword]);
@@ -62,9 +62,9 @@ export const register = async (req: Request, res: Response, db: Database) => {
 
 
 export const login = async (req: Request, res: Response, db: Database) => {
-  const { email, passwordString } = req.body;
-  const password = Password.create(passwordString);
-  if (!email || !password) {
+  const { email, password } = req.body;
+  const passwordObj = Password.create(password);
+  if (!email || !passwordObj) {
     return res.status(400).json({ message: 'Email and password are required' });
   }
 
@@ -74,7 +74,7 @@ export const login = async (req: Request, res: Response, db: Database) => {
       return res.status(400).json({ message: 'Invalid email' });
     }
 
-    const isValidPassword = await comparePassword(password.toString(), user.password);
+    const isValidPassword = await comparePassword(passwordObj.toString(), user.password);
     if (!isValidPassword) {
       return res.status(400).json({ message: 'Invalid password' });
     }
@@ -189,8 +189,8 @@ export const forgotPassword = async (req: Request, res: Response, db: Database) 
 
 
 export const resetPassword = async (req: Request, res: Response, db: Database) => {
-  const { token, newPasswordString } = req.body;
-  const newPassword = Password.create(newPasswordString);
+  const { token, newPassword } = req.body;
+  const newPasswordObj = Password.create(newPassword);
 
   if (!token || !newPassword) {
     return res.status(400).json({ message: 'Token and new password are required' });
@@ -204,11 +204,11 @@ export const resetPassword = async (req: Request, res: Response, db: Database) =
 
     if (!user || user.resetPasswordExpire < currentTime) {
       return res.status(400).json({ message: 'Invalid or expired token' });
-    } else if (newPassword.getStrength() < 3) {
+    } else if (newPasswordObj.getStrength() < 3) {
       return res.status(400).json({ message: 'Password must be at least 8 characters long and should contain upper and lower case letters as well as numbers or special characters' });
     }
-    
-    const hashedPassword = await hashPassword(newPassword.toString());
+
+    const hashedPassword = await hashPassword(newPasswordObj.toString());
     await db.run('UPDATE users SET password = ?, resetPasswordToken = NULL, resetPasswordExpire = NULL WHERE id = ?', [hashedPassword, user.id]);
 
     res.status(200).json({ message: 'Password has been reset' });
