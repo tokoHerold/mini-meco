@@ -15,7 +15,8 @@ import {
     getProjectsForCourse,
     getRoleForProject,
     getUsers,
-    getUserRole
+    getUserRole,
+    updateUserRole
 } from './projectManagement';
 import { 
     sendStandupsEmail, saveHappinessMetric, createSprints, getProjectHappinessMetrics, getSprints, 
@@ -84,6 +85,7 @@ initializeDB().then((db) => {
   app.post('/user/gitubUsername', (req, res) => setUserGitHubUsername(req, res, db));
   app.get('/user/status', (req, res) => { getUsersByStatus(req, res, db) });
   app.get('/user/role', (req, res) => { getUserRole(req, res, db) });
+  app.post('/user/role', (req, res) => { updateUserRole(req, res, db) });
 
 
   app.post('/projConfig/changeURL', (req, res) => setUserProjectURL(req, res, db));

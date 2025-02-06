@@ -283,6 +283,22 @@ export const getUserRole = async (req: Request, res: Response, db: Database) => 
     }
 }
 
+export const updateUserRole = async (req: Request, res: Response, db: Database) => {
+    const { email, role } = req.body;
+
+    if (!email || !role) {
+        return res.status(400).json({ message: "Please provide email and role" });
+    }
+
+    try {
+        await db.run('UPDATE users SET userRole = ? WHERE email = ?', [role, email]);
+        res.status(200).json({ message: "User role updated successfully" });
+    } catch (error) {
+        console.error("Error during updating user role:", error);
+        res.status(500).json({ message: "Failed to update user role", error });
+    }
+}
+
 export const updateUserStatus = async (req: Request, res: Response, db: Database) => {
     const { email, status } = req.body;
 
