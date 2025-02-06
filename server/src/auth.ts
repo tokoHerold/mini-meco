@@ -6,9 +6,8 @@ import { Database } from 'sqlite';
 import { UserStatus, UserStatusEnum } from './userStatus';
 import { Request, Response, NextFunction } from 'express';
 import { ObjectHandler } from './ObjectHandler';
-
-
 import { comparePassword, hashPassword } from './hash';
+import { Password } from './Models/Password';
 
 dotenv.config();
 
@@ -16,19 +15,20 @@ dotenv.config();
 const secret = process.env.JWT_SECRET || 'your_jwt_secret';
 
 export const register = async (req: Request, res: Response, db: Database) => {
-  const { name, email, password } = req.body;
+  const { name, email, passwordString } = req.body;
+  const password = Password.create(passwordString);
 
   if (!name || !email || !password) {
     return res.status(400).json({ message: 'Please fill in username, email and password!' });
-  } else if (password.length < 8) {
-    return res.status(400).json({ message: 'Password must be at least 8 characters long' });
+  } else if (password.getStrength() < 3) {
+    return res.status(400).json({ message: 'Password must be at least 8 characters long and should contain upper and lower case letters as well as numbers or special characters' });
   } else if (!email.includes('@')) {
     return res.status(400).json({ message: 'Invalid email address' });
   } else if (name.length < 3) {
     return res.status(400).json({ message: 'Name must be at least 3 characters long' });
   }
 
-  const hashedPassword = await hashPassword(password);
+  const hashedPassword = await hashPassword(password.toString());
 
   try {
     await db.run('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [name, email, hashedPassword]);
@@ -62,7 +62,8 @@ export const register = async (req: Request, res: Response, db: Database) => {
 
 
 export const login = async (req: Request, res: Response, db: Database) => {
-  const { email, password } = req.body;
+  const { email, passwordString } = req.body;
+  const password = Password.create(passwordString);
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required' });
   }
@@ -73,7 +74,7 @@ export const login = async (req: Request, res: Response, db: Database) => {
       return res.status(400).json({ message: 'Invalid email' });
     }
 
-    const isValidPassword = await comparePassword(password, user.password);
+    const isValidPassword = await comparePassword(password.toString(), user.password);
     if (!isValidPassword) {
       return res.status(400).json({ message: 'Invalid password' });
     }
@@ -188,7 +189,8 @@ export const forgotPassword = async (req: Request, res: Response, db: Database) 
 
 
 export const resetPassword = async (req: Request, res: Response, db: Database) => {
-  const { token, newPassword } = req.body;
+  const { token, newPasswordString } = req.body;
+  const newPassword = Password.create(newPasswordString);
 
   if (!token || !newPassword) {
     return res.status(400).json({ message: 'Token and new password are required' });
@@ -202,9 +204,11 @@ export const resetPassword = async (req: Request, res: Response, db: Database) =
 
     if (!user || user.resetPasswordExpire < currentTime) {
       return res.status(400).json({ message: 'Invalid or expired token' });
+    } else if (newPassword.getStrength() < 3) {
+      return res.status(400).json({ message: 'Password must be at least 8 characters long and should contain upper and lower case letters as well as numbers or special characters' });
     }
-
-    const hashedPassword = await hashPassword(newPassword);
+    
+    const hashedPassword = await hashPassword(newPassword.toString());
     await db.run('UPDATE users SET password = ?, resetPasswordToken = NULL, resetPasswordExpire = NULL WHERE id = ?', [hashedPassword, user.id]);
 
     res.status(200).json({ message: 'Password has been reset' });
