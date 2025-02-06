@@ -25,7 +25,8 @@ export async function initializeDB() {
       resetPasswordToken TEXT,
       resetPasswordExpire INTEGER,
       confirmEmailToken TEXT,
-      confirmEmailExpire INTEGER
+      confirmEmailExpire INTEGER,
+      userRole TEXT DEFAULT "USER" NOT NULL
     )
   `);
 
@@ -33,8 +34,8 @@ export async function initializeDB() {
   if (userCount.count === 0) {
     const { name, email, password } = DEFAULT_USER;
     await db.run(
-      `INSERT INTO users (name, email, password, status) VALUES (?, ?, ?, ?)`,
-      [name, email, await hashPassword(password), 'confirmed']
+      `INSERT INTO users (name, email, password, status, userRole) VALUES (?, ?, ?, ?, ?)`,
+      [name, email, await hashPassword(password), 'confirmed', "ADMIN"]
     );
     console.log(`Default admin user created: (email: '${email}', password: '${password}')`);
   }

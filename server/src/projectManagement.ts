@@ -1,6 +1,5 @@
 import { Database } from "sqlite";
-import { Request, Response } from "express";
-import { send } from "process";
+import { Request, Response } from "express";;
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
@@ -265,6 +264,22 @@ export const getUsersByStatus = async (req: Request, res: Response, db: Database
     } catch (error) {
         console.error("Error during retrieving user status:", error);
         res.status(500).json({ message: "Failed to retrieve user status", error });
+    }
+}
+
+export const getUserRole = async (req: Request, res: Response, db: Database) => {
+    const { userEmail } = req.query;
+
+    try {
+        const user = await db.get('SELECT userRole FROM users WHERE email = ?', [userEmail]);
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (error) {
+        console.error("Error during retrieving user role:", error);
+        res.status(500).json({ message: "Failed to retrieve user role", error });
     }
 }
 
