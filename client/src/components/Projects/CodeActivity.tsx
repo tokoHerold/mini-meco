@@ -36,7 +36,7 @@ const CodeActivity: React.FC = () => {
     email: string;
     githubUsername: string;
   } | null>(null);
-  // @ts-ignore: suppress unused variable warning
+  // @ts-expect-error: suppress unused variable warning
   const [projectGroups, setProjectGroups] = useState<string[]>([]);
   const [selectedProjectGroup, setSelectedProjectGroup] = useState<string>("");
   const [commitsPerSprint, setCommitsPerSprint] = useState<any[]>([]);
