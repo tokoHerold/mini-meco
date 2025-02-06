@@ -35,11 +35,12 @@ export class Password {
   }
 
   private static calculatePasswordStrength(value: string): PasswordStrength {
-    // Check if the password is very weak
+    // password needs to be at least 8 characters long
     if (value.length < 8) {
       return PasswordStrength.VeryWeak;
     }
 
+    // mixed case, special characters, numbers and length > 12 contribute to password strength
     var baseValue = 1;
     if (Password.containsLowerAndUpperCase(value)) {
       baseValue++;
