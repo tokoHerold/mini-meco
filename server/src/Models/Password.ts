@@ -12,7 +12,7 @@ export class Password {
     
     public static create(passwordValue: string): Password {
         if (!passwordValue || passwordValue === undefined) {
-            throw new Error("Password value cannot be empty");
+            passwordValue = '';
         }
         return new Password(passwordValue, Password.calculatePasswordStrength(passwordValue));
     }

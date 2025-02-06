@@ -7,8 +7,9 @@ describe('Password', () => {
         expect(password.getValue()).toBe('TestPassword123');
     });
 
-    it('should throw an error if the password value is empty', () => {
-        expect(() => Password.create('')).toThrowError();
+    it('should create an empty password with no input', () => {
+        const password = Password.create('');
+        expect(password.getValue()).toBe('');
     });
 
     it('toString should return the password as a string', () => {
