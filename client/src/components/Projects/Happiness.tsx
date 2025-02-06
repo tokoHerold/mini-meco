@@ -29,7 +29,7 @@ const Happiness: React.FC = (): React.ReactNode => {
   const location = useLocation();
 
   const [projectName, setProjectName] = useState<string | null>("");
-  // @ts-ignore: suppress unused variable warning
+  // @ts-expect-error: suppress unused variable warning
   const [userName, setUserName] = useState<string | null>(null);
   const [user, setUser] = useState<{ name: string; email: string } | null>(
     null
