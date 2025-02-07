@@ -62,7 +62,7 @@ const CodeActivity: React.FC = () => {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/getUserProjectGroups?projectName=${encodeURIComponent(
+          `http://localhost:3000/course/user?projectName=${encodeURIComponent(
             projectName
           )}`
         );
@@ -121,7 +121,7 @@ const CodeActivity: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/getProjectGitHubURL?email=${encodeURIComponent(
+        `http://localhost:3000/user/projects?userEmail=${encodeURIComponent(
           user.email
         )}&projectName=${encodeURIComponent(projectName)}`
       );
@@ -160,30 +160,30 @@ const CodeActivity: React.FC = () => {
           )}`
         );
         const fetchedSprints = await response.json();
-  
+
         // Only have end date, so calculate start date
         const updatedSprints = fetchedSprints.map(
           (sprint: any, index: number) => {
-            const sprintName = `sprint${index}`; 
+            const sprintName = `sprint${index}`;
             if (index === 0) {
               // First sprint: start date is one week before end date
               const startDate = new Date(sprint.endDate);
               startDate.setDate(startDate.getDate() - 7);
-              return { ...sprint, startDate, name: sprintName }; 
+              return { ...sprint, startDate, name: sprintName };
             } else {
               // Other sprints: start date is the previous sprint's end date
               const startDate = new Date(fetchedSprints[index - 1].endDate);
-              return { ...sprint, startDate, name: sprintName }; 
+              return { ...sprint, startDate, name: sprintName };
             }
           }
         );
-  
+
         setSprints(updatedSprints);
       } catch (error) {
         console.error("Error fetching sprints:", error);
       }
     };
-  
+
     fetchAllSprints();
   }, [selectedCourse]);
   
@@ -277,15 +277,14 @@ const CodeActivity: React.FC = () => {
         });
         return { sprint: sprint.name, count: commitsInSprint.length }; // Ensure `sprint` is the name
       });
-  
+
       setCommitsPerSprint(commitsCount);
     };
-  
+
     if (commits.length && sprints.length) {
       calculateCommitsPerSprint();
     }
   }, [commits, sprints]);
-  
 
   return (
     <div onClick={handleNavigation}>

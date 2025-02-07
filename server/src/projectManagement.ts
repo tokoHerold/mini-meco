@@ -5,6 +5,8 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { DatabaseManager } from "./Models/DatabaseManager";
 
+import { Semester } from "./Models/Semester";
+
 dotenv.config();
 
 export const createCourse = async (req: Request, res: Response, db: Database) => {
@@ -17,8 +19,10 @@ export const createCourse = async (req: Request, res: Response, db: Database) =>
     return res.status(400).json({ message: "Invalid semester format. Please use SSYY or WSYYYY format" });
   }
 
+  let semesterInput = semester; // Raw input from the request
   try {
-    await db.run("INSERT INTO courses (semester, courseName) VALUES (?, ?)", [semester, courseName]);
+    const semester = Semester.create(semesterInput); // Uses the Semester's internal validation
+    await db.run("INSERT INTO courses (semester, courseName) VALUES (?, ?)", [semester.toString(), courseName]);
     res.status(201).json({ message: "Course created successfully" });
   } catch (error) {
     console.error("Error during project group creation:", error);
@@ -61,12 +65,13 @@ export const editCourse = async (req: Request, res: Response, db: Database) => {
   }
 
   try {
+    const semester = Semester.create(newSemester); // @todo Shared ValueType method?
     const courseId = DatabaseManager.getCourseIdFromName(db, courseName);
     console.log(`Executing SQL: UPDATE courses SET semester = '${newSemester}', courseName = '${newCourseName}' WHERE id = '${courseId}'`);
 
     await db.run(
       `UPDATE courses SET semester = ?, courseName = ? WHERE id = ?`,
-      [newSemester, newCourseName, courseId]
+      [semester.toString(), newCourseName, courseId]
     );
 
     res.status(201).json({ message: "Course edited successfully" });
@@ -289,9 +294,6 @@ export const updateAllConfirmedUsers = async (req: Request, res: Response, db: D
   }
 
   try {
-    const confirmedUsers = await db.all('SELECT * FROM users WHERE status = "confirmed"');
-
-
     const result = await db.run(
       'UPDATE users SET status = ? WHERE status = "confirmed"',
       [status]

@@ -63,7 +63,7 @@ const Happiness: React.FC = (): React.ReactNode => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch("http://localhost:3000/project-groups");
+        const response = await fetch("http://localhost:3000/course");
         const data = await response.json();
         setCourses(data.map((item: any) => item.CourseName));
         console.log("Fetched project groups:", data);
@@ -96,7 +96,7 @@ const Happiness: React.FC = (): React.ReactNode => {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/sprints?courseName=${encodeURIComponent(
+          `http://localhost:3000/courseProject/sprints?courseName=${encodeURIComponent(
             selectedCourse
           )}`
         );
@@ -122,7 +122,7 @@ const Happiness: React.FC = (): React.ReactNode => {
 
       try {
         const response = await fetch(
-          `http://localhost:3000/currentSprint?projectName=${encodeURIComponent(
+          `http://localhost:3000/courseProject/currentSprint?projectName=${encodeURIComponent(
             projectName
           )}`
         );
@@ -154,7 +154,7 @@ const Happiness: React.FC = (): React.ReactNode => {
 
     try {
       const response = await fetch(
-        "http://localhost:3000/happiness/createSprints",
+        "http://localhost:3000/courseProject/sprints",
         {
           method: "POST",
           headers: {
@@ -180,7 +180,7 @@ const Happiness: React.FC = (): React.ReactNode => {
 
   const handleHappinessSubmit = async () => {
     try {
-      await fetch("http://localhost:3000/happiness/saveHappiness", {
+      await fetch("http://localhost:3000/courseProject/happiness", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -201,7 +201,7 @@ const Happiness: React.FC = (): React.ReactNode => {
   const fetchHappinessData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/getHappinessData?projectName=${encodeURIComponent(
+        `http://localhost:3000/courseProject/happiness?projectName=${encodeURIComponent(
           projectName ?? ""
         )}`
       );
@@ -226,9 +226,8 @@ const Happiness: React.FC = (): React.ReactNode => {
     ...new Set(happinessData.map((data) => data.userEmail)),
   ];
   uniqueEmails.forEach((email, index) => {
-    emailColors[email] = `hsl(${
-      (index * 360) / uniqueEmails.length
-    }, 100%, 50%)`;
+    emailColors[email] = `hsl(${(index * 360) / uniqueEmails.length
+      }, 100%, 50%)`;
   });
 
   const formattedData: { [sprintName: string]: any } = {};

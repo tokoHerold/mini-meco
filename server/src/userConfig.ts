@@ -85,10 +85,6 @@ export const getUserProjectURL = async (req: Request, res: Response, db: Databas
   }
 }
 
-export const changeUserProjectURL = async (req: Request, res: Response, db: Database) => {
-  setUserProjectURL(req, res, db);
-}
-
 export const setUserGitHubUsername = async (req: Request, res: Response, db: Database) => {
   const { userEmail, newGithubUsername } = req.body;
   if (!newGithubUsername) {
