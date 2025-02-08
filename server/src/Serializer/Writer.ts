@@ -14,9 +14,9 @@ export interface Writer {
     /**
      * Writes an object to backend. First writes the reference and then queues the Object for writing, if it was not handled previously.
      * @param attributeName Name used to identify the object reference when reading/writing.
-     * @param objRef ??? @todo figure out, what exactly goes here
+     * @param objRef Serializable to be written.
      */
-    writeObject<T extends object>(attributeName: string, objRef: T | undefined): void;
+    writeObject<T extends Serializable>(attributeName: string, objRef: T | undefined): void;
 
     /**
      * Writes @param string to backend with @param attributeName.
