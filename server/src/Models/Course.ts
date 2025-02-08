@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { CourseProject } from "./CourseProject";
 export class Course {
 
@@ -43,15 +42,3 @@ export class Course {
     this.projects = this.projects.filter(courseProject => courseProject !== project);
   }
 }
-=======
-export class Course {
-    getUserCourses() {
-        // Implementation here
-        return [];
-    }
-
-    testEcho(str: string): string {
-        return str;
-    }
-}
->>>>>>> upstream/main
