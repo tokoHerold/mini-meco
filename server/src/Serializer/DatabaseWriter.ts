@@ -3,6 +3,10 @@ import { Admin } from "../Models/Admin";
 import { Serializable } from "../Serializer/Serializable";
 import { User } from "../Models/User";
 import { Writer } from "./Writer";
+import { CourseProject } from "../Models/CourseProject";
+import { Course } from "../Models/Course";
+import { ProjectMember } from "../Models/ProjectMember";
+import { ProjectParticipation } from "../Models/ProjectParticipation";
 
 /**
  * Reader Class
@@ -16,6 +20,7 @@ export class DatabaseWriter implements Writer {
      */
     protected attributes: {[attributeName: string]: string | number | null} = {};
     protected toHandle: Array<Serializable> = new Array();
+    protected wasHandled: Set<{tableName: string, id: number}> = new Set();
     protected db: Database;
 
     constructor(db: Database) {    
@@ -23,7 +28,9 @@ export class DatabaseWriter implements Writer {
     }
 
     async writeRoot(rootObject: Serializable) {
-        /** @todo handle writing referenced objects recursively if required! */
+        /** handle writing referenced objects recursively if required! */
+        this.toHandle = new Array();
+        this.wasHandled = new Set();
         this.toHandle.push(rootObject);
 
         let obj: Serializable | undefined; 
@@ -42,6 +49,10 @@ export class DatabaseWriter implements Writer {
                 `UPDATE :table SET ${assignments} WHERE id = :id`,
                 {...this.attributes, }
             );
+
+            if ('getId' in obj && typeof obj.getId === 'function') {
+                this.wasHandled.add({tableName: table, id: obj.getId()})
+            }   
         }
 
     }
@@ -54,22 +65,32 @@ export class DatabaseWriter implements Writer {
         } else if ('getId' in objRef && typeof objRef.getId === 'function') { 
             // make sure Object has an ID and a getter.
             this.attributes[attributeName] = objRef.getId();
-            this.toHandle.push(objRef);
+            if (!this.wasHandled.has({
+                tableName: this.getTableNameFromClass(objRef), 
+                id: objRef.getId()
+            })) {
+                this.toHandle.push(objRef);
+            }
         } else {
             throw new Error("Serialization for Object of type " + typeof objRef + " failed!");
         }
     }
+
     writeString(attributeName: string, string: string | null): void {
         this.attributes[attributeName] = string;
     }
+
     writeNumber(attributeName: string, number: number | null): void {
         this.attributes[attributeName] = number;
     }
     
-
     getTableNameFromClass(s: Serializable): string {
         if (s instanceof User || s instanceof Admin) {
             return "users";
+        } else if (s instanceof Course) {
+            return "courses";
+        } else if (s instanceof CourseProject) {
+            return "projects";
         /** @todo Add further tables/Classes! */
         } else {
             throw new Error("Unknown Serializable! Probably not implemented yet!");
