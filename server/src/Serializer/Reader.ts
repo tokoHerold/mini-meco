@@ -1,4 +1,4 @@
-import { Serializable } from "../Models/Serializable";
+import { Serializable } from "../Serializer/Serializable";
 
 /**
  * Generic Reader

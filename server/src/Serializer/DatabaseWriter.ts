@@ -1,6 +1,6 @@
 import { Database } from "sqlite";
 import { Admin } from "../Models/Admin";
-import { Serializable } from "../Models/Serializable";
+import { Serializable } from "../Serializer/Serializable";
 import { User } from "../Models/User";
 import { Writer } from "./Writer";
 import { query } from "express";
@@ -20,13 +20,13 @@ export class DatabaseWriter implements Writer {
 
     constructor(db: Database) {    
         this.db = db;
-          /* res.status(201).json({ message: 'User registered successfully' }); */
-        /*'UPDATE users SET confirmEmailToken = ?, confirmEmailExpire = ? WHERE email = ?',*/
     }
 
 
     async writeRoot(rootObject: Serializable) {
         /** @todo handle writing referenced objects recursively if required! */
+        // reset attributes dict
+        this.attributes = {};
         // get table string based on class.
         let table: string;
         if (rootObject instanceof User || rootObject instanceof Admin) {
@@ -44,7 +44,7 @@ export class DatabaseWriter implements Writer {
                         .join(", ");
         await this.db.run(
             `UPDATE :table SET ${assignments} WHERE id = :id`,
-            {...this.attributes}
+            {...this.attributes, }
         );
     }
 

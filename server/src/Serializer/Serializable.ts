@@ -1,7 +1,7 @@
 import { initializeDB } from "../databaseInitializer";
 import { Reader } from "../Serializer/Reader";
 import { Writer } from "../Serializer/Writer";
-import { User } from "./User";
+import { User } from "../Models/User";
 
 
 /**

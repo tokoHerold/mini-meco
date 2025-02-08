@@ -1,6 +1,6 @@
 import { Visitor } from "./Visitor";
 import { CourseProject } from "./CourseProject";
-import { Serializable } from "./Serializable";
+import { Serializable } from "../Serializer/Serializable";
 import { Reader } from "../Serializer/Reader";
 import { Writer } from "../Serializer/Writer";
 

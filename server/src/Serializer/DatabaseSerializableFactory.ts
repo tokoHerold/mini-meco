@@ -1,8 +1,8 @@
-import { Serializable } from "./Serializable";
-import { SerializableFactory } from "./SerializableFactory";
+import { Serializable } from "../Serializer/Serializable";
+import { SerializableFactory } from "../Serializer/SerializableFactory";
 import { Database } from "sqlite";
-import { User } from "./User";
-import { DatabaseWriter } from "../Serializer/DatabaseWriter";
+import { User } from "../Models/User";
+import { DatabaseWriter } from "./DatabaseWriter";
 
 /**
  * Factory for creating Serializables in a way specific to the sqlite database.

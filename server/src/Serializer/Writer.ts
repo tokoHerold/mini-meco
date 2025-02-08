@@ -1,4 +1,4 @@
-import { Serializable } from "../Models/Serializable";
+import { Serializable } from "./Serializable";
 
 /**
  * Generic Writer
