@@ -42,8 +42,16 @@ export class DatabaseWriter implements Writer {
     }
 
     
-    writeObject(attributeName: string, objRef: Serializable): void {
-        throw new Error("Method not implemented.");
+    writeObject<T extends object>(attributeName: string, objRef: T | undefined): void {
+        // if object is not defined write NULL to db
+        if (objRef === undefined) {
+            this.attributes[attributeName] = "NULL";
+        } else if ('getId' in objRef && typeof objRef.getId === 'function') { 
+            // make sure Object has an ID and a getter.
+            this.attributes[attributeName] = objRef.getId();
+        } else {
+            throw new Error("Serialization for Object of type " + typeof objRef + " failed!");
+        }
     }
     writeString(attributeName: string, string: string): void {
         this.attributes[attributeName] = string;
