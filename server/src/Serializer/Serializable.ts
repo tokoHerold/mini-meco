@@ -1,11 +1,10 @@
 import { initializeDB } from "../databaseInitializer";
-import { Reader } from "../Serializer/Reader";
+import { Reader } from "./Reader";
 import { Writer } from "../Serializer/Writer";
 import { User } from "../Models/User";
 
 
 /**
- * @todo: Expand
  * For object creation please use a SerializableFactory!
  */
 export interface Serializable {

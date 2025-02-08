@@ -1,4 +1,4 @@
-import { Serializable } from "../Serializer/Serializable";
+import { Serializable } from "./Serializable";
 import { Reader } from "./Reader";
 
 /**
@@ -8,19 +8,18 @@ import { Reader } from "./Reader";
  * 
  */
 export class DatabaseResultSetReader implements Reader {
-    protected resultSet: Serializable[];
+    protected resultSet: Promise<any> | Promise<any[]>;
 
-    constructor(resultSet: Serializable[]) {
+    constructor(resultSet: Promise<any> | Promise<any[]>) {
         this.resultSet = resultSet;
     }
 
-    readRoot(): void {
-        /* loop over all entries in resultSet */ 
+    readRoot(): Serializable {
+        /* loop over all entries in resultSet */
             /* Read type and attributes from entry */
             /* Create a new instance of fitting type */
             /* Call readFrom() on that instance which will read all attributes from attribute set. */
         /* end loop */
-
         throw new Error("Method not implemented.");
     }
     readObject(attributeName: string): Serializable {
