@@ -9,13 +9,13 @@ export interface Reader {
      * Any specification which objects to read can be passed to the constructor
      * of the classes implementing this interface.
      */
-    readRoot(): void;
+    readRoot<T extends Serializable>(Constructor: new (...args: any[]) => T): T | Promise<T | T[]>;
 
     /**
      * Writes an object to backend. First writes the reference and then queues the Object for writing, if it was not handled previously.
      * @param attributeName Name used to identify the object reference when reading/writing.
      */
-    readObject(attributeName: string): Serializable;
+    readObject(attributeName: string, className: string): Promise<Serializable | undefined> ;
 
     /**
      * Reads a string from backend with @param attributeName.

@@ -108,7 +108,7 @@ export const checkOwnership = (db: Database, oh: ObjectHandler) => {
 
         try {
             const decoded = jwt.verify(token, secret) as { id: string; email: string };
-            const userFromTokenId = await oh.getUser(decoded.id, db);
+            const userFromTokenId = await oh.getUser(Number(decoded.id), db);
             const userFromParamsId = await oh.getUserByMail(req.body.email, db);
 
             if(!userFromTokenId || !userFromParamsId) {

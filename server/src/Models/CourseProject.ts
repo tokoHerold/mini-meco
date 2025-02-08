@@ -14,10 +14,10 @@ export class CourseProject implements Serializable {
     this.id = id;
   }
 
-  readFrom(reader: Reader): void {
+  async readFrom(reader: Reader): Promise<void> {
     this.id = reader.readNumber("id");
     this.name = reader.readString("projectName");
-    this.course = reader.readObject<Course>("courseId");
+    this.course = (await reader.readObject("courseId", "Course")) as Course ;
     // todo this.members = reader.readArray(...)
   }
   writeTo(writer: Writer): void {
