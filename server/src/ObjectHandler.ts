@@ -78,6 +78,10 @@ export class ObjectHandler {
         }
     }
 
+    public async getUserCount(db: Database): Promise<number | undefined> {
+        return (await db.get('SELECT COUNT(*) AS count FROM users')).count;
+    }
+
 
     public async getUser(id: number, db: Database): Promise<User | null> {
         const userRow = await db.get('SELECT * FROM users WHERE id = ?', [id]);

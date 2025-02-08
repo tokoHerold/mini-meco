@@ -1,6 +1,10 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import { hashPassword } from './hash';
+import { ObjectHandler } from './ObjectHandler';
+import { DatabaseSerializableFactory } from './Serializer/DatabaseSerializableFactory';
+import { User } from './Models/User';
+import { DatabaseWriter } from './Serializer/DatabaseWriter';
 
 const DEFAULT_USER = {
   name: "admin",
@@ -13,6 +17,8 @@ export async function initializeDB() {
     filename: './myDatabase.db',
     driver: sqlite3.Database,
   });
+
+  const oh = new ObjectHandler();
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS users (
@@ -29,13 +35,19 @@ export async function initializeDB() {
     )
   `);
 
-  const userCount = await db.get('SELECT COUNT(*) AS count FROM users');
-  if (userCount.count === 0) {
+  const userCount = await oh.getUserCount(db);
+  if (!userCount || userCount === 0) {
     const { name, email, password } = DEFAULT_USER;
-    await db.run(
-      `INSERT INTO users (name, email, password, status) VALUES (?, ?, ?, ?)`,
-      [name, email, await hashPassword(password), 'confirmed']
-    );
+    // await db.run(`INSERT INTO users (name, email, password, status) VALUES (?, ?, ?, ?)`, [name, email, await hashPassword(password), 'confirmed']);
+    const dbsf = new DatabaseSerializableFactory(db);
+    const writer = new DatabaseWriter(db);
+    const admin = await dbsf.create("User") as User;
+    admin.setName(name);
+    admin.setEmail(email);
+    admin.setPassword(await hashPassword(password));
+    admin.setStatus('confirmed');
+    writer.writeRoot(admin);
+
     console.log(`Default admin user created: (email: '${email}', password: '${password}')`);
   }
 
