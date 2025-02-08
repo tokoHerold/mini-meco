@@ -29,6 +29,7 @@ export class User extends Visitor implements Serializable {
   }
 
   readFrom(reader: Reader): void {
+    /** use setter? */
     this.id = reader.readNumber("id");
     this.name = reader.readString("name");
     this.githubUsername = reader.readString("githubUserName");
@@ -46,6 +47,7 @@ export class User extends Visitor implements Serializable {
   }
 
   writeTo(writer: Writer): void {
+    /** use getter? */
     writer.writeNumber("id", this.id);
     writer.writeString("name", this.name);
     writer.writeString("githubUserName", this.githubUsername);
