@@ -21,13 +21,13 @@ export interface Reader {
      * Reads a string from backend with @param attributeName.
      * @param attributeName Name used to identify the attribute when reading/writing.
      */
-    readString(attributeName: string): string;
+    readString(attributeName: string): string | null;
 
     /**
      * Reads a number from backend with @param attributeName.
      * @param attributeName Name used to identify the attribute when reading/writing.
      */
-    readNumber(attributeName: string): number;
+    readNumber(attributeName: string): number | null;
 
     /**
      * 

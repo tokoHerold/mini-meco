@@ -10,7 +10,7 @@ import { Database } from "sqlite";
  * 
  */
 export class DatabaseResultSetReader implements Reader {
-    protected attributes: {[attributeName: string]: string | number} = {};
+    protected attributes: {[attributeName: string]: string | number | null} = {};
     protected resultSet: Promise<any> | Promise<any[]>;
     protected db: Database;
     
@@ -51,8 +51,8 @@ export class DatabaseResultSetReader implements Reader {
         for (const attribute in row) {
             const value = row[attribute];
             // Some type checks
-            if (value !== null && value !== undefined && 
-                (typeof value === 'string' || typeof value === 'number')) {
+            if (value !== undefined && 
+                (typeof value === 'string' || typeof value === 'number' || value === null)) {
                 this.attributes[attribute] = value;
             }
         }
@@ -84,16 +84,16 @@ export class DatabaseResultSetReader implements Reader {
         return obj;
     }
 
-    readString(attributeName: string): string {
+    readString(attributeName: string): string | null{
         const val = this.attributes[attributeName];
-        if (typeof val !== 'string') {
+        if (val !== null && typeof val !== 'string' ) {
             throw new Error("Error during Serialization: Attribute " + attributeName + " is not a string!");  
         }
         return val;
     }
-    readNumber(attributeName: string): number {
+    readNumber(attributeName: string): number | null {
         const val = this.attributes[attributeName];
-        if (typeof val !== 'number') {
+        if (val !== null && typeof val !== 'number') {
             throw new Error("Error during Serialization: Attribute " + attributeName + " is not a number!");
         }
         return val;

@@ -5,8 +5,8 @@ import { CourseProject } from "./CourseProject";
 
 export class Course implements Serializable {
   protected id: number;
-  protected name: string = "";
-  protected semester: string = "";
+  protected name: string | null = null;
+  protected semester: string | null = null;
   protected projects: CourseProject[] = [];
 
   constructor(id: number) {
@@ -14,7 +14,7 @@ export class Course implements Serializable {
   }
 
   readFrom(reader: Reader): void {
-    this.id = reader.readNumber("id");
+    this.id = reader.readNumber("id") as number;
     this.name = reader.readString("courseName");
     this.semester = reader.readString("semester");
     // todo ??? this.projects = reader.readObject("projects")
@@ -31,11 +31,11 @@ export class Course implements Serializable {
     return this.id;
   }
 
-  public getName(): string {
+  public getName(): string | null{
     return this.name;
   }
 
-  public getSemester(): string {
+  public getSemester(): string | null {
     return this.semester;
   }
 
@@ -44,12 +44,12 @@ export class Course implements Serializable {
   }
 
   // Setters
-  public setName(name: string) {
+  public setName(name: string | null) {
     // ToDo validate uniqueness of name
     this.name = name;
   }
 
-  public setSemester(semester: string) {
+  public setSemester(semester: string | null) {
     this.semester = semester;
   }
 

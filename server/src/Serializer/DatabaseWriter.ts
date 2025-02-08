@@ -15,7 +15,7 @@ export class DatabaseWriter implements Writer {
     /**
      * Dictionary to be filled with attributes to be written in a single SQL call.
      */
-    protected attributes: {[attributeName: string]: string | number} = {};
+    protected attributes: {[attributeName: string]: string | number | null} = {};
     protected db: Database;
 
     constructor(db: Database) {    
@@ -53,10 +53,10 @@ export class DatabaseWriter implements Writer {
             throw new Error("Serialization for Object of type " + typeof objRef + " failed!");
         }
     }
-    writeString(attributeName: string, string: string): void {
+    writeString(attributeName: string, string: string | null): void {
         this.attributes[attributeName] = string;
     }
-    writeNumber(attributeName: string, number: number): void {
+    writeNumber(attributeName: string, number: number | null): void {
         this.attributes[attributeName] = number;
     }
     

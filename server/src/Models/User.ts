@@ -6,15 +6,15 @@ import { Writer } from "../Serializer/Writer";
 
 export class User extends Visitor implements Serializable {
   protected id: number;
-  protected name: string = "";
-  protected githubUsername: string = "";
-  protected email: string = "";
-  protected status: string = "";
-  protected password: string = "";
-  protected resetPasswordToken: string = "";
-  protected resetPasswordExpire: number = 0;
-  protected confirmEmailToken: string = "";
-  protected confirmEmailExpire: number = 0;
+  protected name: string | null = null;
+  protected githubUsername: string | null = null;
+  protected email: string | null = null;
+  protected status: string = "unconfirmed";
+  protected password: string | null = null;
+  protected resetPasswordToken: string | null = null;
+  protected resetPasswordExpire: number | null = null;
+  protected confirmEmailToken: string | null = null;
+  protected confirmEmailExpire: number | null = null;
   protected projectsUserIsMemberOf: CourseProject[] = [];
   
   /** Do not call this constructor directly. Instead use the SerializableFactory
@@ -30,11 +30,11 @@ export class User extends Visitor implements Serializable {
 
   readFrom(reader: Reader): void {
     /** use setter? */
-    this.id = reader.readNumber("id");
+    this.id = reader.readNumber("id") as number;
     this.name = reader.readString("name");
     this.githubUsername = reader.readString("githubUserName");
     this.email = reader.readString("email");
-    this.status = reader.readString("status");
+    this.status = reader.readString("status") as string;
     this.password = reader.readString("password");
     this.resetPasswordToken = reader.readString("resetPasswordToken");
     this.resetPasswordExpire = reader.readNumber("resetPasswordExpire");
@@ -68,39 +68,39 @@ export class User extends Visitor implements Serializable {
     return this.id;
   }
 
-  public getName(): string{
+  public getName(): string | null {
     return this.name;
   }
 
-  public getGithubUsername(): string{
+  public getGithubUsername(): string | null {
     return this.githubUsername;
   }
 
-  public getEmail(): string{
+  public getEmail(): string | null {
     return this.email;
   }
 
-  public getStatus(): string{
+  public getStatus(): string {
     return this.status;
   }
 
-  public getPassword(): string{
+  public getPassword(): string | null{
     return this.password;
   }
 
-  public getResetPasswordToken(): string{
+  public getResetPasswordToken(): string | null{
     return this.resetPasswordToken;
   }
 
-  public getResetPasswordExpire(): number{
+  public getResetPasswordExpire(): number | null {
     return this.resetPasswordExpire;
   }
 
-  public getConfirmEmailToken(): string{
+  public getConfirmEmailToken(): string | null {
     return this.confirmEmailToken;
   }
 
-  public getConfirmEmailExpire(): number{
+  public getConfirmEmailExpire(): number | null {
     return this.confirmEmailExpire;
   }
 
@@ -113,15 +113,15 @@ export class User extends Visitor implements Serializable {
     this.id = id;
   }
 
-  public setName(name: string){
+  public setName(name: string | null){
     this.name = name;
   }
 
-  public setGithubUsername(githubUsername: string){
+  public setGithubUsername(githubUsername: string | null){
     this.githubUsername = githubUsername;
   }
 
-  public setEmail(email: string){
+  public setEmail(email: string | null){
     this.email = email;
   }
 
@@ -129,23 +129,23 @@ export class User extends Visitor implements Serializable {
     this.status = status;
   }
 
-  public setPassword(password: string){
+  public setPassword(password: string | null){
     this.password = password;
   }
 
-  public setResetPasswordToken(resetPasswordToken: string){
+  public setResetPasswordToken(resetPasswordToken: string | null){
     this.resetPasswordToken = resetPasswordToken;
   }
 
-  public setResetPasswordExpire(resetPasswordExpire: number){
+  public setResetPasswordExpire(resetPasswordExpire: number | null){
     this.resetPasswordExpire = resetPasswordExpire;
   }
 
-  public setConfirmEmailToken(confirmEmailToken: string){
+  public setConfirmEmailToken(confirmEmailToken: string | null){
     this.confirmEmailToken = confirmEmailToken;
   }
 
-  public setConfirmEmailExpire(confirmEmailExpire: number){
+  public setConfirmEmailExpire(confirmEmailExpire: number | null){
     this.confirmEmailExpire = confirmEmailExpire;
   }
 

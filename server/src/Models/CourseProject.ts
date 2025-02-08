@@ -6,7 +6,7 @@ import { ProjectMember } from "./ProjectMember";
 
 export class CourseProject implements Serializable {
   protected id: number;
-  protected name: string = "";
+  protected name: string | null = null;
   protected course: Course | undefined;
   protected members: ProjectMember[] = [];
 
@@ -15,7 +15,7 @@ export class CourseProject implements Serializable {
   }
 
   async readFrom(reader: Reader): Promise<void> {
-    this.id = reader.readNumber("id");
+    this.id = reader.readNumber("id") as number;
     this.name = reader.readString("projectName");
     this.course = (await reader.readObject("courseId", "Course")) as Course ;
     // todo this.members = reader.readArray(...)
@@ -32,7 +32,7 @@ export class CourseProject implements Serializable {
     return this.id;
   }
 
-  public getName(): string {
+  public getName(): string | null {
     return this.name;
   }
 
@@ -45,7 +45,7 @@ export class CourseProject implements Serializable {
   }
 
   // Setters
-  public setName(name: string) {
+  public setName(name: string | null) {
     //ToDo validate uniqueness of new name
     this.name = name;
   }

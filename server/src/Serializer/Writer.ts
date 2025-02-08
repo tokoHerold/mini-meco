@@ -23,14 +23,14 @@ export interface Writer {
      * @param attributeName Name used to identify the attribute when reading/writing.
      * @param string Attribute Value.
      */
-    writeString(attributeName: string, string: String): void;
+    writeString(attributeName: string, string: String | null): void;
 
     /**
      * Writes @param number to backend with @param attributeName.
      * @param attributeName Name used to identify the attribute when reading/writing.
      * @param number Attribute Value.
      */
-    writeNumber(attributeName: string, number: number): void;
+    writeNumber(attributeName: string, number: number | null): void;
 
     /**
      * 
