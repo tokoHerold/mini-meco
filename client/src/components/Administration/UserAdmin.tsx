@@ -41,7 +41,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ "email": user.email, "newGithubUsername": githubUsername })
+                    body: JSON.stringify({ "userEmail": user.email, "newGithubUsername": githubUsername })
                 })
                 .then(checkError)
                 .catch(console.error));
@@ -51,7 +51,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ "email": user.email, "status": status })
+                    body: JSON.stringify({ "userEmail": user.email, "status": status })
                 })
                 .then(checkError)
                 .catch(console.error));
@@ -61,7 +61,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ "email": user.email, "password": password })
+                    body: JSON.stringify({ "userEmail": user.email, "password": password })
                 })
                 .then(checkError)
                 .catch(console.error));
@@ -150,7 +150,7 @@ const UserAdmin = () => {
         fetch(`/user/confirmation/trigger`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: user.email }),
+          body: JSON.stringify({ userEmail: user.email }),
         })
           .then(checkError)
           .catch(console.error);

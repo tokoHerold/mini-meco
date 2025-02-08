@@ -40,50 +40,56 @@ export async function initializeDB() {
   }
 
   await db.exec(`
-    CREATE TABLE IF NOT EXISTS project (
+    CREATE TABLE IF NOT EXISTS projects (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      projectName TEXT,
-      projectGroupName TEXT
+      projectName TEXT UNIQUE,
+      courseId INTEGER,
+      FOREIGN KEY (courseId) REFERENCES courses(id)
     )
   `);
 
   await db.exec(`
-    CREATE TABLE IF NOT EXISTS projectGroup (
+    CREATE TABLE IF NOT EXISTS courses (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       semester TEXT,
-      projectGroupName TEXT UNIQUE
+      courseName TEXT UNIQUE
     )
   `);
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS user_projects (
-      userEmail TEXT,
-      projectName TEXT,
+      userId INTEGER,
+      projectId INTEGER,
+      role TEXT,
       url TEXT,
-      PRIMARY KEY (userEmail, projectName),
-      FOREIGN KEY (userEmail) REFERENCES users(email)
+      PRIMARY KEY (userId, projectId),
+      FOREIGN KEY (userId) REFERENCES users(id),
+      FOREIGN KEY (projectId) REFERENCES projects(id)
     )
     `);
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS sprints (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      projectGroupName TEXT NOT NULL,
+      courseId INTEGER NOT NULL,
       sprintName TEXT NOT NULL,
-      endDate DATETIME NOT NULL
+      endDate DATETIME NOT NULL,
+      FOREIGN KEY (courseId) REFERENCES courses(id)
     )
   `);
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS happiness (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      projectGroupName TEXT,
-      projectName TEXT,
-      userEmail TEXT,
+      projectId INTEGER,
+      userId INTEGER,
       happiness INTEGER,
-      sprintName TEXT,
-      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)
-      `);
+      sprintId INTEGER,
+      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (userId) REFERENCES users(id),
+      FOREIGN KEY (projectId) REFERENCES projects(id)
+    )
+  `);
 
   return db;
 }
