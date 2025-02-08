@@ -1,15 +1,16 @@
-import { User } from "./User";
+import { CourseProject } from "./CourseProject";
 
 
-export class ProjectMember {
+export class ProjectParticipation {
     constructor(
-        protected readonly user: User,
+        protected readonly project: CourseProject,
         protected readonly role: string | null = null,
         protected readonly userProjectUrl: string | null = null,
     ) { }
+    
 
-    public getUser(): User {
-        return this.user;
+    public getProject(): CourseProject {
+        return this.project;
     }
 
     public getRole(): string | null {
@@ -19,5 +20,4 @@ export class ProjectMember {
     public getUrl(): string | null {
         return this.userProjectUrl;
     }
-
 }
