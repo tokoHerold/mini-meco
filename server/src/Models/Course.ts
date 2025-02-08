@@ -1,13 +1,36 @@
+import { Reader } from "../Serializer/Reader";
+import { Serializable } from "../Serializer/Serializable";
+import { Writer } from "../Serializer/Writer";
 import { CourseProject } from "./CourseProject";
-export class Course {
 
-  constructor(
-    protected name: string,
-    protected semester: string,
-    protected projects: CourseProject[]
-  ) { }
+export class Course implements Serializable {
+  protected id: number;
+  protected name: string = "";
+  protected semester: string = "";
+  protected projects: CourseProject[] = [];
+
+  constructor(id: number) {
+    this.id = id;
+  }
+
+  readFrom(reader: Reader): void {
+    this.id = reader.readNumber("id");
+    this.name = reader.readString("courseName");
+    this.semester = reader.readString("semester");
+    // todo ??? this.projects = reader.readObject("projects")
+  }
+
+  writeTo(writer: Writer): void {
+    writer.writeNumber("id", this.id);
+    writer.writeString("courseName", this.name);
+    writer.writeString("semester", this.semester);
+  }
 
   // Getters
+  public getId(): number {
+    return this.id;
+  }
+
   public getName(): string {
     return this.name;
   }
