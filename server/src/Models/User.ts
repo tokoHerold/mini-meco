@@ -109,10 +109,6 @@ export class User extends Visitor implements Serializable {
   }
 
   // Setters
-  public setId(id: number){
-    this.id = id;
-  }
-
   public setName(name: string | null){
     this.name = name;
   }
