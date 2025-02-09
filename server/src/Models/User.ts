@@ -15,7 +15,6 @@ export class User extends Visitor implements Serializable {
   protected resetPasswordExpire: number | null = null;
   protected confirmEmailToken: string | null = null;
   protected confirmEmailExpire: number | null = null;
-  protected projectsUserIsMemberOf: CourseProject[] = [];
   
   /** Do not call this constructor directly. Instead use the SerializableFactory
    *  appropriate for your backend!
@@ -29,7 +28,6 @@ export class User extends Visitor implements Serializable {
   }
 
   readFrom(reader: Reader): void {
-    /** use setter? */
     this.id = reader.readNumber("id") as number;
     this.name = reader.readString("name");
     this.githubUsername = reader.readString("githubUserName");
@@ -40,14 +38,9 @@ export class User extends Visitor implements Serializable {
     this.resetPasswordExpire = reader.readNumber("resetPasswordExpire");
     this.confirmEmailToken = reader.readString("confirmEmailToken");
     this.confirmEmailExpire = reader.readNumber("confirmEmailExpire");
-    /**
-     * @todo design / implement:
-     * this.projectsUserIsMemberOf = reader.read??()
-     */
   }
 
   writeTo(writer: Writer): void {
-    /** use getter? */
     writer.writeNumber("id", this.id);
     writer.writeString("name", this.name);
     writer.writeString("githubUserName", this.githubUsername);
@@ -58,9 +51,6 @@ export class User extends Visitor implements Serializable {
     writer.writeNumber("resetPasswordExpire", this.resetPasswordExpire);
     writer.writeString("confirmEmailToken", this.confirmEmailToken);
     writer.writeNumber("confirmEmailExpire", this.confirmEmailExpire);
-    /** @todo design / implement: 
-     * writer.writeObject("projectsUserIsMemberOf") 
-     */
   }
 
   // Getters
@@ -104,10 +94,6 @@ export class User extends Visitor implements Serializable {
     return this.confirmEmailExpire;
   }
 
-  public getProjectsMemberIn(): CourseProject[]{
-    return this.projectsUserIsMemberOf;
-  }
-
   // Setters
   public setName(name: string | null){
     this.name = name;
@@ -143,19 +129,5 @@ export class User extends Visitor implements Serializable {
 
   public setConfirmEmailExpire(confirmEmailExpire: number | null){
     this.confirmEmailExpire = confirmEmailExpire;
-  }
-
-  public setProjectsMemberIn(projectsUserIsMemberOf: CourseProject[]){
-    this.projectsUserIsMemberOf = projectsUserIsMemberOf;
-  }
-
-  // Command
-
-  public addProject(project: CourseProject){
-    this.projectsUserIsMemberOf.push(project)
-  }
-
-  public removeProject(project: CourseProject){
-    this.projectsUserIsMemberOf = this.projectsUserIsMemberOf.filter(projectEl => projectEl.getName() != project.getName());
   }
 }

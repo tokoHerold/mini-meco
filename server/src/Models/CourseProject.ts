@@ -2,13 +2,12 @@ import { Reader } from "../Serializer/Reader";
 import { Serializable } from "../Serializer/Serializable";
 import { Writer } from "../Serializer/Writer";
 import { Course } from "./Course";
-import { ProjectMember } from "./ProjectMember";
+
 
 export class CourseProject implements Serializable {
   protected id: number;
   protected name: string | null = null;
   protected course: Course | undefined;
-  protected members: ProjectMember[] = [];
 
   constructor(id: number) {
     this.id = id;
@@ -40,10 +39,6 @@ export class CourseProject implements Serializable {
     return this.course;
   }
 
-  public getMembers(): ProjectMember[] {
-    return this.members;
-  }
-
   // Setters
   public setName(name: string | null) {
     //ToDo validate uniqueness of new name
@@ -52,17 +47,5 @@ export class CourseProject implements Serializable {
 
   public setCourse(course: Course): void {
     this.course = course;
-  }
-
-  public setMembers(members: ProjectMember[]) {
-    this.members = members;
-  }
-
-  // Command methods
-  public addMember(member: ProjectMember) {
-    this.members = [...this.members, member];
-  }
-  public removeMember(member: ProjectMember) {
-    this.members = this.members.filter(projectMember => projectMember !== member);
   }
 }
