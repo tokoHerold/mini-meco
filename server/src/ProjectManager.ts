@@ -4,6 +4,7 @@ import { CourseProject } from "./Models/CourseProject";
 import { ObjectHandler } from "./ObjectHandler";
 import { ProjectParticipation } from "./Models/ProjectParticipation";
 import { ProjectMember } from "./Models/ProjectMember";
+import { DatabaseSerializableFactory } from "./Serializer/DatabaseSerializableFactory";
 
 
 /**
@@ -19,6 +20,12 @@ export class ProjectManager {
     constructor (db: Database) {
         this.db = db;
         this.oh = new ObjectHandler();
+    }
+
+    public async createProject (): Promise<CourseProject> {
+        const dbsf = new DatabaseSerializableFactory(this.db);
+        const proj = await dbsf.create("CourseProject") as CourseProject;
+        return proj;
     }
 
     public async getProjectParticipations (user: User):  Promise<ProjectParticipation[]> {
