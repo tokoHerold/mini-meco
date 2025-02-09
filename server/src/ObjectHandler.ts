@@ -102,7 +102,7 @@ export class ObjectHandler {
     }
 
     public async getCourseProject(id: number, db: Database): Promise<CourseProject | null> {
-        const projectRow = await db.get('SELECT * FROM project WHERE id = ?', [id]);
+        const projectRow = await db.get('SELECT * FROM projects WHERE id = ?', [id]);
         if (!projectRow) {
             return null;
         }
@@ -119,7 +119,7 @@ export class ObjectHandler {
     }
 
     public async getCourse(id: number, db: Database): Promise<Course | null> {
-        const courseRow = await db.get('SELECT * FROM projectGroup WHERE id = ?', [id]);
+        const courseRow = await db.get('SELECT * FROM courses WHERE id = ?', [id]);
         if (!courseRow) {
             return null;
         }
