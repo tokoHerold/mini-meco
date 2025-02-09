@@ -30,9 +30,9 @@ export class DatabaseResultSetReader implements Reader {
         const result = await this.resultSet;
         // either read all or read single row
         if (Array.isArray(result)) {
-            return this.readAll(result, Constructor);
+            return await this.readAll(result, Constructor);
         } else { // Read single row:
-            return this.readRow<T>(result, Constructor);
+            return await this.readRow<T>(result, Constructor);
         }
     }
 
@@ -40,15 +40,15 @@ export class DatabaseResultSetReader implements Reader {
         result: any[], Constructor: new (...args: any[]) => T
     ): T[] {
         let arr: T[] = [];
-        result.forEach((row: any) => {
-            arr.push(this.readRow<T>(row, Constructor));
+        result.forEach(async (row: any) => {
+            arr.push(await this.readRow<T>(row, Constructor));
         });
         return arr;
     }
 
-    readRow<T extends Serializable> (
+    async readRow<T extends Serializable> (
         row: any, Constructor: new (...args: any[]) => T
-    ): T {
+    ): Promise<T> {
         // Reset attributes dict
         this.attributes = {};
         // Read all attributes
@@ -69,11 +69,11 @@ export class DatabaseResultSetReader implements Reader {
             s = new Constructor();
         }
         // Read all attributes into new instance
-        s.readFrom(this);
+        await s.readFrom(this);
         return s;
     }
 
-    async readObject(attributeName: string, className: string): Promise<Serializable | undefined> {
+    async readObject(attributeName: string, className: string): Promise<Serializable | null> {
         // Assuming Object to be id-referenced:
         const id = this.attributes[attributeName];
         if (typeof id !== 'number') {
@@ -81,22 +81,28 @@ export class DatabaseResultSetReader implements Reader {
         }
         // Check if Object was read already:
         if (this.wasHandled.has({className: className, id: id})) {
-            return this.wasHandled.get({className: className, id: id})?.instance;
+            console.log("Found a "+ className+" with id "+ id +" in wasHandled.");
+            const o = this.wasHandled.get({className: className, id: id})?.instance;
+            if (o !== undefined) {
+                return o;
+            }
         }
         // if not handled yet, create a new Instance and add to wasHandled.
         const oh = new ObjectHandler();
         const obj = await oh.getSerializableFromId(id, className, this.db);
+        console.log("Tried to get a "+ className +" with id "+ id +" from db. Result: "+ JSON.stringify(obj));
         if (obj === null) {
-            return undefined;
+            return obj;
         }
         this.wasHandled.set({className: className, id: id}, {instance: obj});
+        console.log("returning obj to instance.");
         return obj;
     }
 
     readString(attributeName: string): string | null{
         const val = this.attributes[attributeName];
         if (val !== null && typeof val !== 'string' ) {
-            throw new Error("Error during Serialization: Attribute " + attributeName + " is not a string!");  
+            throw new Error("Error during Serialization: Attribute " + attributeName + " is not a string! (type of val is " + typeof val +").\nAttributes is: "+ JSON.stringify(this.attributes));  
         }
         return val;
     }

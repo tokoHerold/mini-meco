@@ -16,7 +16,7 @@ export interface Writer {
      * @param attributeName Name used to identify the object reference when reading/writing.
      * @param objRef Serializable to be written.
      */
-    writeObject<T extends Serializable>(attributeName: string, objRef: T | undefined): void;
+    writeObject<T extends Serializable>(attributeName: string, objRef: T | null): void;
 
     /**
      * Writes @param string to backend with @param attributeName.

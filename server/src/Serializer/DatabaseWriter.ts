@@ -62,9 +62,10 @@ export class DatabaseWriter implements Writer {
     }
 
     
-    writeObject<T extends Serializable>(attributeName: string, objRef: T | undefined): void {
+    writeObject<T extends Serializable>(attributeName: string, objRef: T | null): void {
+        //console.log("Writing "+ attributeName);
         // if object is not defined write NULL to db
-        if (objRef === undefined) {
+        if (objRef === null) {
             this.attributes[attributeName] = "NULL";
         } else if ('getId' in objRef && typeof objRef.getId === 'function') { 
             // make sure Object has an ID and a getter.
@@ -74,6 +75,7 @@ export class DatabaseWriter implements Writer {
                 id: objRef.getId()
             })) {
                 this.toHandle.push(objRef);
+                // console.log("Object "+ attributeName+ " will be handled");
             }
         } else {
             throw new Error("Serialization for Object of type " + typeof objRef + " failed!");

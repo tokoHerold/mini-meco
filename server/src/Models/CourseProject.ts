@@ -7,7 +7,7 @@ import { Course } from "./Course";
 export class CourseProject implements Serializable {
   protected id: number;
   protected name: string | null = null;
-  protected course: Course | undefined;
+  protected course: Course | null = null;
 
   constructor(id: number) {
     this.id = id;
@@ -17,13 +17,11 @@ export class CourseProject implements Serializable {
     this.id = reader.readNumber("id") as number;
     this.name = reader.readString("projectName");
     this.course = (await reader.readObject("courseId", "Course")) as Course ;
-    // todo this.members = reader.readArray(...)
   }
   writeTo(writer: Writer): void {
     writer.writeNumber("id", this.id);
     writer.writeString("projectName", this.name);
     writer.writeObject<Course>("courseId", this.course);
-    // todo members
   }
 
   // Getters
@@ -35,17 +33,19 @@ export class CourseProject implements Serializable {
     return this.name;
   }
 
-  public getCourse(): Course | undefined {
-    return this.course;
+  public getCourse(): Course | null {
+    if (this.course) {
+      return this.course;
+    }
+    return null;
   }
 
   // Setters
   public setName(name: string | null) {
-    //ToDo validate uniqueness of new name
     this.name = name;
   }
 
-  public setCourse(course: Course): void {
+  public setCourse(course: Course | null): void {
     this.course = course;
   }
 }

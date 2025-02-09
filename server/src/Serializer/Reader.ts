@@ -15,7 +15,7 @@ export interface Reader {
      * Writes an object to backend. First writes the reference and then queues the Object for writing, if it was not handled previously.
      * @param attributeName Name used to identify the object reference when reading/writing.
      */
-    readObject(attributeName: string, className: string): Promise<Serializable | undefined> ;
+    readObject(attributeName: string, className: string): Promise<Serializable | null> ;
 
     /**
      * Reads a string from backend with @param attributeName.
