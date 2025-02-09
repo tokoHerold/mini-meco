@@ -22,24 +22,20 @@ export class CourseManager {
   }
 
   public async getProjectsForCourse(course: Course): Promise<CourseProject[]> {
-    console.log(course.getId())
     const projectRows = await this.db.all(`
             SELECT *
             FROM projects
             WHERE courseId = ?
         `, course.getId());
-    console.log(projectRows);
     let projects: CourseProject[] = [];
-    projectRows.forEach(async (row) => {
+    for (const row of projectRows) {
       const project = await this.oh.getCourseProject(row.id, this.db);
-      if (project == null) {
-        return;
-      } 
-      console.log(project);
-      project.setCourse(course);
-      projects.push(project);
-    });
-    console.log(projects);
-    return  projects;
+      if (project !== null) {
+        project.setCourse(course);
+        projects.push(project);
+      }
+    }
+
+    return projects;
   }
 }
