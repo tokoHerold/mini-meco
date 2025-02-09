@@ -1,9 +1,9 @@
 import { Database } from "sqlite";
-import { User } from "./User";
-import { CourseProject } from "./CourseProject";
-import { ObjectHandler } from "../ObjectHandler";
-import { ProjectParticipation } from "./ProjectParticipation";
-import { ProjectMember } from "./ProjectMember";
+import { User } from "./Models/User";
+import { CourseProject } from "./Models/CourseProject";
+import { ObjectHandler } from "./ObjectHandler";
+import { ProjectParticipation } from "./Models/ProjectParticipation";
+import { ProjectMember } from "./Models/ProjectMember";
 
 
 /**
