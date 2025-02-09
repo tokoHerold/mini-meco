@@ -13,6 +13,9 @@ export class DatabaseResultSetReader implements Reader {
     protected attributes: {[attributeName: string]: string | number | null} = {};
     protected resultSet: Promise<any> | Promise<any[]>;
     protected db: Database;
+
+    protected wasHandled: Map<{className: string, id: number}, {instance: Serializable}> = new Map();
+
     
     constructor(resultSet: Promise<any> | Promise<any[]>, db: Database) {
         this.resultSet = resultSet;
@@ -22,6 +25,7 @@ export class DatabaseResultSetReader implements Reader {
     async readRoot<T extends Serializable> (
         Constructor: new (...args: any[]) => T
     ): Promise<T | T[]> {
+        this.wasHandled = new Map();
         // await resultSet
         const result = await this.resultSet;
         // either read all or read single row
@@ -75,12 +79,17 @@ export class DatabaseResultSetReader implements Reader {
         if (typeof id !== 'number') {
             throw new Error("Error during Serialization: Id " + attributeName + " is not a number!");
         }
-
+        // Check if Object was read already:
+        if (this.wasHandled.has({className: className, id: id})) {
+            return this.wasHandled.get({className: className, id: id})?.instance;
+        }
+        // if not handled yet, create a new Instance and add to wasHandled.
         const oh = new ObjectHandler();
         const obj = await oh.getSerializableFromId(id, className, this.db);
         if (obj === null) {
             return undefined;
         }
+        this.wasHandled.set({className: className, id: id}, {instance: obj});
         return obj;
     }
 
