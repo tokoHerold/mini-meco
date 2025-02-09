@@ -59,7 +59,7 @@ describe('Basic serializer read/write test', async () => {
     expect(p2.getName()).toBe(p.getName());
     expect(p2.getCourse()?.getName()).toBe(c.getName());
 
-    const cm: CourseManager = new CourseManager(db);
+    //const cm: CourseManager = new CourseManager(db);
     //const ps = await cm.getProjectsForCourse(c);
     //expect(ps.length).toBe(1);
     //expect(ps[0].getId).toBe(1);
