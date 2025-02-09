@@ -8,6 +8,8 @@ import { Course } from "../Models/Course";
 import { DatabaseWriter } from "../Serializer/DatabaseWriter";
 import { DatabaseResultSetReader } from "../Serializer/DatabaseResultSetReader";
 import { CourseProject } from "../Models/CourseProject";
+import { CourseManager } from "../CourseManager";
+import { getProjectsForCourse } from "../projectManagement";
 
 /** You need to delete the DB each time before running tests, unfortunately! */
 
@@ -56,5 +58,12 @@ describe('Basic serializer read/write test', async () => {
     const p2 = await oh.getCourseProject(p.getId(), db) as CourseProject;
     expect(p2.getName()).toBe(p.getName());
     expect(p2.getCourse()?.getName()).toBe(c.getName());
+
+    const cm: CourseManager = new CourseManager(db);
+    //const ps = await cm.getProjectsForCourse(c);
+    //expect(ps.length).toBe(1);
+    //expect(ps[0].getId).toBe(1);
+
   });
+
 });
