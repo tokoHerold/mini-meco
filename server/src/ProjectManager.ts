@@ -71,8 +71,8 @@ export class ProjectManager {
         if (!await this.isMemberIn(user, project)) {
             await this.db.run(`
                 INSERT INTO user_projects (userId, projectId, role, url)
-                VALUES (${user.getId()}, ${project.getId()}, ${role}, ${url})  
-            `);
+                VALUES (?, ?, ?, ?)  
+            `, [user.getId(), project.getId(), role, url]);
         }
     }
 
@@ -80,8 +80,8 @@ export class ProjectManager {
         if (await this.isMemberIn(user, project)) {
             await this.db.run(`
                 DELETE FROM user_projects
-                WHERE userId = ${user.getId()} AND projectId = ${project.getId()}
-            `);
+                WHERE userId = ? AND projectId = ?}
+            `, [user.getId(), project.getId()]);
         }
     }
 
@@ -103,9 +103,9 @@ export class ProjectManager {
         }
         await this.db.run(`
             UPDATE user_projects
-            SET role = ${role}
-            WHERE userId = ${user.getId()} AND projectId = ${project.getId()}
-        `);
+            SET role = ?
+            WHERE userId = ? AND projectId = ?
+        `, [role, user.getId(), project.getId()]);
     }
     
     public async getUserProjectUrl(user: User, project: CourseProject): Promise<string | null> {
@@ -126,8 +126,8 @@ export class ProjectManager {
         }
         await this.db.run(`
             UPDATE user_projects
-            SET url = ${url}
-            WHERE userId = ${user.getId()} AND projectId = ${project.getId()}
-        `);
+            SET url = ?
+            WHERE userId = ? AND projectId = ?
+        `, [url, user.getId(), project.getId()]);
     }
 }

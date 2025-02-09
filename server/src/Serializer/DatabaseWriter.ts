@@ -43,11 +43,15 @@ export class DatabaseWriter implements Writer {
             obj.writeTo(this);
             /* Compile SQL query from attributes */
             const assignments = Object.keys(this.attributes)
-                            .map(key => `${key} = :${key}`)
-                            .join(", ");
+                .map(key => `${key} = :${key}`)
+                .join(", ");
+            /* compile parameters map from attributes */
+            const params = Object.fromEntries(
+                Object.entries(this.attributes).map(([key, value]) => [`:${key}`, value])
+            );
             await this.db.run(
-                `UPDATE :table SET ${assignments} WHERE id = :id`,
-                {...this.attributes, }
+                `UPDATE ${table} SET ${assignments} WHERE id = :id`,
+                params
             );
 
             if ('getId' in obj && typeof obj.getId === 'function') {
