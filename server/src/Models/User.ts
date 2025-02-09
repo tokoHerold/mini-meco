@@ -30,7 +30,7 @@ export class User extends Visitor implements Serializable {
   readFrom(reader: Reader): void {
     this.id = reader.readNumber("id") as number;
     this.name = reader.readString("name");
-    this.githubUsername = reader.readString("githubUserName");
+    this.githubUsername = reader.readString("githubUsername");
     this.email = reader.readString("email");
     this.status = reader.readString("status") as string;
     this.password = reader.readString("password");
@@ -43,7 +43,7 @@ export class User extends Visitor implements Serializable {
   writeTo(writer: Writer): void {
     writer.writeNumber("id", this.id);
     writer.writeString("name", this.name);
-    writer.writeString("githubUserName", this.githubUsername);
+    writer.writeString("githubUsername", this.githubUsername);
     writer.writeString("email", this.email);
     writer.writeString("status", this.status);
     writer.writeString("password", this.password);
