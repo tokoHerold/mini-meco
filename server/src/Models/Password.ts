@@ -41,7 +41,7 @@ export class Password {
     }
 
     // mixed case, special characters, numbers and length > 12 contribute to password strength
-    var baseValue = 1;
+    let baseValue = 1;
     if (Password.containsLowerAndUpperCase(value)) {
       baseValue++;
     }
