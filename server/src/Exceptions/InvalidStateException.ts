@@ -10,7 +10,7 @@ export class InvalidStateException extends Exception {
         if (!c) throw new InvalidStateException(m, t);
     }
 
-    public static assertIsNotNullOrUndefined(c : any, m: string = "illegal argument", t?: Exception): void {
+    public static assertIsNotNullOrUndefined(c : unknown, m: string = "illegal argument", t?: Exception): void {
         if (c===null || c===undefined) throw new InvalidStateException(m, t);
     }
 
