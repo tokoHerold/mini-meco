@@ -1,6 +1,5 @@
 import { Database } from "sqlite";
-import { Request, Response } from "express";
-import { send } from "process";
+import { Request, Response } from "express";;
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { Email } from './email';
@@ -14,7 +13,7 @@ export const createProjectGroup = async (req: Request, res: Response, db: Databa
     if (!semester || !projectGroupName) {
         return res.status(400).json({ message: "Please fill in semester and project group name" });
     }
-    
+
     let semesterInput = semester; // Raw input from the request
     try {
         const semester = Semester.create(semesterInput); // Uses the Semester's internal validation
@@ -65,7 +64,7 @@ export const createProject = async (req: Request, res: Response, db: Database) =
 
 export const editProjectGroup = async (req: Request, res: Response, db: Database) => {
     const { projectGroupName, newSemester, newProjectGroupName } = req.body;
- 
+
     if (!newSemester || !newProjectGroupName) {
         return res.status(400).json({ message: "Please fill in semester and project group name" });
     }
@@ -75,10 +74,10 @@ export const editProjectGroup = async (req: Request, res: Response, db: Database
         console.log(`Executing SQL: UPDATE projectGroup SET semester = '${semester.toString()}', projectGroupName = '${newProjectGroupName}' WHERE projectGroupName = '${projectGroupName}'`);
 
         await db.run(
-            
-            `UPDATE projectGroup SET semester = ?, projectGroupName = ? WHERE projectGroupName = ?`, 
+
+            `UPDATE projectGroup SET semester = ?, projectGroupName = ? WHERE projectGroupName = ?`,
             [semester.toString(), newProjectGroupName, projectGroupName]
-        );        
+        );
 
         res.status(201).json({ message: "Project group edited successfully" });
     } catch (error) {
@@ -89,35 +88,35 @@ export const editProjectGroup = async (req: Request, res: Response, db: Database
 
 export const editProject = async (req: Request, res: Response, db: Database) => {
     const { newProjectGroupName, projectName, newProjectName } = req.body;
-  
-    if (!newProjectGroupName || !newProjectName) {
-      return res.status(400).json({ message: "Please fill in project group name and project name" });
-    }
-  
-    try {
-      // Check if table names need to be quoted
-      const quotedProjectName = `"${projectName}"`;
-      const quotedNewProjectName = `"${newProjectName}"`;
-  
-      //get the old project group name
-        const oldProjectGroupName = await db.get('SELECT projectGroupName FROM project WHERE projectName = ?', [projectName]);
-      await db.run(`ALTER TABLE ${quotedProjectName} RENAME TO ${quotedNewProjectName}`);
-        
-      await db.run(
-        `UPDATE project SET projectName = ?, projectGroupName = ? WHERE projectName = ?`,
-        [newProjectName, newProjectGroupName, projectName]
-      );
 
-      // update the table $projectGroupName to $newProjectGroupName
-      await db.run(`UPDATE ${oldProjectGroupName.projectGroupName} SET projectName = ? WHERE projectName = ?`, [newProjectName, projectName]);
-      
-      res.status(201).json({ message: "Project edited successfully" });
-    } catch (error) {
-      console.error("Error during project edition:", error);
-      res.status(500).json({ message: "Project edition failed", error });
+    if (!newProjectGroupName || !newProjectName) {
+        return res.status(400).json({ message: "Please fill in project group name and project name" });
     }
-  };
-  
+
+    try {
+        // Check if table names need to be quoted
+        const quotedProjectName = `"${projectName}"`;
+        const quotedNewProjectName = `"${newProjectName}"`;
+
+        //get the old project group name
+        const oldProjectGroupName = await db.get('SELECT projectGroupName FROM project WHERE projectName = ?', [projectName]);
+        await db.run(`ALTER TABLE ${quotedProjectName} RENAME TO ${quotedNewProjectName}`);
+
+        await db.run(
+            `UPDATE project SET projectName = ?, projectGroupName = ? WHERE projectName = ?`,
+            [newProjectName, newProjectGroupName, projectName]
+        );
+
+        // update the table $projectGroupName to $newProjectGroupName
+        await db.run(`UPDATE ${oldProjectGroupName.projectGroupName} SET projectName = ? WHERE projectName = ?`, [newProjectName, projectName]);
+
+        res.status(201).json({ message: "Project edited successfully" });
+    } catch (error) {
+        console.error("Error during project edition:", error);
+        res.status(500).json({ message: "Project edition failed", error });
+    }
+};
+
 
 
 export const getSemesters = async (req: Request, res: Response, db: Database) => {
@@ -198,7 +197,7 @@ export const joinProject = async (req: Request, res: Response, db: Database) => 
 
     } catch (error) {
         console.error("Error during joining project:", error);
-        res.status(500).json({ message: "Failed to join project", error });   
+        res.status(500).json({ message: "Failed to join project", error });
     }
 };
 
@@ -208,7 +207,7 @@ export const leaveProject = async (req: Request, res: Response, db: Database) =>
     try {
         const isMember = await db.get(`SELECT * FROM "${projectName}" WHERE memberEmail = ?`, [memberEmail]);
         if (!isMember) {
-          return res.status(400).json({ message: "You are not a member of this project" });
+            return res.status(400).json({ message: "You are not a member of this project" });
         }
 
         await db.run(`DELETE FROM "${projectName}" WHERE memberEmail = ?`, [memberEmail]);
@@ -236,11 +235,11 @@ export const getUserProjects = async (req: Request, res: Response, db: Database)
       const projects = await db.all('SELECT projectName FROM user_projects WHERE userEmail = ?', [userEmail.toString()]);
       res.json(projects);
     } catch (error) {
-      console.error("Error during retrieving user projects:", error);
-      res.status(500).json({ message: "Failed to retrieve user projects", error });
+        console.error("Error during retrieving user projects:", error);
+        res.status(500).json({ message: "Failed to retrieve user projects", error });
     }
-  };
-  
+};
+
 export const getUserProjectGroups = async (req: Request, res: Response, db: Database) => {
     const { projectName } = req.query;
 
@@ -287,6 +286,38 @@ export const getUsersByStatus = async (req: Request, res: Response, db: Database
     }
 }
 
+export const getUserRole = async (req: Request, res: Response, db: Database) => {
+    const { userEmail } = req.query;
+
+    try {
+        const user = await db.get('SELECT userRole FROM users WHERE email = ?', [userEmail]);
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+    } catch (error) {
+        console.error("Error during retrieving user role:", error);
+        res.status(500).json({ message: "Failed to retrieve user role", error });
+    }
+}
+
+export const updateUserRole = async (req: Request, res: Response, db: Database) => {
+    const { email, role } = req.body;
+
+    if (!email || !role) {
+        return res.status(400).json({ message: "Please provide email and role" });
+    }
+
+    try {
+        await db.run('UPDATE users SET userRole = ? WHERE email = ?', [role, email]);
+        res.status(200).json({ message: "User role updated successfully" });
+    } catch (error) {
+        console.error("Error during updating user role:", error);
+        res.status(500).json({ message: "Failed to update user role", error });
+    }
+}
+
 export const updateUserStatus = async (req: Request, res: Response, db: Database) => {
     const { email, status } = req.body;
 
@@ -294,9 +325,9 @@ export const updateUserStatus = async (req: Request, res: Response, db: Database
         return res.status(400).json({ message: "Please provide email and status" });
     }
 
-    if (status == "suspended"){
+    if (status == "suspended") {
         sendSuspendedEmail(email);
-    } else if (status == "removed"){
+    } else if (status == "removed") {
         sendRemovedEmail(email);
     }
 
@@ -311,24 +342,24 @@ export const updateUserStatus = async (req: Request, res: Response, db: Database
 
 export const updateAllConfirmedUsers = async (req: Request, res: Response, db: Database) => {
     const { status } = req.body;
-    
+
     if (!status) {
         return res.status(400).json({ message: 'Status is required' });
     }
 
-    
-    
+
+
     try {
-        
+
         const confirmedUsers = await db.all('SELECT * FROM users WHERE status = "confirmed"');
-        
+
 
         const result = await db.run(
-            'UPDATE users SET status = ? WHERE status = "confirmed"', 
+            'UPDATE users SET status = ? WHERE status = "confirmed"',
             [status]
         );
 
-        
+
 
         if (result.changes === 0) {
             return res.status(404).json({ message: 'No confirmed users found to update' });
@@ -347,26 +378,26 @@ export const sendSuspendedEmail = async (email: string) => {
         port: 465,
         secure: true,
         auth: {
-          user: process.env.EMAIL_USER_FAU,
-          pass: process.env.EMAIL_PASS_FAU,
+            user: process.env.EMAIL_USER_FAU,
+            pass: process.env.EMAIL_PASS_FAU,
         },
-      });
+    });
 
-      const mailOptions = {
+    const mailOptions = {
         from: '"Mini-Meco" <shu-man.cheng@fau.de>',
         to: email,
         subject: 'Account Suspended',
         text: `Your account has been suspended. Please contact the administrator for more information.`,
-      };
-    
-      try {
+    };
+
+    try {
         // @todo: Uncomment the following lines to send email
         // const info = await transporter.sendMail(mailOptions);
         // console.log('Account suspended email sent: %s', info.messageId);
-      } catch (error) {
+    } catch (error) {
         console.error('error sending suspended email:', error);
         throw new Error('There was an error sending the email');
-      }
+    }
 }
 
 export const sendRemovedEmail = async (email: string) => {
@@ -375,26 +406,26 @@ export const sendRemovedEmail = async (email: string) => {
         port: 465,
         secure: true,
         auth: {
-          user: process.env.EMAIL_USER_FAU,
-          pass: process.env.EMAIL_PASS_FAU,
+            user: process.env.EMAIL_USER_FAU,
+            pass: process.env.EMAIL_PASS_FAU,
         },
-      });
+    });
 
-      const mailOptions = {
+    const mailOptions = {
         from: '"Mini-Meco" <shu-man.cheng@fau.de>',
         to: email,
         subject: 'Account Removed',
         text: `Your account has been removed. Please contact the administrator for more information.`,
-      };
-    
-      try {
+    };
+
+    try {
         // @todo: Uncomment the following lines to send email
         // const info = await transporter.sendMail(mailOptions);
         // console.log('Account removed email sent: %s', info.messageId);
-      } catch (error) {
+    } catch (error) {
         console.error('error sending removed email:', error);
         throw new Error('There was an error sending the email');
-      }
+    }
 }
 
 
@@ -411,8 +442,8 @@ export const getEnrolledCourses = async (req: Request, res: Response, db: Databa
     }
 
     try {
-      const courses = await db.all(
-        `SELECT DISTINCT projectGroupName 
+        const courses = await db.all(
+            `SELECT DISTINCT projectGroupName 
          FROM user_projects 
          JOIN project USING (projectName)
          WHERE userEmail = ?`,
@@ -420,8 +451,8 @@ export const getEnrolledCourses = async (req: Request, res: Response, db: Databa
     );
       res.json(courses);
     } catch (error) {
-      console.error("Error during retrieving courses of user:", error);
-      res.status(500).json({ message: "Failed to retrieve courses of user", error });
+        console.error("Error during retrieving courses of user:", error);
+        res.status(500).json({ message: "Failed to retrieve courses of user", error });
     }
 };
 
@@ -487,9 +518,9 @@ export const getRoleForProject = async (req: Request, res: Response, db: Databas
     if (!validTableName) {
         return res.status(400).json({ message: "Invalid project name" });
     }
-  
+
     try {
-      
+
         const role = await db.get(
             `SELECT memberRole
              FROM ${projectName}
@@ -500,12 +531,11 @@ export const getRoleForProject = async (req: Request, res: Response, db: Databas
         if (!role) {
             return res.status(404).json({ message: "Role not found" });
         }
-        res.json({role: role.memberRole});
+        res.json({ role: role.memberRole });
     } catch (error) {
-      console.error("Error retrieving project role", error);
-      res.status(500).json({ message: "Failed to retrieve project role", error });
+        console.error("Error retrieving project role", error);
+        res.status(500).json({ message: "Failed to retrieve project role", error });
     }
 }
 
 
-  

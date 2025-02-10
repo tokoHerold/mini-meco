@@ -19,6 +19,7 @@ interface User {
     githubUsername: string | null;
     status: string;
     password: string;
+    userRole: string;
 }
 
 function checkError(response: Response) {
@@ -34,6 +35,7 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
     const [githubUsername, setGithubUsername] = useState<string>(user.githubUsername || "");
     const [status, setStatus] = useState<string>(user.status);
     const [password, setPassword] = useState<string>();
+    const [userRole, setUserRole] = useState<string>(user.userRole);
 
     function onSave() {
         const promises = []
@@ -63,6 +65,16 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ "email": user.email.toString(), "password": password })
+                })
+                .then(checkError)
+                .catch(console.error));
+        }
+        if (userRole !== user.userRole) {
+            promises.push(fetch(`http://localhost:3000/user/role`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ "email": user.email, "role": userRole })
                 })
                 .then(checkError)
                 .catch(console.error));
@@ -117,6 +129,10 @@ function UserEdit({ user, onClose }: { user: User; onClose: (update: boolean) =>
                                 </select>
                             </div>
                             <div className="mb-5">
+                                <label className="mb-2 block text-sm font-medium text-gray-900">UserRole</label>
+                                <input value={userRole} onChange={e => setUserRole(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" />
+                            </div>
+                            <div className="mb-5">
                                 <label className="mb-2 block text-sm font-medium text-gray-900">New Password</label>
                                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900" />
                             </div>
@@ -162,6 +178,7 @@ const UserAdmin = () => {
         user.email.toString(),
         user.githubUsername ? user.githubUsername : "N/A",
         user.status,
+        user.userRole,
         <div key={user.id} className="flex flex-row gap-3">
             <img className="h-5" src={Edit} title="edit" onClick={() => setEditing(user)}></img>
             {user.status === "unconfirmed" && <img className="h-5" src={EmailIcon} title="send confirmation email" onClick={() => sendConfirmationEmail(user)}></img>}
@@ -176,7 +193,7 @@ const UserAdmin = () => {
             </div>
             <div className="BigContainerUserAdmin">
                 <Table
-                    headings={["username", "email", "github username", "status", "action"]}
+                    headings={["username", "email", "github username", "status", "userRole", "action"]}
                     loading={loading}
                     loadData={fetchUsers}
                     data={tableData}
