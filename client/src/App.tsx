@@ -25,16 +25,16 @@ function App() {
           <Route path="/forgotPassword" element={<ForgotPassword />} />
           <Route path="/resetPassword" element={<ResetPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="standups" element={<Standups />} />
-          <Route path="happiness" element={<Happiness />} />
+          <Route path="/standups" element={<Standups />} />
+          <Route path="/happiness" element={<Happiness />} />
           <Route path="/code-activity" element={<CodeActivity />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="course-participation" element={<CourseParticipation />} />
-          <Route path="user-admin" element={<UserAdmin />} />
-          <Route path="project-admin" element={<ProjectAdmin />} />
-          <Route path="project-config" element={<ProjectConfig />} />
-          <Route path="confirmedEmail" element={<ConfirmedEmail />} />
-          <Route path="user-panel" element={<UserPanel />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/course-participation" element={<CourseParticipation />} />
+          <Route path="/user-admin" element={<UserAdmin />} />
+          <Route path="/project-admin" element={<ProjectAdmin />} />
+          <Route path="/project-config" element={<ProjectConfig />} />
+          <Route path="/confirmedEmail" element={<ConfirmedEmail />} />
+          <Route path="/user-panel" element={<UserPanel />} />
         </Routes>
       </BrowserRouter>
     </div>

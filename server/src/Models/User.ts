@@ -20,102 +20,102 @@ export class User extends Visitor {
   }
 
   // Getters
-  public getId(): number{
+  public getId(): number {
     return this.id;
   }
 
-  public getName(): string{
+  public getName(): string {
     return this.name;
   }
 
-  public getGithubUsername(): string{
+  public getGithubUsername(): string {
     return this.githubUsername;
   }
 
-  public getEmail(): string{
+  public getEmail(): string {
     return this.email;
   }
 
-  public getStatus(): string{
+  public getStatus(): string {
     return this.status;
   }
 
-  public getPassword(): string{
+  public getPassword(): string {
     return this.password;
   }
 
-  public getResetPasswordToken(): string{
+  public getResetPasswordToken(): string {
     return this.resetPasswordToken;
   }
 
-  public getResetPasswordExpire(): number{
+  public getResetPasswordExpire(): number {
     return this.resetPasswordExpire;
   }
 
-  public getConfirmEmailToken(): string{
+  public getConfirmEmailToken(): string {
     return this.confirmEmailToken;
   }
 
-  public getConfirmEmailExpire(): number{
+  public getConfirmEmailExpire(): number {
     return this.confirmEmailExpire;
   }
 
-  public getProjectsMemberIn(): CourseProject[]{
+  public getProjectsMemberIn(): CourseProject[] {
     return this.projectsUserIsMemberOf;
   }
 
   // Setters
-  public setId(id: number){
+  public setId(id: number) {
     this.id = id;
   }
 
-  public setName(name: string){
+  public setName(name: string) {
     this.name = name;
   }
 
-  public setGithubUsername(githubUsername: string){
+  public setGithubUsername(githubUsername: string) {
     this.githubUsername = githubUsername;
   }
 
-  public setEmail(email: string){
+  public setEmail(email: string) {
     this.email = email;
   }
 
-  public setStatus(status: string){
+  public setStatus(status: string) {
     this.status = status;
   }
 
-  public setPassword(password: string){
+  public setPassword(password: string) {
     this.password = password;
   }
 
-  public setResetPasswordToken(resetPasswordToken: string){
+  public setResetPasswordToken(resetPasswordToken: string) {
     this.resetPasswordToken = resetPasswordToken;
   }
 
-  public setResetPasswordExpire(resetPasswordExpire: number){
+  public setResetPasswordExpire(resetPasswordExpire: number) {
     this.resetPasswordExpire = resetPasswordExpire;
   }
 
-  public setConfirmEmailToken(confirmEmailToken: string){
+  public setConfirmEmailToken(confirmEmailToken: string) {
     this.confirmEmailToken = confirmEmailToken;
   }
 
-  public setConfirmEmailExpire(confirmEmailExpire: number){
+  public setConfirmEmailExpire(confirmEmailExpire: number) {
     this.confirmEmailExpire = confirmEmailExpire;
   }
 
-  public setProjectsMemberIn(projectsUserIsMemberOf: CourseProject[]){
+  public setProjectsMemberIn(projectsUserIsMemberOf: CourseProject[]) {
     this.projectsUserIsMemberOf = projectsUserIsMemberOf;
   }
 
   // Command
 
-  public addProject(project: CourseProject){
+  public addProject(project: CourseProject) {
     this.projectsUserIsMemberOf.push(project)
   }
 
-  public removeProject(project: CourseProject){
+  public removeProject(project: CourseProject) {
     this.projectsUserIsMemberOf = this.projectsUserIsMemberOf.filter(projectEl => projectEl.projectName != project.projectName);
   }
 }

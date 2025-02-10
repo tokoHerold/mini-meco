@@ -13,6 +13,7 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<string[]>([]);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string>("USER");
 
   const username = localStorage.getItem("username");
 
@@ -41,6 +42,25 @@ const Dashboard: React.FC = () => {
 
     fetchProjects();
   }, [navigate]);
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const userEmail = localStorage.getItem("email");
+      if (userEmail) {
+        try {
+          const response = await fetch(
+            `http://localhost:3000/user/role?userEmail=${userEmail}`
+          );
+          const data = await response.json();
+          setUserRole(data.userRole);
+        } catch (error) {
+          console.error("Error fetching user role:", error);
+        }
+      }
+    };
+
+    fetchUserRole();
+  }, []);
 
   const handleProjectChange = (projectName: string) => {
     setSelectedProject(projectName);
@@ -110,7 +130,7 @@ const Dashboard: React.FC = () => {
         <div className="Title">
           <h2>Projects</h2>
         </div>
-        <div className="ProjectsContainer">
+        <div className="ComponentContainer">
           <Select onValueChange={handleProjectChange}>
             <SelectTrigger className="SelectTriggerProject">
               <SelectValue placeholder="Select Project" />
@@ -123,23 +143,21 @@ const Dashboard: React.FC = () => {
               ))}
             </SelectContent>
           </Select>
-          <div className="componentsContainer">
-            <div onClick={goToStandups} className="componentsProject">
+            <div onClick={goToStandups} className={"components" + (selectedProject ? "" : " disabled")}>
               Standups
             </div>
-            <div onClick={goHappiness} className="componentsProject">
+            <div onClick={goHappiness} className={"components" + (selectedProject ? "" : " disabled")}>
               Happiness
             </div>
-            <div onClick={goCodeActivity} className="componentsProject">
+            <div onClick={goCodeActivity} className={"components" + (selectedProject ? "" : " disabled")}>
               Code Activity
             </div>
-          </div>
         </div>
-        <div className="Title ConfigTitle">
+        <div className="Title">
           <h2>Configuration</h2>
         </div>
         
-        <div className="Container">
+        <div className="ComponentContainer">
           <div onClick={goUserPanel} className="components">
               User profile
           </div>
@@ -154,10 +172,12 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="Title AdminTitle">
+       {userRole === "ADMIN" && (
+        <>
+        <div className="Title">
           <h2>Administration</h2>
         </div>
-        <div className="Container">
+        <div className="ComponentContainer">
           <div onClick={goUserAdmin} className="components">
             User Admin
           </div>
@@ -165,6 +185,7 @@ const Dashboard: React.FC = () => {
             Project Admin
           </div>
         </div>
+       </>)}
       </div>
     </div>
   );
