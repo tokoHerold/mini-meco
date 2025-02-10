@@ -29,8 +29,6 @@ const Happiness: React.FC = (): React.ReactNode => {
   const location = useLocation();
 
   const [projectName, setProjectName] = useState<string | null>("");
-  // @ts-expect-error: suppress unused variable warning
-  const [userName, setUserName] = useState<string | null>(null);
   const [user, setUser] = useState<{ name: string; email: string } | null>(
     null
   );
@@ -56,7 +54,7 @@ const Happiness: React.FC = (): React.ReactNode => {
     }
     const storedUserName = localStorage.getItem("username");
     if (storedUserName) {
-      setUserName(storedUserName);
+      setUser((prev) => (prev ? { ...prev, name: storedUserName } : null));
     }
   }, [location.state]);
 
