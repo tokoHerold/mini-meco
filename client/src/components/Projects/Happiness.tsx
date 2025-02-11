@@ -54,7 +54,7 @@ const Happiness: React.FC = (): React.ReactNode => {
     }
     const storedUserName = localStorage.getItem("username");
     if (storedUserName) {
-      setUser((prev) => (prev ? { ...prev, name: storedUserName } : null));
+      setUser((prev) => prev && ({ ...prev , name: storedUserName }));
     }
   }, [location.state]);
 
