@@ -107,7 +107,7 @@ export class User extends Visitor implements Serializable {
     this.email = email;
   }
 
-  public setStatus(status: string){
+  public setStatus(status: string) {
     this.status = status;
   }
 

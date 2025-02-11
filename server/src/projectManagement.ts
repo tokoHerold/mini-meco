@@ -1,6 +1,5 @@
 import { Database } from "sqlite";
-import { Request, Response } from "express";
-import { send } from "process";
+import { Request, Response } from "express";;
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { DatabaseManager } from "./Models/DatabaseManager";
@@ -11,12 +10,8 @@ dotenv.config();
 
 export const createCourse = async (req: Request, res: Response, db: Database) => {
   const { semester, courseName } = req.body;
-  const semesterRegex = /^(SS|WS)\d{2,4}$/; // Format: SS24 or WS2425
-
   if (!semester || !courseName) {
-    return res.status(400).json({ message: "Please fill in semester and project group name" });
-  } else if (!semesterRegex.test(semester)) {
-    return res.status(400).json({ message: "Invalid semester format. Please use SSYY or WSYYYY format" });
+    return res.status(400).json({ message: "Please fill in semester and course name" });
   }
 
   let semesterInput = semester; // Raw input from the request
@@ -56,18 +51,15 @@ export const createProject = async (req: Request, res: Response, db: Database) =
 
 export const editCourse = async (req: Request, res: Response, db: Database) => {
   const { courseName, newSemester, newCourseName } = req.body;
-  const semesterRegex = /^(SS|WS)\d{2,4}$/; // Format: SS24 or WS2425
 
   if (!newSemester || !newCourseName) {
     return res.status(400).json({ message: "Please fill in semester and project group name" });
-  } else if (!semesterRegex.test(newSemester)) {
-    return res.status(400).json({ message: "Invalid semester format. Please use SSYY or WSYYYY format" });
-  }
+  } 
 
   try {
     const semester = Semester.create(newSemester); // @todo Shared ValueType method?
     const courseId = DatabaseManager.getCourseIdFromName(db, courseName);
-    console.log(`Executing SQL: UPDATE courses SET semester = '${newSemester}', courseName = '${newCourseName}' WHERE id = '${courseId}'`);
+    console.log(`Executing SQL: UPDATE courses SET semester = '${semester.toString()}', courseName = '${newCourseName}' WHERE id = '${courseId}'`);
 
     await db.run(
       `UPDATE courses SET semester = ?, courseName = ? WHERE id = ?`,
@@ -95,6 +87,12 @@ export const editProject = async (req: Request, res: Response, db: Database) => 
       `UPDATE projects SET projectName = ?, courseId = ? WHERE id = ?`,
       [newProjectName, newCourseId, projectId]
     );
+        res.status(201).json({ message: "Project edited successfully" });
+    } catch (error) {
+        console.error("Error during project edition:", error);
+        res.status(500).json({ message: "Project edition failed", error });
+    }
+};
 
     res.status(201).json({ message: "Project edited successfully" });
   } catch (error) {
@@ -185,7 +183,6 @@ export const leaveProject = async (req: Request, res: Response, db: Database) =>
     if (!isMember) {
       return res.status(400).json({ message: "You are not a member of this project" });
     }
-
     await db.run('DELETE FROM user_projects WHERE userId = ? AND projectId = ?', [userId, projectId]);
 
     res.status(200).json({ message: "Left project successfully" });
@@ -370,7 +367,7 @@ export const sendRemovedEmail = async (email: string) => {
 export const getEnrolledCourses = async (req: Request, res: Response, db: Database) => {
   const { userEmail } = req.query;
   if (!userEmail) {
-    return res.status(400).json({ message: "User id is required" });
+    return res.status(400).json({ message: "User email is required" });
   }
 
   try {
@@ -427,7 +424,7 @@ export const getRoleForProject = async (req: Request, res: Response, db: Databas
   const { projectName, userEmail } = req.query;
 
   if (!projectName || !userEmail) {
-    return res.status(400).json({ message: "Project Id and user Id are required" });
+    return res.status(400).json({ message: "Project name and user email are required" });
   }
 
   try {
@@ -449,6 +446,3 @@ export const getRoleForProject = async (req: Request, res: Response, db: Databas
     res.status(500).json({ message: "Failed to retrieve project role", error });
   }
 }
-
-
-

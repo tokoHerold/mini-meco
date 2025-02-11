@@ -31,7 +31,8 @@ export async function initializeDB() {
       resetPasswordToken TEXT,
       resetPasswordExpire INTEGER,
       confirmEmailToken TEXT,
-      confirmEmailExpire INTEGER
+      confirmEmailExpire INTEGER,
+      userRole TEXT DEFAULT "USER" NOT NULL
     )
   `);
 
@@ -47,7 +48,6 @@ export async function initializeDB() {
     admin.setPassword(await hashPassword(password));
     admin.setStatus('confirmed');
     writer.writeRoot(admin);
-
     console.log(`Default admin user created: (email: '${email}', password: '${password}')`);
   }
 
