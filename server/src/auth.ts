@@ -8,10 +8,42 @@ import { Request, Response, NextFunction } from "express";
 import { ObjectHandler } from "./ObjectHandler";
 import { comparePassword, hashPassword } from "./hash";
 import { Password } from "./Models/Password";
+import { Email } from './email';
 
 dotenv.config();
 
 const secret = process.env.JWT_SECRET || "your_jwt_secret";
+
+export const sendConfirmEmail = async (email: Email, token: string) => {
+
+  const transporter = nodemailer.createTransport({
+    host: "smtp-auth.fau.de",
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER_FAU,
+      pass: process.env.EMAIL_PASS_FAU,
+    },
+  });
+  const confirmedLink = `http://localhost:5173/confirmedEmail?token=${token}`;
+
+  const mailOptions = {
+    from: '"Mini-Meco" <shu-man.cheng@fau.de>',
+    to: email.toString(),
+    subject: 'Confirm Email',
+    text: `You registered for Mini-Meco. Click the link to confirm your email: ${confirmedLink}`,
+  };
+
+  try {
+    // @todo: Uncomment the following lines to send email
+    // const info = await transporter.sendMail(mailOptions);
+    // console.log('Confirm email sent: %s', info.messageId);
+    // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  } catch (error) {
+    console.error("Error sending confirm email:", error);
+    throw new Error("There was an error sending the email");
+  }
+};
 
 export const register = async (req: Request, res: Response, db: Database) => {
   const { name, email, password } = req.body;
@@ -26,12 +58,18 @@ export const register = async (req: Request, res: Response, db: Database) => {
       message:
         "Password must be at least 8 characters long and should contain upper and lower case letters as well as numbers or special characters",
     });
-  } else if (!email.includes("@")) {
-    return res.status(400).json({ message: "Invalid email address" });
+  } else if(typeof email !== 'string') {
+    return res.status(400).json({ message: 'email has not the right format' });
   } else if (name.length < 3) {
     return res
       .status(400)
-      .json({ message: "Name must be at least 3 characters long" });
+      .json({ message: "Name must be at least 3 characters long" })
+    };
+    let validatedEmail: Email;
+    try {
+      validatedEmail = new Email(email as string);
+    } catch (IllegalArgumentException) {
+      return res.status(400).json({ message: 'Invalid email address' });
   }
 
   const hashedPassword = await hashPassword(passwordObj.toString());
@@ -45,7 +83,7 @@ export const register = async (req: Request, res: Response, db: Database) => {
     res.status(201).json({ message: "User registered successfully" });
 
     // Generate confirm email TOKEN
-    const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
+    const user = await db.get("SELECT * FROM users WHERE email = ?", [validatedEmail.toString()]);
     if (!user) {
       console.error("Email not found after registration");
       return;
@@ -57,11 +95,11 @@ export const register = async (req: Request, res: Response, db: Database) => {
     console.log(`Generated token: ${token}, Expiry time: ${expire}`);
 
     await db.run(
-      "UPDATE users SET confirmEmailToken = ?, confirmEmailExpire = ? WHERE email = ?",
-      [token, expire, email]
+      'UPDATE users SET confirmEmailToken = ?, confirmEmailExpire = ? WHERE email = ?',
+      [token, expire, validatedEmail.toString()]
     );
 
-    await sendConfirmEmail(email, token);
+    await sendConfirmEmail(validatedEmail, token);
 
     console.log("Confirmation email sent");
   } catch (error) {
@@ -72,12 +110,20 @@ export const register = async (req: Request, res: Response, db: Database) => {
 export const login = async (req: Request, res: Response, db: Database) => {
   const { email, password } = req.body;
   const passwordObj = Password.create(password);
-  if (!email || !passwordObj) {
+  if (!email || !passwordObj || typeof email !== 'string') {
     return res.status(400).json({ message: "Email and password are required" });
   }
 
+  let validatedEmail: Email;
   try {
-    const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
+    validatedEmail = new Email(email as string);
+  } catch (IllegalArgumentException) {
+    return res.status(400).json({ message: 'Invalid email address' });
+  }
+
+
+  try {
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [validatedEmail.toString()]);
     if (!user) {
       return res.status(400).json({ message: "Invalid email" });
     }
@@ -112,7 +158,7 @@ export const login = async (req: Request, res: Response, db: Database) => {
     res.status(200).json({
       token,
       name: user.name,
-      email: user.email,
+      email: user.email.toString(),
       githubUsername: user.githubUsername,
     });
   } catch (error) {
@@ -156,7 +202,8 @@ export const checkOwnership = (db: Database, oh: ObjectHandler) => {
   };
 };
 
-const sendPasswordResetEmail = async (email: string, token: string) => {
+const sendPasswordResetEmail = async (email: Email, token: string) => {
+
   const transporter = nodemailer.createTransport({
     host: "smtp-auth.fau.de",
     port: 465,
@@ -171,8 +218,8 @@ const sendPasswordResetEmail = async (email: string, token: string) => {
 
   const mailOptions = {
     from: '"Mini-Meco" <shu-man.cheng@fau.de>',
-    to: email,
-    subject: "Password Reset",
+    to: email.toString(),
+    subject: 'Password Reset',
     text: `You requested a password reset. Click the link to reset your password: ${resetLink}`,
   };
 
@@ -187,15 +234,20 @@ const sendPasswordResetEmail = async (email: string, token: string) => {
   }
 };
 
-export const forgotPassword = async (
-  req: Request,
-  res: Response,
-  db: Database
-) => {
-  const { email } = req.body;
+export const forgotPassword = async (req: Request, res: Response, db: Database) => {
+  let email: Email;
+  if (!req.body.email || typeof req.body.email !== 'string') {
+    return res.status(400).json({ message: 'User email is required' });
+  }
+  try {
+    email = new Email(req.body.email as string); // Validate and construct the Email instance
+  } catch (IllegalArgumentException) {
+  return res.status(400).json({ message: 'Invalid email address' });
+}
+
 
   try {
-    const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [email.toString()]);
     if (!user) {
       return res.status(404).json({ message: "Email not found" });
     }
@@ -206,8 +258,8 @@ export const forgotPassword = async (
     console.log(`Generated token: ${token}, Expiry time: ${expire}`);
 
     await db.run(
-      "UPDATE users SET resetPasswordToken = ?, resetPasswordExpire = ? WHERE email = ?",
-      [token, expire, email]
+      'UPDATE users SET resetPasswordToken = ?, resetPasswordExpire = ? WHERE email = ?',
+      [token, expire, email.toString()]
     );
 
     await sendPasswordResetEmail(email, token);
@@ -264,36 +316,6 @@ export const resetPassword = async (
   }
 };
 
-export const sendConfirmEmail = async (email: string, token: string) => {
-  const transporter = nodemailer.createTransport({
-    host: "smtp-auth.fau.de",
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER_FAU,
-      pass: process.env.EMAIL_PASS_FAU,
-    },
-  });
-  const confirmedLink = `http://localhost:5173/confirmedEmail?token=${token}`;
-
-  const mailOptions = {
-    from: '"Mini-Meco" <shu-man.cheng@fau.de>',
-    to: email,
-    subject: "Confirm Email",
-    text: `You registered for Mini-Meco. Click the link to confirm your email: ${confirmedLink}`,
-  };
-
-  try {
-    // @todo: Uncomment the following lines to send email
-    // const info = await transporter.sendMail(mailOptions);
-    // console.log('Confirm email sent: %s', info.messageId);
-    // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-  } catch (error) {
-    console.error("Error sending confirm email:", error);
-    throw new Error("There was an error sending the email");
-  }
-};
-
 export const confirmEmail = async (
   req: Request,
   res: Response,
@@ -322,7 +344,7 @@ export const confirmEmail = async (
 
     await db.run(
       'UPDATE users SET status = "confirmed", confirmEmailToken = NULL, confirmEmailExpire = NULL WHERE email = ?',
-      [user.email]
+      [user.email.toString()]
     );
 
     res.status(200).json({ message: "Email has been confirmed" });
@@ -333,13 +355,20 @@ export const confirmEmail = async (
 };
 
 export const sendConfirmationEmail = async (
-  req: Request,
-  res: Response,
+  req: Request, 
+  res: Response, 
   db: Database
 ) => {
-  const { email } = req.body;
+  let email: Email;
+  if (!req.body.email || typeof req.body.email !== 'string') {
+    return res.status(400).json({ message: 'User email is required' });
+  } try {
+    email = new Email(req.body.email as string);
+  } catch (IllegalArgumentException) {
+    return res.status(400).json({ message: 'Invalid email address' });
+  }
   try {
-    const user = await db.get("SELECT * FROM users WHERE email = ?", [email]);
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [email.toString()]);
     let st: string = user.status;
     let userStatus: UserStatus = new UserStatus(st as UserStatusEnum);
     if (!user || userStatus.getStatus() != UserStatusEnum.unconfirmed) {
@@ -353,7 +382,7 @@ export const sendConfirmationEmail = async (
 
     await db.run(
       "UPDATE users SET confirmEmailToken = ?, confirmEmailExpire = ? WHERE email = ?",
-      [token, expire, email]
+      [token, expire, email.toString()]
     );
     await sendConfirmEmail(email, token);
 

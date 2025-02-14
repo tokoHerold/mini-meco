@@ -120,7 +120,7 @@ const CodeActivity: React.FC = () => {
     try {
       const response = await fetch(
         `http://localhost:3000/user/user/projects?email=${encodeURIComponent(
-          user.email
+          user.email.toString()
         )}&projectName=${encodeURIComponent(projectName)}`
       );
       const data = await response.json();

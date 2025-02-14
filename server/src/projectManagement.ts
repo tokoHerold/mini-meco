@@ -2,6 +2,7 @@ import { Database } from "sqlite";
 import { Request, Response } from "express";;
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import { Email } from './email';
 
 import { Semester } from "./Models/Semester";
 
@@ -164,7 +165,17 @@ export const getProjects = async (req: Request, res: Response, db: Database) => 
 };
 
 export const joinProject = async (req: Request, res: Response, db: Database) => {
-    const { projectName, memberName, memberRole, memberEmail } = req.body;
+    const { projectName, memberName, memberRole } = req.body;
+
+    let memberEmail: Email;
+    if (!req.query.email || typeof req.query.email !== 'string') {
+        return res.status(400).json({ message: 'User email is required' });
+    }
+    try {
+        memberEmail = new Email(req.query.email as string);
+    } catch (IllegalArgumentException) {
+        return res.status(400).json({ message: 'Invalid email address' });
+    }
 
     if (!memberRole) {
         return res.status(400).json({ message: "Please fill in your role" });
@@ -210,11 +221,19 @@ export const leaveProject = async (req: Request, res: Response, db: Database) =>
 }
 
 export const getUserProjects = async (req: Request, res: Response, db: Database) => {
-    const { userEmail } = req.query;
-
+    let userEmail : Email;
+    if (!req.query.email || typeof req.query.email !== 'string') {
+        return res.status(400).json({ message: 'User email is required' });
+    }
     try {
-        const projects = await db.all('SELECT projectName FROM user_projects WHERE userEmail = ?', [userEmail]);
-        res.json(projects);
+        userEmail = new Email(req.query.email as string);
+    } catch (IllegalArgumentException) {
+        return res.status(400).json({ message: 'Invalid email address' });
+    }
+  
+    try {
+      const projects = await db.all('SELECT projectName FROM user_projects WHERE userEmail = ?', [userEmail.toString()]);
+      res.json(projects);
     } catch (error) {
         console.error("Error during retrieving user projects:", error);
         res.status(500).json({ message: "Failed to retrieve user projects", error });
@@ -411,11 +430,15 @@ export const sendRemovedEmail = async (email: string) => {
 
 
 export const getEnrolledCourses = async (req: Request, res: Response, db: Database) => {
-
-    const { userEmail } = req.query;
-
-    if (!userEmail) {
-        return res.status(400).json({ message: "User email is required" });
+    
+    let userEmail : Email;
+    if (!req.query.email || typeof req.query.email !== 'string') {
+        return res.status(400).json({ message: 'User email is required' });
+      }
+    try {
+        userEmail = new Email(req.query.email as string);
+    } catch (IllegalArgumentException) {
+        return res.status(400).json({ message: 'Invalid email address' });
     }
 
     try {
@@ -424,9 +447,9 @@ export const getEnrolledCourses = async (req: Request, res: Response, db: Databa
          FROM user_projects 
          JOIN project USING (projectName)
          WHERE userEmail = ?`,
-            [userEmail]
-        );
-        res.json(courses);
+         [userEmail.toString()]
+    );
+      res.json(courses);
     } catch (error) {
         console.error("Error during retrieving courses of user:", error);
         res.status(500).json({ message: "Failed to retrieve courses of user", error });
@@ -434,10 +457,20 @@ export const getEnrolledCourses = async (req: Request, res: Response, db: Databa
 };
 
 export const getProjectsForCourse = async (req: Request, res: Response, db: Database) => {
-    const { courseName, userEmail } = req.query;
+    const { courseName} = req.query;
 
-    if (!courseName || !userEmail) {
-        return res.status(400).json({ message: "Course name and user email are required" });
+    let userEmail : Email;
+    if (!req.query.email || typeof req.query.email !== 'string') {
+        return res.status(400).json({ message: 'User email is required' });
+      }
+    try {
+        userEmail = new Email(req.query.email as string);
+    } catch (IllegalArgumentException) {
+        return res.status(400).json({ message: 'Invalid email address' });
+    }
+
+    if (!courseName) {
+        return res.status(400).json({ message: "Course name is required" });
     }
 
     try {
@@ -446,7 +479,7 @@ export const getProjectsForCourse = async (req: Request, res: Response, db: Data
              FROM project
              JOIN user_projects USING (projectName)
              WHERE projectGroupName = ? AND userEmail = ?`,
-            [courseName, userEmail]
+            [courseName, userEmail.toString()]
         );
 
         const availableProjects = await db.all(
@@ -454,7 +487,7 @@ export const getProjectsForCourse = async (req: Request, res: Response, db: Data
              FROM project p
              LEFT JOIN user_projects up ON (p.projectName = up.projectName) AND (up.userEmail = ?)
              WHERE p.projectGroupName = ? AND up.userEmail IS NULL`,
-            [userEmail, courseName]
+            [userEmail.toString(), courseName]
         );
 
         res.json({ enrolledProjects, availableProjects });
@@ -465,10 +498,20 @@ export const getProjectsForCourse = async (req: Request, res: Response, db: Data
 };
 
 export const getRoleForProject = async (req: Request, res: Response, db: Database) => {
-    const { projectName, userEmail } = req.query;
+    const { projectName } = req.query;
 
-    if (!projectName || !userEmail) {
-        return res.status(400).json({ message: "Project name and user email are required" });
+    let userEmail : Email;
+    if (!req.query.email || typeof req.query.email !== 'string') {
+        return res.status(400).json({ message: 'User email is required' });
+      }
+    try {
+        userEmail = new Email(req.query.email as string);
+    } catch (IllegalArgumentException) {
+        return res.status(400).json({ message: 'Invalid email address' });
+    }
+  
+    if (!projectName) {
+      return res.status(400).json({ message: "Project name is required" });
     }
 
     const validTableName = typeof projectName === 'string' && /^[a-zA-Z0-9_]+$/.test(projectName);
@@ -482,7 +525,7 @@ export const getRoleForProject = async (req: Request, res: Response, db: Databas
             `SELECT memberRole
              FROM ${projectName}
              WHERE memberEmail = ?`,
-            [userEmail]
+            [userEmail.toString()]
         );
 
         if (!role) {

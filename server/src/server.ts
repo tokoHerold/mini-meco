@@ -19,7 +19,7 @@ import {
     updateUserRole
 } from './projectManagement';
 import { 
-    sendStandupsEmail, saveHappinessMetric, createSprints, getProjectHappinessMetrics, getSprints, 
+    sendStandupEmails, saveHappinessMetric, createSprints, getProjectHappinessMetrics, getSprints, 
     getProjectCurrentSprint
 } from './projectFeatures';
 import { 
@@ -59,7 +59,7 @@ initializeDB().then((db) => {
   app.get('/courseProject/happiness', (req, res) => { getProjectHappinessMetrics(req, res, db) });
   app.post('/courseProject/happiness', (req, res) => saveHappinessMetric(req, res, db));
   app.post('/courseProject/sprints', (req, res) => createSprints(req, res, db));
-  app.post('/courseProject/standupsEmail', (req, res) => sendStandupsEmail(req, res, db));
+  app.post('/courseProject/standupsEmail', (req, res) => sendStandupEmails(req, res, db));
   app.get('/courseProject/currentSprint', (req, res) => { getProjectCurrentSprint(req, res, db) });
   app.get('/courseProject/sprints', (req, res) => { getSprints(req, res, db) });
 
@@ -86,7 +86,6 @@ initializeDB().then((db) => {
   app.get('/user/status', (req, res) => { getUsersByStatus(req, res, db) });
   app.get('/user/role', (req, res) => { getUserRole(req, res, db) });
   app.post('/user/role', (req, res) => { updateUserRole(req, res, db) });
-
 
   app.post('/projConfig/changeURL', (req, res) => setUserProjectURL(req, res, db));
   app.get('/semesters', (req, res) => { getSemesters(req, res, db) });
