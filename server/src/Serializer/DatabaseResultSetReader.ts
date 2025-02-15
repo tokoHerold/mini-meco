@@ -2,6 +2,7 @@ import { Serializable } from "./Serializable";
 import { Reader } from "./Reader";
 import { ObjectHandler } from "../ObjectHandler";
 import { Database } from "sqlite";
+import { ResultSet, ResultRow } from "./ResultSetTypes";
 
 /**
  * Reader Class
@@ -11,19 +12,19 @@ import { Database } from "sqlite";
  */
 export class DatabaseResultSetReader implements Reader {
     protected attributes: {[attributeName: string]: string | number | null} = {};
-    protected resultSet: Promise<any> | Promise<any[]>;
+    protected resultSet: Promise<ResultSet>;
     protected db: Database;
 
     protected wasHandled: Map<{className: string, id: number}, {instance: Serializable}> = new Map();
 
     
-    constructor(resultSet: Promise<any> | Promise<any[]>, db: Database) {
+    constructor(resultSet: Promise<ResultSet>, db: Database) {
         this.resultSet = resultSet;
         this.db = db;
     }
 
     async readRoot<T extends Serializable> (
-        Constructor: new (...args: any[]) => T
+        Constructor: new (id: number) => T
     ): Promise<T | T[]> {
         this.wasHandled = new Map();
         // await resultSet
@@ -37,36 +38,38 @@ export class DatabaseResultSetReader implements Reader {
     }
 
     readAll<T extends Serializable> (
-        result: any[], Constructor: new (...args: any[]) => T
+        result: ResultRow[], Constructor: new (id: number) => T
     ): T[] {
         let arr: T[] = [];
-        result.forEach(async (row: any) => {
+        result.forEach(async (row: ResultRow) => {
             arr.push(await this.readRow<T>(row, Constructor));
         });
         return arr;
     }
 
     async readRow<T extends Serializable> (
-        row: any, Constructor: new (...args: any[]) => T
+        row: ResultRow, Constructor: new (id: number) => T
     ): Promise<T> {
         // Reset attributes dict
         this.attributes = {};
         // Read all attributes
         for (const attribute in row) {
-            const value = row[attribute];
-            // Some type checks
-            if (value !== undefined && 
-                (typeof value === 'string' || typeof value === 'number' || value === null)) {
-                this.attributes[attribute] = value;
+            if (this.isValidKey(attribute, row)) {
+                const value = row[attribute];
+                // Some type checks
+                if (value !== undefined && 
+                    (typeof value === 'string' || typeof value === 'number' || value === null)) {
+                    this.attributes[attribute] = value;
+                }
             }
         }
         // Create new instance
         let s: T;
         // Checking if this table had an id entry.
-        if ("id" in this.attributes) {
+        if ("id" in this.attributes && typeof this.attributes["id"] === "number") {
             s = new Constructor(this.attributes["id"]);
         } else {
-            s = new Constructor();
+            throw Error("Something went terribly wrong and the db entry does not have an id attribute!");
         }
         // Read all attributes into new instance
         await s.readFrom(this);
@@ -113,5 +116,9 @@ export class DatabaseResultSetReader implements Reader {
         }
         return val;
     }
-     
+    
+
+    protected isValidKey<T extends Object>(key: string | number | symbol, obj: T): key is keyof T {
+        return key in obj;
+    }
 }

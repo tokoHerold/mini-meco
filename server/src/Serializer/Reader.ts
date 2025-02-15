@@ -9,7 +9,7 @@ export interface Reader {
      * Any specification which objects to read can be passed to the constructor
      * of the classes implementing this interface.
      */
-    readRoot<T extends Serializable>(Constructor: new (...args: any[]) => T): T | Promise<T | T[]>;
+    readRoot<T extends Serializable>(Constructor: new (id: number) => T): T | Promise<T | T[]>;
 
     /**
      * Writes an object to backend. First writes the reference and then queues the Object for writing, if it was not handled previously.
