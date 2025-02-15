@@ -22,7 +22,7 @@ import {
 } from './projectFeatures';
 import {
   changeEmail, changePassword, setUserGitHubUsername, getUserGitHubUsername, setUserProjectURL,
-  getUserProjectURL
+  getUserProjectURL, getUserRole, updateUserRole
 } from './userConfig';
 import { checkOwnership } from './auth';
 

@@ -86,7 +86,7 @@ export const register = async (req: Request, res: Response, db: Database) => {
     
     const u = await dbsf.create("User") as User;
     u.setName(name);
-    u.setEmail(email);
+    u.setEmail(new Email(email));
     u.setPassword(hashedPassword);
     writer.writeRoot(u);
     res.status(201).json({ message: 'User registered successfully' });
@@ -139,13 +139,14 @@ export const login = async (req: Request, res: Response, db: Database) => {
     const userPassword = user.getPassword();
     if (userPassword === null) {
       return res.status(400).json({ message: 'No password set for user' });
-    }
-    const isValidPassword = await comparePassword(
-      passwordObj.toString(),
-      user.password
-    );
-    if (!isValidPassword) {
-      return res.status(400).json({ message: "Invalid password" });
+    } else {
+      const isValidPassword = await comparePassword(
+        passwordObj.toString(),
+        userPassword
+      );
+      if (!isValidPassword) {
+        return res.status(400).json({ message: "Invalid password" });
+      }
     }
 
     let st: string = user.getStatus();
@@ -164,14 +165,14 @@ export const login = async (req: Request, res: Response, db: Database) => {
       });
     }
 
-    const token = jwt.sign({ id: user.id }, "your_jwt_secret", {
+    const token = jwt.sign({ id: user.getId() }, "your_jwt_secret", {
       expiresIn: "1h",
     });
     res.status(200).json({
       token,
-      name: user.name,
-      email: user.email.toString(),
-      githubUsername: user.githubUsername,
+      name: user.getName(),
+      email: user.getEmailString(),
+      githubUsername: user.getGithubUsername(),
     });
   } catch (error) {
     console.error("Error during login:", error);
@@ -253,7 +254,7 @@ export const forgotPassword = async (req: Request, res: Response, db: Database) 
   try {
     const oh = new ObjectHandler();
     const writer = new DatabaseWriter(db);
-    const user = await oh.getUserByMail(email, db);
+    const user = await oh.getUserByMail(email.toString(), db);
     if (!user) {
       return res.status(404).json({ message: "Email not found" });
     }
@@ -383,7 +384,7 @@ export const sendConfirmationEmail = async (
   try {
     const oh = new ObjectHandler();
     const writer = new DatabaseWriter(db);
-    const user = await oh.getUserByMail(email, db);
+    const user = await oh.getUserByMail(email.toString(), db);
     if (!user) {
       return res.status(400).json({ message: 'User not found' });
     }

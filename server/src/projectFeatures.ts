@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import nodemailer from "nodemailer";
 import { Email } from './email';
 
-export const sendStandupsEmail = async (req: Request, res: Response, db: Database) => {
+export const sendStandupEmails = async (req: Request, res: Response, db: Database) => {
   const { projectName, userName, doneText, plansText, challengesText } = req.body;
 
 
@@ -18,6 +18,7 @@ export const sendStandupsEmail = async (req: Request, res: Response, db: Databas
 
     if (members.length === 0) {
       return res.status(400).json({ message: "No members in the project group" });
+    }
   
       const recipientEmails = members.map(member => member.memberEmail).join(",");
   

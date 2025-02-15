@@ -95,13 +95,6 @@ export const editProject = async (req: Request, res: Response, db: Database) => 
     }
 };
 
-    res.status(201).json({ message: "Project edited successfully" });
-  } catch (error) {
-    console.error("Error during project edition:", error);
-    res.status(500).json({ message: "Project edition failed", error });
-  }
-};
-
 
 
 export const getSemesters = async (req: Request, res: Response, db: Database) => {
@@ -154,28 +147,28 @@ export const joinProject = async (req: Request, res: Response, db: Database) => 
   const { projectName, memberName, memberRole } = req.body;
 
   let memberEmail: Email;
-  if (!req.query.email || typeof req.query.email !== 'string') {
+  if (!req.query.memberEmail || typeof req.query.memberEmail !== 'string') {
       return res.status(400).json({ message: 'User email is required' });
   }
   try {
-      memberEmail = new Email(req.query.email as string);
+      memberEmail = new Email(req.query.memberEmail as string);
   } catch (IllegalArgumentException) {
       return res.status(400).json({ message: 'Invalid email address' });
   }
 
-  if (!role) {
+  if (!memberRole) {
     return res.status(400).json({ message: "Please fill in your role" });
   }
 
   try {
     const projectId = DatabaseManager.getProjectIdFromName(db, projectName);
-    const userId = DatabaseManager.getUserIdFromEmail(db, userEmail);
+    const userId = DatabaseManager.getUserIdFromEmail(db, memberEmail.toString());
     const isMember = await db.get(`SELECT * FROM user_projects WHERE userId = ? AND projectId = ?`, [userId, projectId]);
     if (isMember) {
       return res.status(400).json({ message: "You have already joined this project" });
     }
 
-    await db.run('INSERT INTO user_projects (userId, projectId, memberRole ) VALUES (?, ?, ?)', [userId, projectId, role]);
+    await db.run('INSERT INTO user_projects (userId, projectId, memberRole ) VALUES (?, ?, ?)', [userId, projectId, memberRole]);
     res.status(201).json({ message: "Joined project successfully" });
 
   } catch (error) {
@@ -205,7 +198,7 @@ export const leaveProject = async (req: Request, res: Response, db: Database) =>
 
 export const getUserProjects = async (req: Request, res: Response, db: Database) => {
   let userEmail : Email;
-  if (!req.query.email || typeof req.query.email !== 'string') {
+  if (!req.query.userEmail || typeof req.query.userEmail !== 'string') {
       return res.status(400).json({ message: 'User email is required' });
   }
   try {

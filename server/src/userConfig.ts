@@ -117,3 +117,36 @@ export const getUserGitHubUsername = async (req: Request, res: Response, db: Dat
     res.status(500).json({ message: "Failed to fetch GitHub username", error });
   }
 }
+
+export const getUserRole = async (req: Request, res: Response, db: Database) => {
+  const { userEmail } = req.query;
+
+  try {
+      const user = await db.get('SELECT userRole FROM users WHERE email = ?', [userEmail]);
+      if (user) {
+          res.json(user);
+      } else {
+          res.status(404).json({ message: "User not found" });
+      }
+  } catch (error) {
+      console.error("Error during retrieving user role:", error);
+      res.status(500).json({ message: "Failed to retrieve user role", error });
+  }
+}
+
+export const updateUserRole = async (req: Request, res: Response, db: Database) => {
+  const { email, role } = req.body;
+
+  if (!email || !role) {
+      return res.status(400).json({ message: "Please provide email and role" });
+  }
+
+  try {
+      await db.run('UPDATE users SET userRole = ? WHERE email = ?', [role, email]);
+      res.status(200).json({ message: "User role updated successfully" });
+  } catch (error) {
+      console.error("Error during updating user role:", error);
+      res.status(500).json({ message: "Failed to update user role", error });
+  }
+}
+

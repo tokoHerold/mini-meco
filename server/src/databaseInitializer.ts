@@ -5,6 +5,7 @@ import { ObjectHandler } from './ObjectHandler';
 import { DatabaseSerializableFactory } from './Serializer/DatabaseSerializableFactory';
 import { User } from './Models/User';
 import { DatabaseWriter } from './Serializer/DatabaseWriter';
+import { Email } from './email';
 
 const DEFAULT_USER = {
   name: "admin",
@@ -43,7 +44,7 @@ export async function initializeDB() {
     const writer = new DatabaseWriter(db);
     const admin = await dbsf.create("User") as User;
     admin.setName(name);
-    admin.setEmail(email);
+    admin.setEmail(new Email(email));
     admin.setPassword(await hashPassword(password));
     admin.setStatus('confirmed');
     writer.writeRoot(admin);

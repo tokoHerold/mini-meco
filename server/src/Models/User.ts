@@ -34,7 +34,7 @@ export class User extends Visitor implements Serializable {
     this.githubUsername = reader.readString("githubUsername");
     const emailString = reader.readString("email");
     if (emailString != null) {
-      this.email = new Email();
+      this.email = new Email(emailString);
     } else {
       this.email = null;
     }
@@ -50,7 +50,11 @@ export class User extends Visitor implements Serializable {
     writer.writeNumber("id", this.id);
     writer.writeString("name", this.name);
     writer.writeString("githubUsername", this.githubUsername);
-    writer.writeString("email", this.email.toString());
+    if (this.email === null) {
+      writer.writeString("email", null);
+    } else {
+      writer.writeString("email", this.email.toString());
+    }
     writer.writeString("status", this.status);
     writer.writeString("password", this.password);
     writer.writeString("resetPasswordToken", this.resetPasswordToken);
