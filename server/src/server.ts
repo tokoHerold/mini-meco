@@ -16,9 +16,9 @@ import {
   getRoleForProject,
   getUsers
 } from './projectManagement';
-import {
-  sendStandupsEmail, saveHappinessMetric, createSprints, getProjectHappinessMetrics, getSprints,
-  getProjectCurrentSprint
+import { 
+    sendStandupEmails, saveHappinessMetric, createSprints, getProjectHappinessMetrics, getSprints, 
+    getProjectCurrentSprint
 } from './projectFeatures';
 import {
   changeEmail, changePassword, setUserGitHubUsername, getUserGitHubUsername, setUserProjectURL,
@@ -57,7 +57,7 @@ initializeDB().then((db) => {
   app.get('/courseProject/happiness', (req, res) => { getProjectHappinessMetrics(req, res, db) });
   app.post('/courseProject/happiness', (req, res) => saveHappinessMetric(req, res, db));
   app.post('/courseProject/sprints', (req, res) => createSprints(req, res, db));
-  app.post('/courseProject/standupsEmail', (req, res) => sendStandupsEmail(req, res, db));
+  app.post('/courseProject/standupsEmail', (req, res) => sendStandupEmails(req, res, db));
   app.get('/courseProject/currentSprint', (req, res) => { getProjectCurrentSprint(req, res, db) });
   app.get('/courseProject/sprints', (req, res) => { getSprints(req, res, db) });
 

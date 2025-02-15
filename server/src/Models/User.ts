@@ -3,12 +3,13 @@ import { CourseProject } from "./CourseProject";
 import { Serializable } from "../Serializer/Serializable";
 import { Reader } from "../Serializer/Reader";
 import { Writer } from "../Serializer/Writer";
+import { Email } from "../email";
 
 export class User extends Visitor implements Serializable {
   protected id: number;
   protected name: string | null = null;
   protected githubUsername: string | null = null;
-  protected email: string | null = null;
+  protected email: Email | null = null;
   protected status: string = "unconfirmed";
   protected password: string | null = null;
   protected resetPasswordToken: string | null = null;
@@ -31,7 +32,12 @@ export class User extends Visitor implements Serializable {
     this.id = reader.readNumber("id") as number;
     this.name = reader.readString("name");
     this.githubUsername = reader.readString("githubUsername");
-    this.email = reader.readString("email");
+    const emailString = reader.readString("email");
+    if (emailString != null) {
+      this.email = new Email();
+    } else {
+      this.email = null;
+    }
     this.status = reader.readString("status") as string;
     this.password = reader.readString("password");
     this.resetPasswordToken = reader.readString("resetPasswordToken");
@@ -44,7 +50,7 @@ export class User extends Visitor implements Serializable {
     writer.writeNumber("id", this.id);
     writer.writeString("name", this.name);
     writer.writeString("githubUsername", this.githubUsername);
-    writer.writeString("email", this.email);
+    writer.writeString("email", this.email.toString());
     writer.writeString("status", this.status);
     writer.writeString("password", this.password);
     writer.writeString("resetPasswordToken", this.resetPasswordToken);
@@ -66,7 +72,14 @@ export class User extends Visitor implements Serializable {
     return this.githubUsername;
   }
 
-  public getEmail(): string | null {
+  public getEmailString(): string | null {
+    if (this.email === null) {
+      return null;
+    }
+    return this.email.toString();
+  }
+
+  public getEmail(): Email | null {
     return this.email;
   }
 
@@ -103,7 +116,7 @@ export class User extends Visitor implements Serializable {
     this.githubUsername = githubUsername;
   }
 
-  public setEmail(email: string | null){
+  public setEmail(email: Email | null){
     this.email = email;
   }
 

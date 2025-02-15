@@ -176,8 +176,9 @@ const CourseParticipation: React.FC = () => {
 
     const body = {
       projectName,
-      userEmail: user.email,
-      role: role,
+      memberName: user.name,
+      memberRole: role,
+      memberEmail: user.email.toString(),
     };
 
     try {
@@ -217,7 +218,7 @@ const CourseParticipation: React.FC = () => {
 
     const body = {
       projectName,
-      userEmail: user.email,
+      memberEmail: user.email.toString(),
     };
 
     try {

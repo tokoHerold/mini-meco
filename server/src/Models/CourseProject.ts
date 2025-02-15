@@ -3,7 +3,6 @@ import { Serializable } from "../Serializer/Serializable";
 import { Writer } from "../Serializer/Writer";
 import { Course } from "./Course";
 
-
 export class CourseProject implements Serializable {
   protected id: number;
   protected name: string | null = null;

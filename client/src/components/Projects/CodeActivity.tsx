@@ -36,8 +36,6 @@ const CodeActivity: React.FC = () => {
     email: string;
     githubUsername: string;
   } | null>(null);
-  // @ts-ignore: suppress unused variable warning
-  const [courses, setCourses] = useState<string[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<string>("");
   const [commitsPerSprint, setCommitsPerSprint] = useState<any[]>([]);
 
@@ -122,7 +120,7 @@ const CodeActivity: React.FC = () => {
     try {
       const response = await fetch(
         `http://localhost:3000/user/projects?userEmail=${encodeURIComponent(
-          user.email
+          user.email.toString()
         )}&projectName=${encodeURIComponent(projectName)}`
       );
       const data = await response.json();
