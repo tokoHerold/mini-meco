@@ -39,7 +39,6 @@ export async function initializeDB() {
   const userCount = await oh.getUserCount(db);
   if (!userCount || userCount === 0) {
     const { name, email, password } = DEFAULT_USER;
-    // await db.run(`INSERT INTO users (name, email, password, status) VALUES (?, ?, ?, ?)`, [name, email, await hashPassword(password), 'confirmed']);
     const dbsf = new DatabaseSerializableFactory(db);
     const writer = new DatabaseWriter(db);
     const admin = await dbsf.create("User") as User;

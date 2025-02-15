@@ -49,7 +49,6 @@ export const register = async (req: Request, res: Response, db: Database) => {
     res.status(201).json({ message: 'User registered successfully' });
 
     // Generate confirm email TOKEN
-    // const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
     if (!oh.getUserByMail(email, db)) {
       console.error('Email not found after registration');
       return;
@@ -63,7 +62,6 @@ export const register = async (req: Request, res: Response, db: Database) => {
     u.setConfirmEmailToken(token);
     u.setConfirmEmailExpire(expire);
     writer.writeRoot(u);
-    // await db.run('UPDATE users SET confirmEmailToken = ?, confirmEmailExpire = ? WHERE email = ?', [token, expire, email]);
 
     await sendConfirmEmail(email, token);
 
@@ -83,8 +81,6 @@ export const login = async (req: Request, res: Response, db: Database) => {
 
   try {
     const oh = new ObjectHandler();
-
-    // const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
     const user = await oh.getUserByMail(email, db);
     if (!user) {
       return res.status(400).json({ message: 'Invalid email' });
@@ -192,7 +188,6 @@ export const forgotPassword = async (req: Request, res: Response, db: Database) 
 
     console.log(`Generated token: ${token}, Expiry time: ${expire}`);
 
-    // await db.run('UPDATE users SET resetPasswordToken = ?, resetPasswordExpire = ? WHERE email = ?', [token, expire, email]);
     user.setResetPasswordToken(token);
     user.setResetPasswordExpire(expire);
     writer.writeRoot(user);
@@ -229,7 +224,6 @@ export const resetPassword = async (req: Request, res: Response, db: Database) =
     }
 
     const hashedPassword = await hashPassword(newPassword);
-    // await db.run('UPDATE users SET password = ?, resetPasswordToken = NULL, resetPasswordExpire = NULL WHERE id = ?', [hashedPassword, user.id]);
     u.setPassword(hashedPassword);
     u.setResetPasswordExpire(null);
     u.setResetPasswordToken(null);
@@ -314,7 +308,6 @@ export const sendConfirmationEmail = async (req: Request, res: Response, db: Dat
   try {
     const oh = new ObjectHandler();
     const writer = new DatabaseWriter(db);
-    // const user = await db.get('SELECT * FROM users WHERE email = ?', [email]);
     const user = await oh.getUserByMail(email, db);
     if (!user) {
       return res.status(400).json({ message: 'User not found' });
@@ -328,7 +321,6 @@ export const sendConfirmationEmail = async (req: Request, res: Response, db: Dat
     const token = crypto.randomBytes(20).toString('hex');
     const expire = Date.now() + 3600000;
 
-    // await db.run('UPDATE users SET confirmEmailToken = ?, confirmEmailExpire = ? WHERE email = ?', [token, expire, email]);
     user.setConfirmEmailToken(token);
     user.setConfirmEmailExpire(expire);
     writer.writeRoot(user);
