@@ -49,42 +49,4 @@ export class DatabaseSerializableFactory implements SerializableFactory {
         e.writeTo(new DatabaseWriter(this.db));
         return e;
     }
-
-
-    /** 
-     * Creates a new User object and its corresponding database entity.
-     * Will overwrite the Databases Default Values with any defaults from 
-     * User class and its constructor!
-     */
-    /* protected async createUser(): Promise<User> {
-        // Create new user row 
-        const runResult = await this.db.run('INSERT INTO users DEFAULT VALUES');
-        if (!runResult || runResult.lastID === undefined) {  
-            throw new Error("Serializable Creation Failed: Failed to create db entry for new user!");
-        } else {
-            let u = new User(runResult.lastID);
-            u.writeTo(new DatabaseWriter(this.db));
-            return u;
-        }
-    } */
-
-    /** 
-     * Creates a new CourseProject object and its corresponding database entity.
-     * Will overwrite the Databases Default Values with any defaults from 
-     * CourseProject class and its constructor!
-     */
-    /* protected async createCourseProject(): Promise<CourseProject> {
-        // Create new user row 
-        const runResult = await this.db.run('INSERT INTO projects DEFAULT VALUES');
-        if (!runResult || runResult.lastID === undefined) {  
-            throw new Error("Serializable Creation Failed: Failed to create db entry for new project!");
-        } else {
-            let u = new CourseProject(runResult.lastID);
-            u.writeTo(new DatabaseWriter(this.db));
-            return u;
-        }
-    } */
-
-
-
 }
