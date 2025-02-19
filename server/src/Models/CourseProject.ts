@@ -8,6 +8,7 @@ export class CourseProject implements Serializable {
   protected name: string | null = null;
   protected course: Course | null = null;
 
+
   constructor(id: number) {
     this.id = id;
   }
