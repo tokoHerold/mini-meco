@@ -161,7 +161,6 @@ const ProjectAdmin: React.FC = () => {
 
     const body: { [key: string]: string } = {
       courseName: selectedCourse.courseName,
-      newSemester: selectedCourse.semester, // ToDo remove
       newCourseName: courseName,
       projectName: selectedProject.projectName,
       newProjectName: projectName,
